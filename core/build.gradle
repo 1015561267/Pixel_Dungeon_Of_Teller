@@ -1,0 +1,28 @@
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        resConfigs "en_US", "zh_CN"
+        minSdkVersion 14
+        targetSdkVersion 28}
+    buildTypes{
+        debug{
+            applicationIdSuffix ".indev"
+            versionNameSuffix '-INDEV'
+        }
+        release{
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions.encoding="UTF-8"
+}
+dependencies {
+    implementation project(':SPD-classes')
+    implementation 'cat.ereza:customactivityoncrash:2.3.0'
+    repositories{
+        google()
+        jcenter()
+    }
+}
