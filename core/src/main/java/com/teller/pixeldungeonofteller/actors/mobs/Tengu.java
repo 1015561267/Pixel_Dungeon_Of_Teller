@@ -143,12 +143,14 @@ public class Tengu extends Mob {
         int hpBracket = ranged ? 12 : 20;
 
         //phase 1 of the fight is over
-        //if (beforeHitHP > HT/2 && HP <= HT/2){
-        if (ARMOR == 0|| HP <= 40) {
+        // if (beforeHitHP > HT/2 && HP <= HT/2){
+
+        if ( HP <= 40 ) {
             //HP = (HT / 2) - 1;
             if(!ranged) {
                 ranged=true;//FIXME:Implementing shield and armor cause unwanted bug here,tengu's meachine won't work properly if I just copy the raw code
-                if(HP <= 40){ HP = 40;}
+                //if(HP <= 40){ HP = 40;}
+                HP = 39;
                 ARMOR=30;
                 yell(Messages.get(this, "interesting"));
                 GLog.w(" fight1 over");
