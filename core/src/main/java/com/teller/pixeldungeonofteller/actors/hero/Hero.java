@@ -1825,9 +1825,8 @@ public class Hero extends Char {
                     item.updateQuickslot();
                     GameScene.scene.updateweaponindicator((Weapon)item,false);
                 }
-                else  if (item.doPickUp(this)) {
+                else if (item.doPickUp(this)) {
                    heap.pickUp();
-                   item.doPickUp( this );
                  }
             }
         }

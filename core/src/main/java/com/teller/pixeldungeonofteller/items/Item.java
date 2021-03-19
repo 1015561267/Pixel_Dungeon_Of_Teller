@@ -31,6 +31,7 @@ import com.teller.pixeldungeonofteller.actors.buffs.SnipersMark;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.effects.Speck;
 import com.teller.pixeldungeonofteller.items.bags.Bag;
+import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.teller.pixeldungeonofteller.items.weapon.missiles.Boomerang;
 import com.teller.pixeldungeonofteller.items.weapon.missiles.MissileWeapon;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon.DualWieldWeapon;
@@ -215,7 +216,8 @@ public class Item implements Bundlable {
         if (stackable) {
             for (Item item : items) {
                 if (isSimilar(item)) {
-                    item.quantity += quantity;
+                    //item.quantity += quantity;
+                    item.merge( this );
                     item.updateQuickslot();
                     return true;
                 }
@@ -223,7 +225,6 @@ public class Item implements Bundlable {
         }
 
         if (items.size() < container.size) {
-
             if (Dungeon.hero != null && Dungeon.hero.isAlive()) {
                 Badges.validateItemLevelAquired(this);
             }
@@ -245,36 +246,39 @@ public class Item implements Bundlable {
     }
 
     public final Item detach(Bag container) {
-
         if (quantity <= 0) {
-
             return null;
-
         } else if (quantity == 1) {
-
             if (stackable || this instanceof Boomerang) {
                 Dungeon.quickslot.convertToPlaceholder(this);
             }
-
             return detachAll(container);
-
         } else {
-
-            quantity--;
+            Item detached = split(1);
             updateQuickslot();
+            if (detached != null) detached.onDetach( );
+            return detached;
+        }
+    }
 
+    public Item split( int amount ){
+        if (amount <= 0 || amount >= quantity()) {
+            return null;
+        } else {
             try {
-
-                //pssh, who needs copy constructors?
-                Item detached = getClass().newInstance();
+                Item split = null;
+                if(this instanceof MagicPage)
+                {
+                    split = new MagicPage(((MagicPage) this).spell);
+                }
+                else {split = this.getClass().newInstance();}
                 Bundle copy = new Bundle();
                 this.storeInBundle(copy);
-                detached.restoreFromBundle(copy);
-                detached.quantity(1);
-
-                detached.onDetach();
-                return detached;
-            } catch (Exception e) {
+                split.restoreFromBundle(copy);
+                split.quantity(amount);
+                quantity -= amount;
+                return split;
+            } catch (Exception e){
                 PixelDungeonOfTeller.reportException(e);
                 return null;
             }
@@ -284,7 +288,6 @@ public class Item implements Bundlable {
     public final Item detachAll(Bag container) {
         Dungeon.quickslot.clearItem(this);
         updateQuickslot();
-
         for (Item item : container.items) {
             if (item == this) {
                 container.items.remove(this);
@@ -525,7 +528,16 @@ public class Item implements Bundlable {
                 reset(user.pos, cell, this, new Callback() {
                     @Override
                     public void call() {
-                        Item.this.detach(user.belongings.backpack).onThrow(cell);
+                       Item detached = Item.this.detach(user.belongings.backpack);
+                        if(detached!=null)
+                        {
+                             detached.onThrow(cell);
+                        }
+                        else
+                        {
+                            GLog.w("Null throw");
+                        }
+
                         user.spendAndNext(finalDelay);
                     }
                 });

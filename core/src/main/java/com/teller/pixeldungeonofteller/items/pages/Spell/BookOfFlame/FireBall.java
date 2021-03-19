@@ -6,6 +6,7 @@ import com.teller.pixeldungeonofteller.actors.Actor;
 import com.teller.pixeldungeonofteller.actors.Char;
 import com.teller.pixeldungeonofteller.actors.MagicalDamage;
 import com.teller.pixeldungeonofteller.actors.buffs.Invisibility;
+import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.MagicBook;
 import com.teller.pixeldungeonofteller.items.pages.Spell.Spell;
 import com.teller.pixeldungeonofteller.mechanics.Ballistica;
@@ -40,7 +41,7 @@ public class FireBall extends Spell {
     }
 
     @Override
-    public void conjure(boolean useMagicPage)
+    public void conjure(boolean useMagicPage, MagicPage page)
     {
         if(checkmana()) {
             curUser = Dungeon.hero;
@@ -109,8 +110,8 @@ public class FireBall extends Spell {
         return Messages.get(this, "desc",min(),max());
     }
 
-    public int min(){return 3+Dungeon.hero.INT;}
-    public int max(){return 10+5*Dungeon.hero.INT;}
+    public static int min(){return 3+Dungeon.hero.INT;}
+    public static int max(){return 10+5*Dungeon.hero.INT;}
 
     public boolean equals(Object object)
     {

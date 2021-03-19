@@ -10,6 +10,7 @@ import com.teller.pixeldungeonofteller.actors.buffs.FlashOverLoad;
 import com.teller.pixeldungeonofteller.actors.buffs.Invisibility;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.effects.particles.FlameParticle;
+import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.MagicBook;
 import com.teller.pixeldungeonofteller.items.pages.Spell.Spell;
 import com.teller.pixeldungeonofteller.levels.Level;
@@ -23,14 +24,14 @@ public class Flash extends Spell {
 
     {
         name= Messages.get(this,"name");
-        image= ItemSpriteSheet.FLASHLIGHT;
+        image= ItemSpriteSheet.PAGE_FLASH;
         spriteClass = FlashSprite.class;
     }
 
     @Override
     public String desc()
     {
-        return Messages.get(this, "desc");
+        return "\n"+Messages.get(this, "desc");
     }
 
     public boolean equals(Object object)
@@ -47,10 +48,11 @@ public class Flash extends Spell {
         else return 6;
     }
 
-    public void conjure(boolean useMagicPage)
+    public void conjure(boolean useMagicPage, MagicPage page)
     {
-        if(checkmana()) {
-            Dungeon.hero.MANA-=ManaCost();
+        if(checkmana()|| useMagicPage) {
+            if(!useMagicpage) { Dungeon.hero.MANA-=ManaCost(); }
+            useMagicpage=false;
             Dungeon.hero.busy();
             Dungeon.hero.sprite.zap(Dungeon.hero.pos);
             boolean overloading=Dungeon.hero.buff(FlashOverLoad.class) != null;

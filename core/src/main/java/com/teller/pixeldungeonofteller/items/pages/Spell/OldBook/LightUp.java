@@ -5,6 +5,7 @@ import com.teller.pixeldungeonofteller.actors.buffs.Buff;
 import com.teller.pixeldungeonofteller.actors.buffs.Invisibility;
 import com.teller.pixeldungeonofteller.actors.buffs.Light;
 import com.teller.pixeldungeonofteller.effects.particles.FlameParticle;
+import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.MagicBook;
 import com.teller.pixeldungeonofteller.items.pages.Spell.Spell;
 import com.teller.pixeldungeonofteller.messages.Messages;
@@ -18,14 +19,14 @@ public class LightUp  extends Spell {
 
     {
         name= Messages.get(this,"name");
-        image= ItemSpriteSheet.LIGHTUP;
+        image= ItemSpriteSheet.PAGE_LIGHTUP;
         spriteClass = LightUpSprite.class;
     }
 
     @Override
     public String desc()
     {
-        return Messages.get(this, "desc");
+        return "\n"+Messages.get(this, "desc");
     }
 
     @Override
@@ -38,11 +39,13 @@ public class LightUp  extends Spell {
         return 10;
     }
 
-    public void conjure(boolean useMagicPage)
+    public void conjure(boolean useMagicPage, MagicPage page)
     {
-          if(checkmana())
+          if(checkmana()||useMagicPage)
           {
-              Dungeon.hero.MANA-=ManaCost();
+              if(!useMagicpage)
+              { Dungeon.hero.MANA-=ManaCost(); }
+              useMagicpage=false;
               Dungeon.hero.busy();
               Dungeon.hero.sprite.zap(Dungeon.hero.pos);
               Buff.affect(Dungeon.hero, Light.class, 60f+30f*Dungeon.hero.INT);

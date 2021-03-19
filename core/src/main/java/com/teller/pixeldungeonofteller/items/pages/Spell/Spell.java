@@ -6,6 +6,8 @@ import com.teller.pixeldungeonofteller.actors.buffs.Buff;
 import com.teller.pixeldungeonofteller.actors.buffs.LockedFloor;
 import com.teller.pixeldungeonofteller.actors.buffs.Recharging;
 import com.teller.pixeldungeonofteller.items.Item;
+import com.teller.pixeldungeonofteller.items.pages.MagicPage;
+import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.MagicSpellSprite.MagicSpellSprite;
 import com.watabou.utils.Bundle;
 
@@ -17,6 +19,9 @@ public class Spell extends Item {
     protected int charge;
 
     public Class<? extends MagicSpellSprite> spriteClass;
+
+    protected boolean useMagicpage = false;//I have to add this to handle with spells which needs to aim,else the page would be lost if player cancel targeting
+
 
     public int ManaCost()
     {
@@ -82,11 +87,17 @@ public class Spell extends Item {
     public boolean checkmana()
     { return Dungeon.hero.MANA>=ManaCost(); }
 
-    public void conjure(boolean useMagicPage) { }
+    public void conjure(boolean useMagicPage, MagicPage page) { }
 
     public void charge(Char owner) {
             charger = new CoolDowner();
             charger.attachTo(owner);
+    }
+
+    @Override
+    public String desc()
+    {
+        return "\n"+super.desc();
     }
 
     public class CoolDowner extends Buff {

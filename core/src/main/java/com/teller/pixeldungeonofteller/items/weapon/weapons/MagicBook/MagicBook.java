@@ -2,12 +2,16 @@ package com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook;
 
 import com.teller.pixeldungeonofteller.Dungeon;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
+import com.teller.pixeldungeonofteller.effects.particles.ElmoParticle;
+import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.teller.pixeldungeonofteller.items.pages.Spell.Spell;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.OffHandWeapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
 import com.teller.pixeldungeonofteller.sprites.CharSprite;
+import com.teller.pixeldungeonofteller.sprites.HeroSprite;
 import com.teller.pixeldungeonofteller.utils.GLog;
+import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
@@ -16,17 +20,23 @@ public class MagicBook extends OffHandWeapon {
 
     public static final String AC_CAST = "CAST";
     public static final String AC_SWITCH = "SWITCH";
+    public static final String AC_TEAR = "TEAR";
 
     private static final String SELECTEDSPELL = "SELECTEDSPELL";
+    private static final String STOREDSPELL = "STOREDSPELL";
 
     private static final float TIME_TO_CAST = 1f;
     private static final float TIME_TO_SWITCH = 1f;
+    private static final float TIME_TO_TEAR = 1f;
+
+    private static boolean usepage = false;
 
     public boolean attackable() {
         return false;
     }
 
-    public Spell storedspells[];
+    public ArrayList<Spell> storedspells = new ArrayList<Spell>();
+    ;
     public Spell selectedspell;
 
     @Override
@@ -35,19 +45,26 @@ public class MagicBook extends OffHandWeapon {
 
     public void joinNew(Spell spell)
     {
-        storedspells[storedspells.length] = spell;
+        storedspells.add(spell);
+        GameScene.scene.offhandupdate();
     }
 
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
         bundle.put(SELECTEDSPELL, selectedspell);
+        bundle.put(STOREDSPELL,storedspells);
     }
 
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
         selectedspell = (Spell)(bundle.get(SELECTEDSPELL));
+
+        for (Bundlable item : bundle.getCollection(STOREDSPELL)) {
+            if (item != null) storedspells.add((Spell) item);
+        }
+
         usesTargeting = selectedspell.usesTargeting;
         selftargeting = selectedspell.selftargeting;
     }
@@ -59,6 +76,7 @@ public class MagicBook extends OffHandWeapon {
         {
             actions.add(AC_CAST);
             actions.add(AC_SWITCH);
+            actions.add(AC_TEAR);
         }
         return actions;
     }
@@ -69,20 +87,14 @@ public class MagicBook extends OffHandWeapon {
         if(action.equals(AC_SWITCH)||action.equals(AC_CAST)) {
             if (hero.belongings.offhandweapon == this) {
                 if (action.equals(AC_CAST)) {
-                    selectedspell.conjure(false);
+                    selectedspell.conjure(false, null);
                 } else if (action.equals(AC_SWITCH)) {
-                    int length = storedspells.length;
-                    if (selectedspell.equals(storedspells[storedspells.length - 1])) {
-                        selectedspell = storedspells[0];
-                    } else {
-                        for (int i = 0; i < length; i++) {
-                            if (selectedspell.equals(storedspells[i]))
-                            {
-                                selectedspell = storedspells[i + 1];
-                                break;
-                            }
-                        }
+                    int index = storedspells.indexOf(selectedspell);
+                    if(index == storedspells.size() -1 )
+                    {
+                        index = -1;
                     }
+                    selectedspell = storedspells.get(index+1);
                     GameScene.scene.offhandupdate();
                     usesTargeting=selectedspell.usesTargeting;
                     selftargeting=selectedspell.selftargeting;
@@ -93,9 +105,36 @@ public class MagicBook extends OffHandWeapon {
                 GLog.w(Messages.get(MagicBook.class, "unequip"));
             }
         }
+        else if(action.equals(AC_TEAR))
+        {
+            if(storedspells.size()>1) {
 
+                String name=selectedspell.name();
+                Spell teared = selectedspell;
 
+                int index = storedspells.indexOf(selectedspell);
+                storedspells.remove(selectedspell);
+                if(index == storedspells.size())
+                {
+                    index = 0;
+                }
+                selectedspell = storedspells.get(index);
 
+                GameScene.scene.offhandupdate();
+                hero.busy();
+                hero.sprite.operate(hero.pos);
+                ((HeroSprite) curUser.sprite).read();
+                hero.sprite.emitter().burst(ElmoParticle.FACTORY, 12);
+                hero.spendAndNext(TIME_TO_TEAR);
+                usesTargeting=selectedspell.usesTargeting;
+                selftargeting=selectedspell.selftargeting;
+                GLog.w(Messages.get(MagicBook.class, "teared",name,name()));
+                new MagicPage(teared).collect();
+            }
+            else {
+                GLog.w(Messages.get(MagicBook.class, "onlyone"));
+            }
+        }
     }
 
     @Override
@@ -103,17 +142,17 @@ public class MagicBook extends OffHandWeapon {
         String info = desc();
 
         info+="\n\n"+Messages.get(MagicBook.class, "all");
-        for (int i = 0; i < storedspells.length; i++) {
-            info+=storedspells[i].name();
-            if(i!= storedspells.length-1)
+        for (int i = 0; i < storedspells.size(); i++) {
+            info+=storedspells.get(i).name();
+            if(i!= storedspells.size()-1)
             {
                 info+=",";
             }
         }
 
-        info+="\n\n"+Messages.get(MagicBook.class, "selected",selectedspell.name());
-        info+="\n\n"+selectedspell.desc();
-        info+="\n\n"+Messages.get(MagicBook.class, "manacost",selectedspell.ManaCost());
+        info+="\n"+Messages.get(MagicBook.class, "selected",selectedspell.name());
+        info+= selectedspell.desc();
+        info+="\n"+Messages.get(MagicBook.class, "manacost",selectedspell.ManaCost());
         return info;
     }
 
@@ -124,7 +163,7 @@ public class MagicBook extends OffHandWeapon {
 
     public boolean fulfilled()
     {
-        return storedspells.length>=3;
+        return storedspells.size()>=3;
     }
 
     public boolean reiterated(Spell toadd)
@@ -138,4 +177,7 @@ public class MagicBook extends OffHandWeapon {
         }
             return false;
     }
+
+    public MagicBook addRaw()
+    { return null;}
 }

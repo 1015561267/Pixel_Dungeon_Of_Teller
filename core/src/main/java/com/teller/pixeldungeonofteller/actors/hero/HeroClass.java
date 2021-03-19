@@ -31,6 +31,12 @@ import com.teller.pixeldungeonofteller.items.armor.PlateArmor;
 import com.teller.pixeldungeonofteller.items.artifacts.CloakOfShadows;
 import com.teller.pixeldungeonofteller.items.artifacts.EtherealChains;
 import com.teller.pixeldungeonofteller.items.food.Food;
+import com.teller.pixeldungeonofteller.items.pages.MagicPage;
+import com.teller.pixeldungeonofteller.items.pages.Spell.BookOfLight.Flash;
+import com.teller.pixeldungeonofteller.items.pages.Spell.BookOfLight.Healing;
+import com.teller.pixeldungeonofteller.items.pages.Spell.BookOfLight.HolyBomb;
+import com.teller.pixeldungeonofteller.items.pages.Spell.OldBook.LightUp;
+import com.teller.pixeldungeonofteller.items.pages.Spell.OldBook.MagicMissile;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfExperience;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfHealing;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfInvisibility;
@@ -101,8 +107,8 @@ public enum HeroClass {
         new Gauntlet().identify().collect();
         //new JavelinBarrel().identify().collect();
         new Nunchaku().identify().collect();
-        new OldBook().identify().collect();
-        new BookOfLight().identify().collect();
+        new OldBook().addRaw().identify().collect();
+        new BookOfLight().addRaw().identify().collect();
         new SubmachineGun().identify().collect();
 
         //new Tamahawk().identify().collect();
@@ -112,6 +118,29 @@ public enum HeroClass {
         new Dirk().identify().collect();
         new Flail().identify().collect();
 
+        MagicPage m1 = new MagicPage();
+        m1.getspell(new MagicMissile()).collect();
+
+        MagicPage m2 = new MagicPage();
+        m2.getspell(new MagicMissile()).collect();
+
+        MagicPage m3 = new MagicPage();
+        m3.getspell(new LightUp()).collect();
+
+        MagicPage m4 = new MagicPage();
+        m4.getspell(new LightUp()).collect();
+
+        MagicPage m5 = new MagicPage();
+        m5.getspell(new Flash()).collect();
+
+        MagicPage m6 = new MagicPage();
+        m6.getspell(new Flash()).collect();
+
+        MagicPage m7 = new MagicPage();
+        m7.getspell(new Healing()).collect();
+
+        MagicPage m8 = new MagicPage();
+        m8.getspell(new HolyBomb()).collect();
     }
 
     private static void initWarrior(Hero hero) {

@@ -121,7 +121,6 @@ public class Blandfruit extends Food {
     }
 
     public Item cook(Seed seed) {
-
         try {
             return imbuePotion((Potion) seed.alchemyClass.newInstance());
         } catch (Exception e) {
@@ -132,12 +131,9 @@ public class Blandfruit extends Food {
     }
 
     public Item imbuePotion(Potion potion) {
-
         potionAttrib = potion;
         potionAttrib.ownedByFruit = true;
-
         potionAttrib.image = ItemSpriteSheet.BLANDFRUIT;
-
         if (potionAttrib instanceof PotionOfHealing) {
             name = Messages.get(this, "sunfruit");
             potionGlow = new ItemSprite.Glowing(0x2EE62E);
@@ -172,7 +168,6 @@ public class Blandfruit extends Food {
             name = Messages.get(this, "starfruit");
             potionGlow = new ItemSprite.Glowing(0xA79400);
         }
-
         return this;
     }
 
@@ -189,7 +184,6 @@ public class Blandfruit extends Food {
         } else {
             super.cast(user, dst);
         }
-
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.teller.pixeldungeonofteller.items.pages.Spell.BookOfLight;
 
 import com.teller.pixeldungeonofteller.actors.buffs.Invisibility;
 import com.teller.pixeldungeonofteller.items.Holybomb;
+import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.MagicBook;
 import com.teller.pixeldungeonofteller.items.pages.Spell.Spell;
 import com.teller.pixeldungeonofteller.mechanics.Ballistica;
@@ -22,7 +23,7 @@ public class HolyBomb extends Spell {
 
     {
         name= Messages.get(this,"name");
-        image= ItemSpriteSheet.HOLYBOMB;
+        image= ItemSpriteSheet.PAGE_HOLYBOMB;
         spriteClass = HolyBombSprite.class;
         usesTargeting=true;
     }
@@ -30,7 +31,7 @@ public class HolyBomb extends Spell {
     @Override
     public String desc()
     {
-        return Messages.get(this, "desc",3,min(),max());
+        return "\n"+Messages.get(this, "desc",3,min(),max());
     }
 
     @Override
@@ -38,9 +39,9 @@ public class HolyBomb extends Spell {
         return spriteClass;
     }
 
-    public int min(){return 4+ 2* hero.INT();}
+    public static int min(){return 4+ 2* hero.INT();}
 
-    public int max(){return 22+ 8* hero.INT();}
+    public static int max(){return 22+ 8* hero.INT();}
 
     public boolean equals(Object object)
     {
@@ -52,9 +53,13 @@ public class HolyBomb extends Spell {
         return 15;
     }
 
-    public void conjure(boolean useMagicPage)
+    public void conjure(boolean useMagicPage, MagicPage p)
     {
-        if(checkmana()) { GameScene.selectCell(thrower); }
+        if (checkmana() || useMagicPage) {
+            if(useMagicPage) { useMagicpage = true;
+            }
+            GameScene.selectCell(thrower);
+        }
         else {
             GLog.w(Messages.get(MagicBook.class, "nomana"));
             OffHandIndicator.cancel();
@@ -64,16 +69,13 @@ public class HolyBomb extends Spell {
     CellSelector.Listener thrower = new CellSelector.Listener() {
         @Override
         public void onSelect(final Integer target) {
-            if(!checkmana()) {
-                GLog.w( Messages.get(MagicBook.class, "nomana"));
-                OffHandIndicator.cancel();
-                return;
-            }
             if (target != null) {
+                if(!useMagicpage)
+                { hero.MANA-=ManaCost(); }
+                useMagicpage=false;
+
                 final Ballistica shot = new Ballistica(hero.pos,target, Ballistica.PROJECTILE);
                 final int cell = shot.collisionPos;
-
-                hero.MANA-=ManaCost();
                 Invisibility.dispel();
                 final Holybomb holybomb=new Holybomb();
                 ((MissileSprite)  hero.sprite.parent.recycle(MissileSprite.class)).

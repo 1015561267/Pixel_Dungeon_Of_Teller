@@ -6,12 +6,14 @@ import com.teller.pixeldungeonofteller.actors.Actor;
 import com.teller.pixeldungeonofteller.actors.Char;
 import com.teller.pixeldungeonofteller.actors.MagicalDamage;
 import com.teller.pixeldungeonofteller.actors.buffs.Invisibility;
+import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.MagicBook;
 import com.teller.pixeldungeonofteller.items.pages.Spell.Spell;
 import com.teller.pixeldungeonofteller.mechanics.Ballistica;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.CellSelector;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
+import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.teller.pixeldungeonofteller.sprites.MagicSpellSprite.Normal.OldBook.MagicMissleSprite;
 import com.teller.pixeldungeonofteller.sprites.MagicSpellSprite.MagicSpellSprite;
 import com.teller.pixeldungeonofteller.ui.OffHandIndicator;
@@ -22,10 +24,12 @@ import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 
 public class MagicMissile extends Spell {
+
     {
         name= Messages.get(this,"name");
         spriteClass = MagicMissleSprite.class;
         usesTargeting=true;
+        image= ItemSpriteSheet.PAGE_MAGICMISSILE;
     }
 
     public Class<? extends MagicSpellSprite> Spellsprite()
@@ -38,10 +42,11 @@ public class MagicMissile extends Spell {
         return 3;
     }
 
-    public void conjure(boolean useMagicPage)
+    public void conjure(boolean MagicPage, MagicPage p)
     {
-        if(checkmana())
-        {
+        if (checkmana() || MagicPage) {
+            if(MagicPage) { useMagicpage = true;
+            }
             curUser = Dungeon.hero;
             curItem = this;
             GameScene.selectCell(zapper);
@@ -55,17 +60,13 @@ public class MagicMissile extends Spell {
     protected CellSelector.Listener zapper = new CellSelector.Listener() {
         @Override
         public void onSelect(Integer target) {
-            if(!checkmana()) {
-                GLog.w( Messages.get(MagicBook.class, "nomana"));
-                OffHandIndicator.cancel();
-                return;
-            }
             if (target != null) {
                 final MagicMissile magicmissile = (MagicMissile) Spell.curItem;
                 final Ballistica shot = new Ballistica(curUser.pos, target, Ballistica.MAGIC_BOLT);
                 int cell = shot.collisionPos;
                 if (target == curUser.pos || cell == curUser.pos) {
                     GLog.i(Messages.get(MagicBook.class, "self_target"));
+                    if(useMagicpage) { new MagicPage(new MagicMissile()).collect(); }
                     return;
                 }
                 curUser.sprite.zap(target);
@@ -103,17 +104,22 @@ public class MagicMissile extends Spell {
             ch.damage(dmg, this);
         }
         curUser.spendAndNext(1f);
-        Dungeon.hero.MANA-=ManaCost();
+
+        if(!useMagicpage)
+        {
+            Dungeon.hero.MANA-=ManaCost();
+        }
+        else  useMagicpage=false;
     }
 
     @Override
     public String desc()
     {
-        return Messages.get(this, "desc",min(),max());
+        return "\n"+Messages.get(this, "desc",min(),max());
     }
 
-    public int min(){return 2+Dungeon.hero.INT;}
-    public int max(){return 6+3*Dungeon.hero.INT;}
+    public static int min(){return 2+Dungeon.hero.INT;}
+    public static int max(){return 6+3*Dungeon.hero.INT;}
 
     public boolean equals(Object object)
     {

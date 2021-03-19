@@ -387,6 +387,18 @@ public class ItemSpriteSheet {
             assignItemRect(i, 3,3,10, 10);
     }
 
+    private static final int PAGES = xy(1, 23);  //16 slots
+    public static final int PAGE_MAGICMISSILE = PAGES + 0;
+    public static final int PAGE_LIGHTUP = PAGES + 1;
+    public static final int PAGE_FLASH = PAGES + 2;
+    public static final int PAGE_HEALING = PAGES + 3;
+    public static final int PAGE_HOLYBOMB = PAGES + 4;
+
+    static {
+        for (int i = PAGES; i < PAGES+16; i++)
+            assignItemRect(i, 0,1,15, 14);
+    }
+
     private static final int FOOD = xy(1, 25);  //16 slots
 
     //32 free slots

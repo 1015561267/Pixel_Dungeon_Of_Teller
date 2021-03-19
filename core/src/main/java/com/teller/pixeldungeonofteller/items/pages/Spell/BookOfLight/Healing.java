@@ -10,6 +10,7 @@ import com.teller.pixeldungeonofteller.actors.buffs.HolyHealing;
 import com.teller.pixeldungeonofteller.actors.buffs.Invisibility;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.actors.mobs.Mob;
+import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.MagicBook;
 import com.teller.pixeldungeonofteller.items.pages.Spell.Spell;
 import com.teller.pixeldungeonofteller.messages.Messages;
@@ -25,7 +26,7 @@ public class Healing extends Spell {
 
     {
         name= Messages.get(this,"name");
-        image= ItemSpriteSheet.HOLYHEAL;
+        image= ItemSpriteSheet.PAGE_HEALING;
         spriteClass = HealingSprite.class;
         usesTargeting = true;
         selftargeting = true;
@@ -34,7 +35,7 @@ public class Healing extends Spell {
     @Override
     public String desc()
     {
-        return Messages.get(this, "desc",healingsum(),healingeach());
+        return "\n"+Messages.get(this, "desc",healingsum(),healingeach());
     }
 
     @Override
@@ -46,32 +47,25 @@ public class Healing extends Spell {
 
     public static int healingeach() {return (int)Math.floor(1+Dungeon.hero.INT()/3); }
 
-    public boolean equals(Object object)
-    {
-        return object instanceof Healing;
-    }
-
     public int ManaCost()
     {
         return 8;
     }
 
-    public void conjure(boolean useMagicPage)
+    public void conjure(boolean MagicPage, MagicPage p)
     {
-        if(checkmana())
-        {
-            GameScene.selectCell(zapper);
-        }
-        else {
-            GLog.w(Messages.get(MagicBook.class, "nomana"));
-            OffHandIndicator.cancel();
-        }
+            if (checkmana() || MagicPage) {
+                if(MagicPage) { useMagicpage = true; }
+                GameScene.selectCell(zapper);
+            } else {
+                GLog.w(Messages.get(MagicBook.class, "nomana"));
+                OffHandIndicator.cancel();
+            }
     }
 
     protected CellSelector.Listener zapper = new CellSelector.Listener() {
         @Override
         public void onSelect(Integer target) {
-
             if (target != null) {
 
                 Char ch=Actor.findChar(target);
@@ -92,10 +86,13 @@ public class Healing extends Spell {
                         }
                     }
                 }
-
                 if(effictive)
                 {
-                    Dungeon.hero.MANA-=8;
+                    if(!useMagicpage)
+                    {
+                        Dungeon.hero.MANA-=8;
+                    }
+                    useMagicpage=false;
                     curUser.busy();
                     curUser.sprite.zap(ch.pos);
                     Buff.affect(ch, HolyHealing.class).set(healingsum(),healingeach());
@@ -104,6 +101,7 @@ public class Healing extends Spell {
                 }
                 else
                 {
+                    if(useMagicpage) { new MagicPage(new Healing()).collect(); }
                     GLog.w(Messages.get(Healing.class, "targetrequired"));
                 }
             }
