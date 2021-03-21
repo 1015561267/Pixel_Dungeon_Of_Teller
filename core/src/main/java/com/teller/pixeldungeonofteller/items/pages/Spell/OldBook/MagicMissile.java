@@ -42,13 +42,13 @@ public class MagicMissile extends Spell {
         return 3;
     }
 
+    private MagicPage page;
+
     public void conjure(boolean MagicPage, MagicPage p)
     {
         if (checkmana() || MagicPage) {
-            if(MagicPage) { useMagicpage = true;
-            }
+            if(MagicPage) { usePage = true; page = p;}
             curUser = Dungeon.hero;
-            curItem = this;
             GameScene.selectCell(zapper);
         }
         else {
@@ -62,11 +62,12 @@ public class MagicMissile extends Spell {
         public void onSelect(Integer target) {
             if (target != null) {
                 final MagicMissile magicmissile = (MagicMissile) Spell.curItem;
+
                 final Ballistica shot = new Ballistica(curUser.pos, target, Ballistica.MAGIC_BOLT);
                 int cell = shot.collisionPos;
                 if (target == curUser.pos || cell == curUser.pos) {
                     GLog.i(Messages.get(MagicBook.class, "self_target"));
-                    if(useMagicpage) { new MagicPage(new MagicMissile()).collect(); }
+                    if(usePage) { new MagicPage(new MagicMissile()).collect(); usePage = false; }
                     return;
                 }
                 curUser.sprite.zap(target);
@@ -81,8 +82,8 @@ public class MagicMissile extends Spell {
                         }
                     });
                     Invisibility.dispel();
-                }
             }
+        }
         @Override
         public String prompt() {
             return Messages.get(MagicBook.class, "prompt");
@@ -105,11 +106,11 @@ public class MagicMissile extends Spell {
         }
         curUser.spendAndNext(1f);
 
-        if(!useMagicpage)
+        if(!usePage)
         {
             Dungeon.hero.MANA-=ManaCost();
         }
-        else  useMagicpage=false;
+        else  {usePage=false; page.detach(Dungeon.hero.belongings.backpack);}
     }
 
     @Override

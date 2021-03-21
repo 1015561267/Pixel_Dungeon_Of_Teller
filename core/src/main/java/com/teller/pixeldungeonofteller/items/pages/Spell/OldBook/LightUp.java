@@ -43,9 +43,10 @@ public class LightUp  extends Spell {
     {
           if(checkmana()||useMagicPage)
           {
-              if(!useMagicpage)
+              if(!useMagicPage)
               { Dungeon.hero.MANA-=ManaCost(); }
-              useMagicpage=false;
+              else
+              { page.detach(Dungeon.hero.belongings.backpack); }
               Dungeon.hero.busy();
               Dungeon.hero.sprite.zap(Dungeon.hero.pos);
               Buff.affect(Dungeon.hero, Light.class, 60f+30f*Dungeon.hero.INT);

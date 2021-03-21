@@ -55,7 +55,7 @@ public class Healing extends Spell {
     public void conjure(boolean MagicPage, MagicPage p)
     {
             if (checkmana() || MagicPage) {
-                if(MagicPage) { useMagicpage = true; }
+                if(MagicPage) { usePage = true; curItem = p;}
                 GameScene.selectCell(zapper);
             } else {
                 GLog.w(Messages.get(MagicBook.class, "nomana"));
@@ -88,11 +88,14 @@ public class Healing extends Spell {
                 }
                 if(effictive)
                 {
-                    if(!useMagicpage)
+                    if(!usePage)
                     {
                         Dungeon.hero.MANA-=8;
                     }
-                    useMagicpage=false;
+                    else
+                    {
+                        curItem.detach(Dungeon.hero.belongings.backpack);  usePage=false;
+                    }
                     curUser.busy();
                     curUser.sprite.zap(ch.pos);
                     Buff.affect(ch, HolyHealing.class).set(healingsum(),healingeach());
@@ -101,7 +104,6 @@ public class Healing extends Spell {
                 }
                 else
                 {
-                    if(useMagicpage) { new MagicPage(new Healing()).collect(); }
                     GLog.w(Messages.get(Healing.class, "targetrequired"));
                 }
             }

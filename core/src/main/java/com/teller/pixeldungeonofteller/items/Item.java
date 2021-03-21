@@ -121,7 +121,17 @@ public class Item implements Bundlable {
             Item item = cl.newInstance();
             item.quantity = 0;
             return item;
+        } catch (Exception e) {
+            PixelDungeonOfTeller.reportException(e);
+            return null;
+        }
+    }
 
+    public static Item virtualpage(MagicPage page) {
+        try {
+            Item item = new MagicPage(page.spell);
+            item.quantity = 0;
+            return item;
         } catch (Exception e) {
             PixelDungeonOfTeller.reportException(e);
             return null;

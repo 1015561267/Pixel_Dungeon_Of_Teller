@@ -36,6 +36,7 @@ public class MagicPage extends Item {
 
 
     public Spell spell = null;
+
     public static final float TIME_TO_READ = 1;
     {
         stackable = true;
@@ -73,6 +74,10 @@ public class MagicPage extends Item {
     public boolean isSimilar(Item item) {
         if(item instanceof MagicPage)
         {
+            if(((MagicPage) item).spell == null)
+            {
+                return this.spell == null;
+            }
             return this.spell.getClass() == ((MagicPage) item).spell.getClass();
         }
         return false;
@@ -99,7 +104,6 @@ public class MagicPage extends Item {
              else {
                 hero.buff(Noise.class).readScrollNoise();
                 hero.sprite.emitter().burst(ElmoParticle.FACTORY, 12);
-                this.detach(Dungeon.hero.belongings.backpack);
                 spell.conjure(true , this);
              }
         }

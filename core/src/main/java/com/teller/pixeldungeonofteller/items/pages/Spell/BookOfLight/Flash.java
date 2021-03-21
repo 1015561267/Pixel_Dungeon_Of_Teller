@@ -51,8 +51,8 @@ public class Flash extends Spell {
     public void conjure(boolean useMagicPage, MagicPage page)
     {
         if(checkmana()|| useMagicPage) {
-            if(!useMagicpage) { Dungeon.hero.MANA-=ManaCost(); }
-            useMagicpage=false;
+            if(!useMagicPage) { Dungeon.hero.MANA-=ManaCost(); }
+            else { page.detach(Dungeon.hero.belongings.backpack); }
             Dungeon.hero.busy();
             Dungeon.hero.sprite.zap(Dungeon.hero.pos);
             boolean overloading=Dungeon.hero.buff(FlashOverLoad.class) != null;

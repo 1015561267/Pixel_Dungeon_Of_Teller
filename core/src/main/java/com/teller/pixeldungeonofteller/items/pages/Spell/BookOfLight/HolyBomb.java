@@ -1,5 +1,6 @@
 package com.teller.pixeldungeonofteller.items.pages.Spell.BookOfLight;
 
+import com.teller.pixeldungeonofteller.Dungeon;
 import com.teller.pixeldungeonofteller.actors.buffs.Invisibility;
 import com.teller.pixeldungeonofteller.items.Holybomb;
 import com.teller.pixeldungeonofteller.items.pages.MagicPage;
@@ -56,8 +57,7 @@ public class HolyBomb extends Spell {
     public void conjure(boolean useMagicPage, MagicPage p)
     {
         if (checkmana() || useMagicPage) {
-            if(useMagicPage) { useMagicpage = true;
-            }
+            if(useMagicPage) { usePage = true; curItem = p;}
             GameScene.selectCell(thrower);
         }
         else {
@@ -70,9 +70,10 @@ public class HolyBomb extends Spell {
         @Override
         public void onSelect(final Integer target) {
             if (target != null) {
-                if(!useMagicpage)
+                if(!usePage)
                 { hero.MANA-=ManaCost(); }
-                useMagicpage=false;
+                else { curItem.detach(Dungeon.hero.belongings.backpack);  usePage=false; }
+                usePage=false;
 
                 final Ballistica shot = new Ballistica(hero.pos,target, Ballistica.PROJECTILE);
                 final int cell = shot.collisionPos;

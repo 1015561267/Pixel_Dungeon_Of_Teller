@@ -21,6 +21,7 @@
 package com.teller.pixeldungeonofteller;
 
 import com.teller.pixeldungeonofteller.items.Item;
+import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -91,7 +92,13 @@ public class QuickSlot {
     }
 
     public void convertToPlaceholder(Item item) {
-        Item placeholder = Item.virtual(item.getClass());
+
+        Item placeholder;
+
+        if(item instanceof MagicPage)
+            placeholder = Item.virtualpage((MagicPage) item);
+        else
+            placeholder = Item.virtual(item.getClass());
 
         if (placeholder != null && contains(item))
             for (int i = 0; i < SIZE; i++)

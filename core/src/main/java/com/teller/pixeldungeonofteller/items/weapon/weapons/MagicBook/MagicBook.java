@@ -29,8 +29,6 @@ public class MagicBook extends OffHandWeapon {
     private static final float TIME_TO_SWITCH = 1f;
     private static final float TIME_TO_TEAR = 1f;
 
-    private static boolean usepage = false;
-
     public boolean attackable() {
         return false;
     }

@@ -40,6 +40,9 @@ public class Noise extends Buff{
             target.buff(Noise.class).invisibilityNoise();
         }
         triggered = false;
+
+        noise = (int) Math.ceil(noise * 0.9f);
+
         spend(TICK);
         return true;
     }

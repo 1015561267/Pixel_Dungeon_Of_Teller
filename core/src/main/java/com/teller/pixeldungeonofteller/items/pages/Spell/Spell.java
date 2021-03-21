@@ -20,8 +20,7 @@ public class Spell extends Item {
 
     public Class<? extends MagicSpellSprite> spriteClass;
 
-    protected boolean useMagicpage = false;//I have to add this to handle with spells which needs to aim,else the page would be lost if player cancel targeting
-
+    protected boolean usePage = false;//I have to add this to handle with spells which needs to aim,else the page would be lost if player cancel targeting
 
     public int ManaCost()
     {
@@ -69,30 +68,30 @@ public class Spell extends Item {
         return false;
     }
 
-    public boolean multiplecharge(){return false;}
+    //public boolean multiplecharge(){return false;}
 
-    public void destory() {
-        if(!passive()){
-            if (charger != null) {
-                charger.detach();
-                charger = null;
-            }
-        }
-        else
-        {
-            detachpassivebuff();
-        }
-    }
+    //public void destory() {
+    //    if(!passive()){
+    //        if (charger != null) {
+    //            charger.detach();
+    //            charger = null;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        detachpassivebuff();
+    //    }
+    //}
 
     public boolean checkmana()
     { return Dungeon.hero.MANA>=ManaCost(); }
 
     public void conjure(boolean useMagicPage, MagicPage page) { }
 
-    public void charge(Char owner) {
-            charger = new CoolDowner();
-            charger.attachTo(owner);
-    }
+    //public void charge(Char owner) {
+    //        charger = new CoolDowner();
+    //        charger.attachTo(owner);
+    //}
 
     @Override
     public String desc()

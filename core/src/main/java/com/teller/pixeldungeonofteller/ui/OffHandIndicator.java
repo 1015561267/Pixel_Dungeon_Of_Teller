@@ -111,7 +111,6 @@ public class OffHandIndicator extends Button {
             }
 
             protected boolean onLongClick() {
-
                 if (targeting) {
                     int cell = autoAim(lastTarget);
 
@@ -155,10 +154,12 @@ public class OffHandIndicator extends Button {
                     }
                 }
                 else {
-                    if (weapon.usesTargeting) {
-                        useTargeting();
+                    if(weapon!=null) {
+                        if (weapon.usesTargeting) {
+                            useTargeting();
+                        }
+                        slot.item.execute(Dungeon.hero, ((MagicBook) Dungeon.hero.belongings.offhandweapon).AC_CAST);
                     }
-                    slot.item.execute(Dungeon.hero, ((MagicBook) Dungeon.hero.belongings.offhandweapon).AC_CAST);
                 }
             }
             protected boolean onLongClick() {
@@ -216,6 +217,7 @@ public class OffHandIndicator extends Button {
 
         slot.enable(Dungeon.hero.isAlive() && Dungeon.hero.ready);
         spslot.enable(Dungeon.hero.isAlive() && Dungeon.hero.ready);
+
         GameScene.scene.enableswitchindicator(Dungeon.hero.isAlive() && Dungeon.hero.ready);
 
         if (weapon instanceof MagicBook) {
