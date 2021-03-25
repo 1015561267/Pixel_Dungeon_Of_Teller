@@ -6,6 +6,7 @@ import com.teller.pixeldungeonofteller.effects.particles.ElmoParticle;
 import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.teller.pixeldungeonofteller.items.pages.Spell.Spell;
 import com.teller.pixeldungeonofteller.items.weapon.Weapon;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon.Tonfa;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
 import com.teller.pixeldungeonofteller.sprites.CharSprite;
@@ -137,7 +138,7 @@ public class MagicBook extends Weapon {
 
                 int index = storedspells.indexOf(selectedspell);
                 storedspells.remove(selectedspell);
-                if(index == storedspells.size())
+                if(index == storedspells.size() || index<0)
                 {
                     index = 0;
                 }
@@ -184,21 +185,18 @@ public class MagicBook extends Weapon {
         return selectedspell.Spellsprite();
     }
 
+    public boolean reiterated(Spell Toadd)
+    {
+        for (int i=0;i<storedspells.size();i++) {
+            if(Toadd.getClass() == storedspells.get(i).getClass())
+            return true;
+        }
+        return false;
+    }
+
     public boolean fulfilled()
     {
         return storedspells.size()>=3;
-    }
-
-    public boolean reiterated(Spell toadd)
-    {
-        for(Spell contained :storedspells)
-        {
-            if(toadd.equals(contained))
-            {
-                return true;
-            }
-        }
-            return false;
     }
 
     public MagicBook addRaw()
