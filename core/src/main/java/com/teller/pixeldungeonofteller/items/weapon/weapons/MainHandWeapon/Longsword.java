@@ -21,11 +21,12 @@
 package com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon;
 
 import com.teller.pixeldungeonofteller.actors.PhysicalPercentage;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Longsword extends MainHandWeapon {
+public class Longsword extends Weapon {
 
     @Override
     public int stealth() {return 1;}
@@ -33,6 +34,11 @@ public class Longsword extends MainHandWeapon {
     public int Impactdamage(){return Random.Int(1,6);}
     public int Slashdamage() {return Random.Int(3,16)+level()*Random.Int(1,4);}
     public int Puncturedamage(){return Random.Int(2,10)+level()*Random.Int(0,1);}
+
+    @Override
+    public Type WeaponType() {
+        return Type.MainHand;
+    }
 
     PhysicalPercentage percentage = new PhysicalPercentage(0.2f, 0.45f, 0.35f);
 
@@ -55,6 +61,11 @@ public class Longsword extends MainHandWeapon {
     @Override
     public int STRReq(int lvl) {
         return 4;
+    }
+
+    @Override
+    public int DEXReq(int lvl) {
+        return 0;
     }
 
     public int STRMINSCALE() { return 1; }

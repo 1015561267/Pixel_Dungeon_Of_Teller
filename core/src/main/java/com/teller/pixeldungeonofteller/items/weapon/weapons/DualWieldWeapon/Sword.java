@@ -21,11 +21,19 @@
 package com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon;
 
 import com.teller.pixeldungeonofteller.Dungeon;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Sword extends DualWieldWeapon {
+import static com.teller.pixeldungeonofteller.Dungeon.hero;
+
+public class Sword extends Weapon {
+
+    @Override
+    public Type WeaponType() {
+        return Type.DualWield;
+    }
 
     @Override
     public int stealth() {return 2;}
@@ -74,10 +82,36 @@ public class Sword extends DualWieldWeapon {
 
     @Override
     public float cooldown() {
-        if (Dungeon.hero.belongings.mainhandweapon instanceof Sword) {
-            return 30f;
-        } else if (Dungeon.hero.belongings.mainhandweapon instanceof DualWieldWeapon) {
-            return 30f;
-        } else return 30f;
+
+        boolean same1 = false;
+        boolean same2 = false;
+        boolean dual1 = false;
+        boolean dual2 = false;
+
+        if (hero.belongings.mainhandweapon!=null)
+        {
+            if(hero.belongings.mainhandweapon instanceof Sword){
+                same1 = true;
+            }
+            else if(hero.belongings.mainhandweapon.WeaponType() == Type.DualWield)
+            {
+                dual1 = true;
+            }
+        }
+
+        if (hero.belongings.offhandweapon!=null)
+        {
+            if(hero.belongings.offhandweapon instanceof Sword){
+                same2 = true;
+            }
+            else if(hero.belongings.offhandweapon.WeaponType() == Type.DualWield)
+            {
+                dual2 = true;
+            }
+        }
+
+        if(same1&&same2) { return 30f; }
+        else if(dual1&&dual2) { return 30f; }
+        else return 30f;
     }
 }

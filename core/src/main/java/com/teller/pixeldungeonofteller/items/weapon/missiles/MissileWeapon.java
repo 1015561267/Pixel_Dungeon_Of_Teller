@@ -55,6 +55,11 @@ abstract public class MissileWeapon extends Weapon {
     }
 
     @Override
+    public Type WeaponType() {
+        return Type.Missile;
+    }
+
+    @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
         actions.remove(AC_EQUIP);
@@ -89,14 +94,12 @@ abstract public class MissileWeapon extends Weapon {
                 if (curUser.heroClass == HeroClass.HUNTRESS && enemy.buff(PinCushion.class) == null)
                     bonus += 3;
 
-                if (!(this instanceof NinjaProsthesis.Shuriken) && !(this instanceof NinjaProsthesis.Kunai)&&! (this instanceof Flintlock.Bullet)) {
                     if (Random.Float() > Math.pow(0.7, bonus)) {
                         if (enemy.isAlive())
                             Buff.affect(enemy, PinCushion.class).stick(this);
                         else
                             Dungeon.level.drop(this, enemy.pos).sprite.drop();
                     }
-                }
             }
         }
     }

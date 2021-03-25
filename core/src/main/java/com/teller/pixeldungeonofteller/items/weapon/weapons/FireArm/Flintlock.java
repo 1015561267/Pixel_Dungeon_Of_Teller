@@ -3,18 +3,18 @@ package com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm;
 import com.teller.pixeldungeonofteller.Assets;
 import com.teller.pixeldungeonofteller.Dungeon;
 import com.teller.pixeldungeonofteller.actors.buffs.Noise;
+import com.teller.pixeldungeonofteller.items.Item;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon.Tonfa;
 import com.teller.pixeldungeonofteller.tiles.DungeonTilemap;
 import com.teller.pixeldungeonofteller.actors.Actor;
 import com.teller.pixeldungeonofteller.actors.Char;
 import com.teller.pixeldungeonofteller.actors.Damage;
 import com.teller.pixeldungeonofteller.actors.PhysicalDamage;
-import com.teller.pixeldungeonofteller.actors.PhysicalPercentage;
 import com.teller.pixeldungeonofteller.actors.buffs.Invisibility;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.effects.Spark;
 import com.teller.pixeldungeonofteller.effects.particles.SmokeParticle;
-import com.teller.pixeldungeonofteller.items.weapon.missiles.MissileWeapon;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon.DualWieldWeapon;
 import com.teller.pixeldungeonofteller.mechanics.Ballistica;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.CellSelector;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 
 import static com.teller.pixeldungeonofteller.Dungeon.hero;
 
-public class Flintlock extends DualWieldWeapon {
+public class Flintlock extends Weapon {
 
     public static final String AC_SHOOT = "SHOOT";
     public static final String AC_DOUBLESHOOT = "DOUBLESHOOT";
@@ -47,6 +47,11 @@ public class Flintlock extends DualWieldWeapon {
     private static final float TIME_TO_SHOOT = 1f;
 
     public float cooldown;
+
+    @Override
+    public Type WeaponType() {
+        return Type.DualWield;
+    }
 
     @Override
     public int stealth() {return 2;}
@@ -103,11 +108,37 @@ public class Flintlock extends DualWieldWeapon {
 
     @Override
     public float cooldown() {
-        if (Dungeon.hero.belongings.mainhandweapon instanceof Flintlock) {
-            return 30f;
-        } else if (Dungeon.hero.belongings.mainhandweapon instanceof DualWieldWeapon) {
-            return 30f;
-        } else return 30f;
+
+        boolean same1 = false;
+        boolean same2 = false;
+        boolean dual1 = false;
+        boolean dual2 = false;
+
+        if (hero.belongings.mainhandweapon!=null)
+        {
+            if(hero.belongings.mainhandweapon instanceof Flintlock){
+                same1 = true;
+            }
+            else if(hero.belongings.mainhandweapon.WeaponType() == Type.DualWield)
+            {
+                dual1 = true;
+            }
+        }
+
+        if (hero.belongings.offhandweapon!=null)
+        {
+            if(hero.belongings.offhandweapon instanceof Flintlock){
+                same2 = true;
+            }
+            else if(hero.belongings.offhandweapon.WeaponType() == Type.DualWield)
+            {
+                dual2 = true;
+            }
+        }
+
+        if(same1&&same2) { return 30f; }
+        else if(dual1&&dual2) { return 30f; }
+        else return 30f;
     }
 
     @Override
@@ -239,7 +270,6 @@ public class Flintlock extends DualWieldWeapon {
     @Override
     public String info() {
         String info = super.info();
-        info+="\n"+Messages.get(this,"shotpercentage",new Bullet().IMPACTFACTOR,new Bullet().SLASHFACTOR,new Bullet().PUNCTUREFACTOR);
         info+="\n"+Messages.get(this, "shotdamage",shootmin() ,shootmax());
         info+="\n"+Messages.get(this, "turntoload",(int)cooldown);
         info+="\n"+Messages.get(this, "specialmoveinfo");
@@ -465,87 +495,16 @@ public class Flintlock extends DualWieldWeapon {
     }
 
 
-    public class Bullet extends MissileWeapon {
-
+    public class Bullet extends Item {
         {
             image = ItemSpriteSheet.BULLET;
-        }
-
-        private PhysicalPercentage percentage() {
-            return new PhysicalPercentage(0.8f, 0f, 0.2f);
-        }
-
-        int IMPACTFACTOR = 80;
-        int SLASHFACTOR = 0;
-        int PUNCTUREFACTOR = 20;
-        private Char enemy;
-
-        {
-            image = ItemSpriteSheet.BULLET;
-            tier = 1;
-        }
-
-        @Override
-        protected void onThrow(int cell) {
-            enemy = Actor.findChar(cell);
-            if (enemy != null) {
-                if (curUser.shoot(enemy, this)) {
-
-                }
-            }
-        }
-
-        @Override
-        public int min(int lvl) {
-            return 3 + lvl;
-        }
-
-        @Override
-        public int max(int lvl) {
-            return 12 + 4 * lvl;
-        }
-
-        @Override
-        public int STRReq(int lvl) {
-            return 1;
-        }
-
-        @Override
-        public int DEXReq(int lvl) {
-            return 1;
-        }
-
-        @Override
-        public Damage proc(Char attacker, Char defender, Damage damage) {
-            return new PhysicalDamage(Random.NormalIntRange(min(), max()), percentage());
         }
     }
 
-    public class DoubleShoot extends MissileWeapon {
+    public class DoubleShoot extends Item {
 
         {
             image = ItemSpriteSheet.DOUBLESHOOT;
         }
-
-        @Override
-        public int STRReq(int lvl) {
-            return 0;
-        }
-        @Override
-        public int DEXReq(int lvl) {
-            return 0;
-        }
-
-        @Override
-        public int min(int lvl) {
-            return 0;
-        }
-
-        @Override
-        public int max(int lvl) {
-            return 0;
-        }
-
-
     }
 }

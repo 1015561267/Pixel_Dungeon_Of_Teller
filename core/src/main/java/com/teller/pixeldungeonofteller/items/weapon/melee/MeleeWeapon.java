@@ -26,7 +26,6 @@ import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 
 public class MeleeWeapon extends Weapon {
-
     public int tier;
 
     //static float IMPACTFACTOR=0f;
@@ -52,6 +51,11 @@ public class MeleeWeapon extends Weapon {
 
     public Item safeUpgrade() {
         return upgrade(enchantment != null);
+    }
+
+    @Override
+    public Type WeaponType() {
+        return Type.MainHand;
     }
 
     public int STRReq(int lvl) {

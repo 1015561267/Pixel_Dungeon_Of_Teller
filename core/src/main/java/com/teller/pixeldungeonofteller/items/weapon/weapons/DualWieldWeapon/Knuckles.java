@@ -21,11 +21,14 @@
 package com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon;
 
 import com.teller.pixeldungeonofteller.Dungeon;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Knuckles extends DualWieldWeapon {
+import static com.teller.pixeldungeonofteller.Dungeon.hero;
+
+public class Knuckles extends Weapon {
 
     @Override
     public int stealth() {return 3;}
@@ -33,6 +36,11 @@ public class Knuckles extends DualWieldWeapon {
     public int Impactdamage(){return 0;}
     public int Slashdamage() {return Random.Int(1,6)+level()*Random.Int(0,2);}
     public int Puncturedamage(){return 0;}
+
+    @Override
+    public Type WeaponType() {
+        return Type.DualWield;
+    }
 
     {
         image = ItemSpriteSheet.KNUCKLEDUSTER;
@@ -75,10 +83,36 @@ public class Knuckles extends DualWieldWeapon {
 
     @Override
     public float cooldown() {
-        if (Dungeon.hero.belongings.mainhandweapon instanceof Knuckles) {
-            return 10f;
-        } else if (Dungeon.hero.belongings.mainhandweapon instanceof DualWieldWeapon) {
-            return 20f;
-        } else return 20f;
+
+        boolean same1 = false;
+        boolean same2 = false;
+        boolean dual1 = false;
+        boolean dual2 = false;
+
+        if (hero.belongings.mainhandweapon!=null)
+        {
+            if(hero.belongings.mainhandweapon instanceof Knuckles){
+                same1 = true;
+            }
+            else if(hero.belongings.mainhandweapon.WeaponType() == Type.DualWield)
+            {
+                dual1 = true;
+            }
+        }
+
+        if (hero.belongings.offhandweapon!=null)
+        {
+            if(hero.belongings.offhandweapon instanceof Knuckles){
+                same2 = true;
+            }
+            else if(hero.belongings.offhandweapon.WeaponType() == Type.DualWield)
+            {
+                dual2 = true;
+            }
+        }
+
+        if(same1&&same2) { return 10f; }
+        else if(dual1&&dual2) { return 20f; }
+        else return 30f;
     }
 }

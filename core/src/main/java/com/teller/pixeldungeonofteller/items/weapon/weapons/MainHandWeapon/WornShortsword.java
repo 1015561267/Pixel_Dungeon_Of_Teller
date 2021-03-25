@@ -20,11 +20,12 @@
  */
 package com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon;
 
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class WornShortsword extends MainHandWeapon {
+public class WornShortsword extends Weapon {
 
     @Override
     public int stealth() {return 2;}
@@ -32,6 +33,11 @@ public class WornShortsword extends MainHandWeapon {
     public int Impactdamage(){return 0;}
     public int Slashdamage() {return Random.Int(1,7)+level()*Random.Int(1,2);}
     public int Puncturedamage(){return Random.Int(1,3);}
+
+    @Override
+    public Type WeaponType() {
+        return Type.MainHand;
+    }
 
     {
         image = ItemSpriteSheet.WORN_SHORTSWORD;
@@ -58,6 +64,12 @@ public class WornShortsword extends MainHandWeapon {
     public int STRReq(int lvl) {
         return 1;
     }
+
+    @Override
+    public int DEXReq(int lvl) {
+        return 0;
+    }
+
     public int STRMINSCALE() { return 1; }
     public int DEXMINSCALE() { return 1; }
     public int STRMAXSCALE() { return 1; }

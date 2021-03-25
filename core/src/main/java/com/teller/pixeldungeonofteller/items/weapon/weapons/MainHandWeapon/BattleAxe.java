@@ -21,11 +21,15 @@
 package com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon;
 
 import com.teller.pixeldungeonofteller.actors.PhysicalPercentage;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class BattleAxe extends MainHandWeapon {
+public class BattleAxe extends Weapon {
+
+    @Override
+    public Type WeaponType() { return Type.MainHand; }
 
     @Override
     public int stealth() {return 1;}
@@ -60,6 +64,9 @@ public class BattleAxe extends MainHandWeapon {
     public int STRReq(int lvl) {
         return 4;
     }
+
+    @Override
+    public int DEXReq(int lvl) { return 0; }
 
     public int STRMINSCALE() { return 1; }
     public int DEXMINSCALE() { return 1; }

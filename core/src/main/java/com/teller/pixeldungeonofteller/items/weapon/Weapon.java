@@ -21,6 +21,7 @@
 package com.teller.pixeldungeonofteller.items.weapon;
 
 import com.teller.pixeldungeonofteller.Badges;
+import com.teller.pixeldungeonofteller.Dungeon;
 import com.teller.pixeldungeonofteller.PixelDungeonOfTeller;
 import com.teller.pixeldungeonofteller.actors.Char;
 import com.teller.pixeldungeonofteller.actors.Damage;
@@ -53,6 +54,7 @@ import com.teller.pixeldungeonofteller.items.weapon.enchantments.Unstable;
 import com.teller.pixeldungeonofteller.items.weapon.enchantments.Vampiric;
 import com.teller.pixeldungeonofteller.items.weapon.enchantments.Venomous;
 import com.teller.pixeldungeonofteller.items.weapon.enchantments.Vorpal;
+import com.teller.pixeldungeonofteller.items.weapon.melee.MeleeWeapon;
 import com.teller.pixeldungeonofteller.items.weapon.missiles.MissileWeapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
@@ -72,6 +74,8 @@ abstract public class Weapon extends KindOfWeapon {
     private static final String UNFAMILIRIARITY = "unfamiliarity";
     private static final String ENCHANTMENT = "enchantment";
     private static final String IMBUE = "imbue";
+
+
     public int tier;
     public float ACC = 1f;    // Accuracy modifier
     public float DLY = 1f;    // Speed modifier
@@ -80,11 +84,13 @@ abstract public class Weapon extends KindOfWeapon {
     public int max;
     public Imbue imbue = Imbue.NONE;
     public Enchantment enchantment;
+
     private int hitsToKnow = HITS_TO_KNOW;
 
     public int Impactdamage(){return 0;}
     public int Slashdamage() {return 0;}
     public int Puncturedamage(){return 0;}
+
     @Override
     public Damage proc(Char attacker, Char defender, Damage damage) {
 
@@ -213,9 +219,74 @@ abstract public class Weapon extends KindOfWeapon {
     public int DEXMAXSCALE() { return 0; }
     public int INTMAXSCALE() { return 0; }
 
-    public int heromin(){return min()+STRFACTOR()*STRMINSCALE()+DEXFACTOR()*DEXMINSCALE()+INTMINSCALE();}
+    @Override
+    public String info() {
+        String info = desc();
 
-    public int heromax(){return max()+STRFACTOR()*STRMAXSCALE()+DEXFACTOR()*DEXMAXSCALE()+INTMAXSCALE();}
+        if (levelKnown) {
+            info += "\n\n" + Messages.get(this, "stats_known", tier, imbue.damageFactor(min()), imbue.damageFactor(max()), STRReq(), DEXReq());
+            if (STRReq() > Dungeon.hero.STR()) {
+                info += "\n " + Messages.get(Weapon.class, "too_heavy");
+            }
+            if (DEXReq() > Dungeon.hero.DEX()) {
+                info += "\n " + Messages.get(Weapon.class, "no_enough_dex");
+            }
+        } else {
+            info += "\n\n" + Messages.get(this, "stats_unknown", tier, min(0), max(0), STRReq(0), DEXReq());
+            if (STRReq(0) > Dungeon.hero.STR()) {
+                info += " " + Messages.get(MeleeWeapon.class, "probably_too_heavy");
+            }
+            if (DEXReq(0) > Dungeon.hero.DEX()) {
+                info += " " + Messages.get(MeleeWeapon.class, "probably_no_enough_dex");
+            }
+        }
+
+        info +="\n " +Messages.get(Weapon.class, "type");
+
+        switch (WeaponType())
+        {
+            case MainHand:info +=  Messages.get(Weapon.class, "main_hand");break;
+            case OffHand:info += Messages.get(Weapon.class, "off_hand");break;
+            case DualWield:info += Messages.get(Weapon.class, "dual_wield");break;
+            case TwoHanded:info += Messages.get(Weapon.class, "two_handed");break;
+            case Attached:info += Messages.get(Weapon.class, "attached");break;
+        }
+
+        String stats_desc = Messages.get(this, "stats_desc");
+
+        switch (stealth())
+        {
+            case 0: info += "\n\n" + Messages.get(Weapon.class, "no_stealth");break;
+            case 1: info += "\n\n" + Messages.get(Weapon.class, "low_stealth");break;
+            case 2: info += "\n\n" + Messages.get(Weapon.class, "normal_stealth");break;
+            case 3: info += "\n\n" + Messages.get(Weapon.class, "high_stealth");break;
+            case 4: info += "\n\n" + Messages.get(Weapon.class, "excellent_stealth");break;
+        }
+
+        if (!stats_desc.equals("") && !stats_desc.equals("!!!NO TEXT FOUND!!!"))
+            info += "\n\n" + stats_desc;
+
+        switch (imbue) {
+            case LIGHT:
+                info += "\n\n" + Messages.get(Weapon.class, "lighter");
+                break;
+            case HEAVY:
+                info += "\n\n" + Messages.get(Weapon.class, "heavier");
+                break;
+            case NONE:
+        }
+        if (enchantment != null && (cursedKnown || !enchantment.curse())) {
+            info += "\n\n" + Messages.get(Weapon.class, "enchanted", enchantment.name());
+            info += " " + Messages.get(enchantment, "desc");
+        }
+        if (cursed && isEquipped(Dungeon.hero)) {
+            info += "\n\n" + Messages.get(Weapon.class, "cursed_worn");
+        } else if (cursedKnown && cursed) {
+            info += "\n\n" + Messages.get(Weapon.class, "cursed");
+        }
+        return info;
+    }
+
 
     public Item upgrade(boolean enchant) {
 

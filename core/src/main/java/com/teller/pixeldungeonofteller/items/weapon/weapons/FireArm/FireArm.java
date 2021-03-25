@@ -3,7 +3,7 @@ package com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm;
 import com.teller.pixeldungeonofteller.items.KindOfWeapon;
 import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 
-public class FireArm extends Weapon{
+public abstract class FireArm extends Weapon{
 
     Weapon type() { return null; }
 

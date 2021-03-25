@@ -5,7 +5,7 @@ import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.effects.particles.ElmoParticle;
 import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.teller.pixeldungeonofteller.items.pages.Spell.Spell;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.OffHandWeapon;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
 import com.teller.pixeldungeonofteller.sprites.CharSprite;
@@ -16,7 +16,12 @@ import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
 
-public class MagicBook extends OffHandWeapon {
+public class MagicBook extends Weapon {
+
+    @Override
+    public Type WeaponType() {
+        return Type.OffHand;
+    }
 
     public static final String AC_CAST = "CAST";
     public static final String AC_SWITCH = "SWITCH";
@@ -28,6 +33,16 @@ public class MagicBook extends OffHandWeapon {
     private static final float TIME_TO_CAST = 1f;
     private static final float TIME_TO_SWITCH = 1f;
     private static final float TIME_TO_TEAR = 1f;
+
+    @Override
+    public int min(int lvl) {
+        return 0;
+    }
+
+    @Override
+    public int max(int lvl) {
+        return 0;
+    }
 
     public boolean attackable() {
         return false;
@@ -65,6 +80,16 @@ public class MagicBook extends OffHandWeapon {
 
         usesTargeting = selectedspell.usesTargeting;
         selftargeting = selectedspell.selftargeting;
+    }
+
+    @Override
+    public int STRReq(int lvl) {
+        return 0;
+    }
+
+    @Override
+    public int DEXReq(int lvl) {
+        return 0;
     }
 
     @Override

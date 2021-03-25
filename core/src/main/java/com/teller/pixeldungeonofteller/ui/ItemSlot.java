@@ -23,6 +23,7 @@ package com.teller.pixeldungeonofteller.ui;
 import com.teller.pixeldungeonofteller.Assets;
 import com.teller.pixeldungeonofteller.Dungeon;
 import com.teller.pixeldungeonofteller.items.Item;
+import com.teller.pixeldungeonofteller.items.KindOfWeapon;
 import com.teller.pixeldungeonofteller.items.armor.Armor;
 import com.teller.pixeldungeonofteller.items.keys.Key;
 import com.teller.pixeldungeonofteller.items.keys.SkeletonKey;
@@ -30,18 +31,13 @@ import com.teller.pixeldungeonofteller.items.potions.Potion;
 import com.teller.pixeldungeonofteller.items.scrolls.Scroll;
 import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.items.weapon.melee.MeleeWeapon;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.AttachedWeapon.AttachedWeapon;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.AttachedWeapon.NinjaProsthesis;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon.DualWieldWeapon;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.Flintlock;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.SubmachineGun;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.MagicBook;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.JavelinBarrel;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.OffHandWeapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.PixelScene;
-import com.teller.pixeldungeonofteller.sprites.CharSprite;
-import com.teller.pixeldungeonofteller.sprites.EyeSprite;
 import com.teller.pixeldungeonofteller.sprites.ItemSprite;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.noosa.BitmapText;
@@ -204,6 +200,7 @@ public class ItemSlot extends Button {
 
         if (item instanceof NinjaProsthesis || item instanceof JavelinBarrel) {
             topLeft.visible = bottomRight.visible = true;
+
             if (!item.levelKnown) {
                 int dex = ((Weapon) item).DEXReq(0);
                 topLeft.text(Messages.format(TXT_TYPICAL_STR, dex));
@@ -295,63 +292,94 @@ public class ItemSlot extends Button {
             layout();
             return;
         }
-
-        topLeft.text(item.status());
         boolean isArmor = item instanceof Armor;
         boolean isWeapon = item instanceof Weapon;
         if (isArmor || isWeapon) {
-            if (!item.levelKnown) {
-                if (item instanceof DualWieldWeapon || item instanceof OffHandWeapon || item instanceof AttachedWeapon) {
-                    int dex = ((Weapon) item).DEXReq(0);
-                    topLeft.text(Messages.format(TXT_TYPICAL_STR, dex));
-                    topLeft.hardlight(WARNING);
-                    if (item instanceof OffHandWeapon) return;
+            if(isArmor)
+            {
+                if (!item.levelKnown) {
+                    topRight.text(Messages.format(TXT_TYPICAL_STR, isArmor ?
+                            ((Armor) item).STRReq(0) :
+                            ((Weapon) item).STRReq(0)));
+                    topRight.hardlight(WARNING);
                 }
-                topRight.text(Messages.format(TXT_TYPICAL_STR, isArmor ?
-                        ((Armor) item).STRReq(0) :
-                        ((Weapon) item).STRReq(0)));
-                topRight.hardlight(WARNING);
-            } else if (item.levelKnown || (isWeapon && !(item instanceof MeleeWeapon))) {
-                if (item instanceof DualWieldWeapon || item instanceof OffHandWeapon || item instanceof AttachedWeapon) {
-                    int dex = ((Weapon) item).DEXReq();
-                    topLeft.text(Messages.format(TXT_DEXTERITY, dex));
-                    if (dex > Dungeon.hero.DEX()) {
-                        topLeft.hardlight(DEGRADED);
+                else {
+                    int str = isArmor ? ((Armor) item).STRReq() : ((Weapon) item).STRReq();
+                    topRight.text(Messages.format(TXT_STRENGTH, str));
+                    if (str > Dungeon.hero.STR()) {
+                        topRight.hardlight(DEGRADED);
                     } else {
-                        topLeft.resetColor();
+                        topRight.resetColor();
                     }
-                    if (item instanceof OffHandWeapon || item instanceof AttachedWeapon) return;
                 }
-                int str = isArmor ? ((Armor) item).STRReq() : ((Weapon) item).STRReq();
-                topRight.text(Messages.format(TXT_STRENGTH, str));
-                if (str > Dungeon.hero.STR()) {
-                    topRight.hardlight(DEGRADED);
-                } else {
-                    topRight.resetColor();
-                }
-            } else {
-                topRight.text(Messages.format(TXT_TYPICAL_STR, isArmor ?
-                        ((Armor) item).STRReq(0) :
-                        ((Weapon) item).STRReq(0)));
-                topRight.hardlight(WARNING);
+                topLeft.measure();
+                topRight.measure();
+                return;
             }
-            topLeft.measure();
-            topRight.measure();
-        } else if (item instanceof Key && !(item instanceof SkeletonKey)) {
+            else
+            {
+                boolean need_dex =   (((Weapon) item).WeaponType() == KindOfWeapon.Type.DualWield  ||
+                        ((Weapon) item).WeaponType() == KindOfWeapon.Type.OffHand ||
+                        ((Weapon) item).WeaponType() == KindOfWeapon.Type.Attached );
+
+                boolean need_str = (((Weapon) item).WeaponType() == KindOfWeapon.Type.DualWield  ||
+                        ((Weapon) item).WeaponType() == KindOfWeapon.Type.MainHand ||
+                        ((Weapon) item).WeaponType() == KindOfWeapon.Type.TwoHanded||
+                        ((Weapon) item).WeaponType() == KindOfWeapon.Type.Missile);
+
+                    if (item.levelKnown) {
+                        if(need_dex) {
+                            int dex = ((Weapon) item).DEXReq();
+                            topLeft.text(Messages.format(TXT_DEXTERITY, dex));
+                            if (dex > Dungeon.hero.DEX()) {
+                                topLeft.hardlight(DEGRADED);
+                            } else {
+                                topLeft.resetColor();
+                            }
+                            topLeft.measure();
+                        }
+                        if(need_str)
+                        {
+                            int str = ((Weapon) item).STRReq();
+                            topRight.text(Messages.format(TXT_STRENGTH, str));
+                            if (str > Dungeon.hero.STR()) {
+                                topRight.hardlight(DEGRADED);
+                            } else {
+                                topRight.resetColor();
+                            }
+                            topRight.measure();
+                        }
+                    }
+                    else
+                    {
+                        if(need_dex) {
+                            int dex = ((Weapon) item).DEXReq(0);
+                            topLeft.text(Messages.format(TXT_DEXTERITY, dex));
+                            topLeft.hardlight(WARNING);
+                            topLeft.measure();
+                        }
+                        if(need_str) {
+                            int str = ((Weapon) item).STRReq(0);
+                            topRight.text(Messages.format(TXT_TYPICAL_STR, str));
+                            topRight.hardlight(WARNING);
+                            topRight.measure();
+                        }
+                    }
+                }
+        }
+        else if (item instanceof Key && !(item instanceof SkeletonKey)) {
             topRight.text(Messages.format(TXT_KEY_DEPTH, ((Key) item).depth));
             topRight.measure();
         } else {
             topRight.text(null);
         }
         int level = item.visiblyUpgraded();
-
         if (level != 0) {
             bottomRight.text(item.levelKnown ? Messages.format(TXT_LEVEL, level) : TXT_CURSED);
             bottomRight.measure();
             bottomRight.hardlight(level > 0 ? UPGRADED : DEGRADED);
         } else if (item instanceof Scroll || item instanceof Potion) {
             bottomRight.text(null);
-
             Integer iconInt;
             if (item instanceof Scroll) {
                 iconInt = ((Scroll) item).initials();
@@ -367,6 +395,9 @@ public class ItemSlot extends Button {
             }
         } else {
             bottomRight.text(null);
+        }
+        if(item.stackable) {
+            topLeft.text(item.status());
         }
         layout();
     }

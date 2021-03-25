@@ -1,15 +1,25 @@
 package com.teller.pixeldungeonofteller.items.weapon.weapons.AttachedWeapon;
 
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class HiddenBlade extends AttachedWeapon {
-
+public class HiddenBlade extends Weapon {
     public int Impactdamage(){return Random.Int(3,20);}
     public int Slashdamage() {return Random.Int(1,3)+level()*Random.Int(1,3);}
     public int Puncturedamage(){return Random.Int(1,2);}
+
+    public Type WeaponType()
+    {
+        return Type.Attached;
+    }
+
+    @Override
+    public int STRReq(int lvl) {
+        return 0;
+    }
 
     {
         image = ItemSpriteSheet.HIDDENBLADE;

@@ -1,10 +1,11 @@
 package com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon;
 
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Rapier extends MainHandWeapon {
+public class Rapier extends Weapon {
 
     @Override
     public int stealth() {return 3;}
@@ -12,6 +13,11 @@ public class Rapier extends MainHandWeapon {
     public int Impactdamage(){return 0;}
     public int Slashdamage() {return 0;}
     public int Puncturedamage(){return Random.Int(3,20)+level()*Random.Int(1,4);}
+
+    @Override
+    public Type WeaponType() {
+        return Type.MainHand;
+    }
 
     {
         image = ItemSpriteSheet.RAPIER;

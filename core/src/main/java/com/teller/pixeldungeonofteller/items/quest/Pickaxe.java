@@ -65,6 +65,11 @@ public class Pickaxe extends Weapon {
     }
 
     @Override
+    public Type WeaponType() {
+        return Type.MainHand;
+    }
+
+    @Override
     public int min(int lvl) {
         return 2;   //tier 2
     }

@@ -25,17 +25,23 @@ import com.teller.pixeldungeonofteller.actors.PhysicalDamage;
 import com.teller.pixeldungeonofteller.actors.PhysicalPercentage;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.actors.mobs.Mob;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Dirk extends MainHandWeapon {
+public class Dirk extends Weapon {
     @Override
     public int stealth() {return 4;}
 
     public int Impactdamage(){return 0;}
     public int Slashdamage() {return Random.Int(2,8)+level()*1;}
     public int Puncturedamage(){return Random.Int(1,6)+level()*1;}
+
+    @Override
+    public Type WeaponType() {
+        return Type.MainHand;
+    }
 
     public int backStabPuncturedamage(){return 6+level()*1;}
 
@@ -64,6 +70,9 @@ public class Dirk extends MainHandWeapon {
     public int STRReq(int lvl) {
         return 2;
     }
+
+    @Override
+    public int DEXReq(int lvl) { return 0; }
 
     public int DEXMINSCALE() { return 1; }
 

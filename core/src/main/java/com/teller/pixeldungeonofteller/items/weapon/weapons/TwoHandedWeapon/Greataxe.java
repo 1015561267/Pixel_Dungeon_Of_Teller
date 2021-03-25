@@ -20,11 +20,12 @@
  */
 package com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon;
 
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Greataxe extends TwoHandedWeapon {
+public class Greataxe extends Weapon {
 
     @Override
     public int stealth() {return 0;}
@@ -32,6 +33,11 @@ public class Greataxe extends TwoHandedWeapon {
     public int Impactdamage(){return Random.Int(3,20)+level()*Random.Int(1,3);}
     public int Slashdamage() {return Random.Int(3,25)+level()*Random.Int(0,2);}
     public int Puncturedamage(){return Random.Int(3,10)+level()*Random.Int(1,4);}
+
+    @Override
+    public Type WeaponType() {
+        return Type.TwoHanded;
+    }
 
     {
         image = ItemSpriteSheet.GREATAXE;
@@ -55,6 +61,11 @@ public class Greataxe extends TwoHandedWeapon {
     @Override
     public int STRReq(int lvl) {
         return 6;
+    }
+
+    @Override
+    public int DEXReq(int lvl) {
+        return 0;
     }
 
     public int STRMINSCALE() { return 2; }

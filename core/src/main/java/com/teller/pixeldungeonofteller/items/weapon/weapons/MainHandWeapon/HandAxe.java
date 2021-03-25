@@ -20,11 +20,12 @@
  */
 package com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon;
 
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class HandAxe extends MainHandWeapon {
+public class HandAxe extends Weapon {
 
     @Override
     public int stealth() {return 2;}
@@ -32,6 +33,11 @@ public class HandAxe extends MainHandWeapon {
     public int Impactdamage(){return  Random.Int(1,8)+level()* Random.Int(1,2);}
     public int Slashdamage() {return Random.Int(1,4)+level()* Random.Int(0,1);}
     public int Puncturedamage(){return Random.Int(1,2);}
+
+    @Override
+    public Type WeaponType() {
+        return Type.MainHand;
+    }
 
     {
         image = ItemSpriteSheet.HAND_AXE;
@@ -62,5 +68,10 @@ public class HandAxe extends MainHandWeapon {
     @Override
     public int STRReq(int lvl) {
         return 2;
+    }
+
+    @Override
+    public int DEXReq(int lvl) {
+        return 0;
     }
 }

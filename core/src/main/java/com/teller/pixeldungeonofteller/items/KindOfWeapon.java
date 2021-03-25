@@ -30,20 +30,20 @@ import com.teller.pixeldungeonofteller.actors.buffs.CombinationReady;
 import com.teller.pixeldungeonofteller.actors.buffs.Guard;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.items.weapon.Weapon;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.AttachedWeapon.AttachedWeapon;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon.DualWieldWeapon;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.MagicBook;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.MainHandWeapon;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.OffHandWeapon;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.TwoHandedWeapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
-import com.teller.pixeldungeonofteller.ui.StatusPane;
 import com.teller.pixeldungeonofteller.utils.GLog;
 import com.teller.pixeldungeonofteller.windows.WndOptions;
 
 abstract public class KindOfWeapon extends EquipableItem {
     protected static final float TIME_TO_EQUIP = 1f;
+
+    public enum Type {
+        MainHand, OffHand, TwoHanded, DualWield, Attached,Missile
+    }
+
+    public abstract Type WeaponType();
 
     @Override
     public boolean isEquipped(Hero hero) {
@@ -53,7 +53,7 @@ abstract public class KindOfWeapon extends EquipableItem {
     @Override
     public boolean doEquip(final Hero hero) {
         detachAll(hero.belongings.backpack);
-        if (this instanceof MainHandWeapon) {
+        if (this.WeaponType() == Type.MainHand) {
             if (hero.belongings.mainhandweapon == null || hero.belongings.mainhandweapon.doUnequip(hero, true)) {
                 hero.belongings.mainhandweapon = this;
                 activate(hero);
@@ -69,13 +69,13 @@ abstract public class KindOfWeapon extends EquipableItem {
                 collect(hero.belongings.backpack);
                 return false;
             }
-        } else if (this instanceof OffHandWeapon) {
+        } else if (this.WeaponType() == Type.OffHand) {
             if (hero.belongings.offhandweapon == null || hero.belongings.offhandweapon.doUnequip(hero, true)) {
-                if (hero.belongings.mainhandweapon instanceof TwoHandedWeapon && (!hero.belongings.mainhandweapon.doUnequip(hero, true))) {
+                if ((hero.belongings.mainhandweapon != null)&&(hero.belongings.mainhandweapon.WeaponType() == Type.TwoHanded) && (!hero.belongings.mainhandweapon.doUnequip(hero, true))) {
                     collect(hero.belongings.backpack);
                     return false;
                 } else {
-                    if (hero.belongings.mainhandweapon instanceof TwoHandedWeapon) {
+                    if (hero.belongings.mainhandweapon != null && hero.belongings.mainhandweapon.WeaponType() == Type.TwoHanded) {
                         hero.belongings.mainhandweapon.doUnequip(hero, true);
                     }
                     hero.belongings.offhandweapon = this;
@@ -100,8 +100,10 @@ abstract public class KindOfWeapon extends EquipableItem {
                 }
             } else collect(hero.belongings.backpack);
             return false;
-        } else if (this instanceof TwoHandedWeapon) {
-            if (hero.belongings.offhandweapon instanceof AttachedWeapon) {
+        } else if (this.WeaponType() == Type.TwoHanded) {
+
+            if(hero.belongings.offhandweapon == null || hero.belongings.offhandweapon.WeaponType() == Type.Attached)
+            {
                 if ((hero.belongings.mainhandweapon == null || hero.belongings.mainhandweapon.doUnequip(hero, true))) {
                     hero.belongings.mainhandweapon = this;
                     activate(hero);
@@ -117,66 +119,29 @@ abstract public class KindOfWeapon extends EquipableItem {
                     collect(hero.belongings.backpack);
                     return false;
                 }
-            } else if ((hero.belongings.mainhandweapon == null && hero.belongings.offhandweapon == null)) {
-                hero.belongings.mainhandweapon = this;
-                activate(hero);
-                updateQuickslot();
-                cursedKnown = true;
-                if (cursed) {
-                    equipCursed(hero);
-                    GLog.n(Messages.get(KindOfWeapon.class, "cursed"));
-                }
-                hero.spendAndNext(TIME_TO_EQUIP);
-                return true;
-            } else if (hero.belongings.offhandweapon == null) {
-                if (hero.belongings.mainhandweapon.doUnequip(hero, true)) {
-                    hero.belongings.mainhandweapon = this;
-                    activate(hero);
-                    updateQuickslot();
-                    cursedKnown = true;
-                    if (cursed) {
-                        equipCursed(hero);
-                        GLog.n(Messages.get(KindOfWeapon.class, "cursed"));
-                    }
-                    hero.spendAndNext(TIME_TO_EQUIP);
-                    return true;
-                } else {
-                    collect(hero.belongings.backpack);
-                    return false;
-                }
-            } else if (hero.belongings.mainhandweapon == null) {
-                if (hero.belongings.offhandweapon.doUnequip(hero, true)) {
-                    hero.belongings.mainhandweapon = this;
-                    activate(hero);
-                    updateQuickslot();
-                    cursedKnown = true;
-                    if (cursed) {
-                        equipCursed(hero);
-                        GLog.n(Messages.get(KindOfWeapon.class, "cursed"));
-                    }
-                    hero.spendAndNext(TIME_TO_EQUIP);
-                    return true;
-                } else {
-                    collect(hero.belongings.backpack);
-                    return false;
-                }
-            } else {
-                if (hero.belongings.mainhandweapon.doUnequip(hero, true) && hero.belongings.offhandweapon.doUnequip(hero, true)) {
-                    hero.belongings.mainhandweapon = this;
-                    activate(hero);
-                    updateQuickslot();
-                    cursedKnown = true;
-                    if (cursed) {
-                        equipCursed(hero);
-                        GLog.n(Messages.get(KindOfWeapon.class, "cursed"));
-                    }
-                    hero.spendAndNext(TIME_TO_EQUIP);
-                    return true;
-                } else
-                    collect(hero.belongings.backpack);
-                return false;
             }
-        } else if (this instanceof DualWieldWeapon) {
+            else
+            {
+                if(hero.belongings.offhandweapon.doUnequip(hero, true))
+                {
+                    if ((hero.belongings.mainhandweapon == null || hero.belongings.mainhandweapon.doUnequip(hero, true))) {
+                        hero.belongings.mainhandweapon = this;
+                        activate(hero);
+                        updateQuickslot();
+                        cursedKnown = true;
+                        if (cursed) {
+                            equipCursed(hero);
+                            GLog.n(Messages.get(KindOfWeapon.class, "cursed"));
+                        }
+                        hero.spendAndNext(TIME_TO_EQUIP);
+                        return true;
+                    } else {
+                        collect(hero.belongings.backpack);
+                        return false;
+                    }
+                }
+            }
+        } else if (this.WeaponType() == Type.DualWield) {
             GameScene.show(
                     new WndOptions(Messages.get(KindOfWeapon.class, "dualweild"),
                             Messages.get(KindOfWeapon.class, "detail"),
@@ -201,7 +166,7 @@ abstract public class KindOfWeapon extends EquipableItem {
                         }
 
                     });
-        } else if (this instanceof AttachedWeapon) {
+        } else if (this.WeaponType() == Type.Attached) {
             if (hero.belongings.offhandweapon == null || hero.belongings.offhandweapon.doUnequip(hero, true)) {
                 hero.belongings.offhandweapon = this;
                 activate(hero);
@@ -240,12 +205,16 @@ abstract public class KindOfWeapon extends EquipableItem {
 
     public boolean doEquipOffHand(Hero hero) {
         if (hero.belongings.offhandweapon == null || hero.belongings.offhandweapon.doUnequip(hero, true)) {
-            if (hero.belongings.mainhandweapon instanceof TwoHandedWeapon && (!hero.belongings.mainhandweapon.doUnequip(hero, true))) {
-                collect(hero.belongings.backpack);
-                return false;
-            } else {
-                if (hero.belongings.mainhandweapon instanceof TwoHandedWeapon) {
-                    hero.belongings.mainhandweapon.doUnequip(hero, true);
+                if (hero.belongings.mainhandweapon!=null && hero.belongings.mainhandweapon.WeaponType() == Type.TwoHanded && (!hero.belongings.mainhandweapon.doUnequip(hero, true))) {
+                    collect(hero.belongings.backpack);
+                    return false;
+                }
+            else {
+                if (hero.belongings.mainhandweapon!=null)
+                {
+                    if (hero.belongings.mainhandweapon.WeaponType() == Type.TwoHanded) {
+                        hero.belongings.mainhandweapon.doUnequip(hero, true);
+                     }
                 }
                 hero.belongings.offhandweapon = this;
                 activate(hero);
@@ -263,7 +232,8 @@ abstract public class KindOfWeapon extends EquipableItem {
                 GameScene.scene.updateweaponindicator((Weapon)this,false);
                 return true;
             }
-        } else {
+            }
+         else {
             collect(hero.belongings.backpack);
             return false;
         }
@@ -273,11 +243,11 @@ abstract public class KindOfWeapon extends EquipableItem {
     public boolean doUnequip(Hero hero, boolean collect, boolean single) {
         if (super.doUnequip(hero, collect, single)) {
             updateQuickslot();
-            if (this instanceof MainHandWeapon) {
+            if (this.WeaponType() == Type.MainHand) {
                 hero.belongings.mainhandweapon = null;
                 this.collect();
                 return true;
-            } else if (this instanceof OffHandWeapon) {
+            } else if (this.WeaponType() == Type.OffHand) {
                 hero.belongings.offhandweapon = null;
                 this.collect();
                 if (hero.buff(CombinationCoolDown.class) != null)
@@ -286,11 +256,11 @@ abstract public class KindOfWeapon extends EquipableItem {
                     Buff.detach(hero, CombinationReady.class);
                 if (hero.buff(Guard.class) != null) Buff.detach(hero, Guard.class);
                 return true;
-            } else if (this instanceof TwoHandedWeapon) {
+            } else if (this.WeaponType() == Type.TwoHanded) {
                 hero.belongings.mainhandweapon = null;
                 this.collect();
                 return true;
-            } else if (this instanceof DualWieldWeapon) {
+            } else if (this.WeaponType() == Type.DualWield) {
                 if (hero.belongings.mainhandweapon == this) {
                     hero.belongings.mainhandweapon = null;
                     return true;
@@ -303,7 +273,7 @@ abstract public class KindOfWeapon extends EquipableItem {
                     return true;
                 }
                 return false;
-            } else if (this instanceof AttachedWeapon) {
+            } else if (this.WeaponType() == Type.Attached) {
                 hero.belongings.offhandweapon = null;
                 this.collect();
                 return true;

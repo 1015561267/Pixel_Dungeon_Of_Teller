@@ -20,12 +20,12 @@
  */
 package com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon;
 
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Whip extends MainHandWeapon {
-
+public class Whip extends Weapon {
     @Override
     public int stealth() {return 3;}
 
@@ -33,6 +33,10 @@ public class Whip extends MainHandWeapon {
     public int Slashdamage() {return Random.Int(1,5);}
     public int Puncturedamage(){return 0;}
 
+    @Override
+    public Type WeaponType() {
+        return Type.MainHand;
+    }
 
     {
         image = ItemSpriteSheet.WHIP;
@@ -58,6 +62,11 @@ public class Whip extends MainHandWeapon {
     @Override
     public int STRReq(int lvl) {
         return 3;
+    }
+
+    @Override
+    public int DEXReq(int lvl) {
+        return 0;
     }
 
     public int DEXMINSCALE() { return 1; }

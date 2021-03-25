@@ -37,6 +37,7 @@ import com.teller.pixeldungeonofteller.items.wands.Wand;
 import com.teller.pixeldungeonofteller.items.wands.WandOfCorruption;
 import com.teller.pixeldungeonofteller.items.wands.WandOfDisintegration;
 import com.teller.pixeldungeonofteller.items.wands.WandOfRegrowth;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
@@ -52,7 +53,7 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class MagesStaff extends MainHandWeapon {
+public class MagesStaff extends Weapon {
 
     public static final String AC_IMBUE = "IMBUE";
     public static final String AC_ZAP = "ZAP";
@@ -65,6 +66,11 @@ public class MagesStaff extends MainHandWeapon {
     public int Impactdamage(){return Random.Int(1,8)+level()*Random.Int(1,2);}
     public int Slashdamage() {return Random.Int(1,2);}
     public int Puncturedamage(){return 0;}
+
+    @Override
+    public Type WeaponType() {
+        return Type.MainHand;
+    }
 
     private Wand wand;
     private final WndBag.Listener itemSelector = new WndBag.Listener() {
@@ -192,6 +198,11 @@ public class MagesStaff extends MainHandWeapon {
     @Override
     public int STRReq(int lvl) {
         return 1;
+    }
+
+    @Override
+    public int DEXReq(int lvl) {
+        return 0;
     }
 
     @Override

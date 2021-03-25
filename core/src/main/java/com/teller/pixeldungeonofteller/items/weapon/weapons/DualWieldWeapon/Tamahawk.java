@@ -32,6 +32,7 @@ import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.items.Heap;
 import com.teller.pixeldungeonofteller.items.Item;
 import com.teller.pixeldungeonofteller.items.rings.RingOfSharpshooting;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.items.weapon.enchantments.Projecting;
 import com.teller.pixeldungeonofteller.items.weapon.missiles.Boomerang;
 import com.teller.pixeldungeonofteller.messages.Messages;
@@ -45,7 +46,12 @@ import java.util.ArrayList;
 
 import static com.teller.pixeldungeonofteller.Dungeon.hero;
 
-public class Tamahawk extends DualWieldWeapon {
+public class Tamahawk extends Weapon {
+
+    @Override
+    public Type WeaponType() {
+        return Type.DualWield;
+    }
 
     @Override
     public int stealth() {return 1;}
@@ -186,9 +192,30 @@ public class Tamahawk extends DualWieldWeapon {
 
     @Override
     public float cooldown() {
-        if (hero.belongings.mainhandweapon instanceof Tamahawk) {
+        boolean same1 = false;
+        boolean same2 = false;
+        boolean dual1 = false;
+        boolean dual2 = false;
+
+        if (hero.belongings.mainhandweapon != null) {
+            if (hero.belongings.mainhandweapon instanceof Tamahawk) {
+                same1 = true;
+            } else if (hero.belongings.mainhandweapon.WeaponType() == Type.DualWield) {
+                dual1 = true;
+            }
+        }
+
+        if (hero.belongings.offhandweapon != null) {
+            if (hero.belongings.offhandweapon instanceof Tamahawk) {
+                same2 = true;
+            } else if (hero.belongings.offhandweapon.WeaponType() == Type.DualWield) {
+                dual2 = true;
+            }
+        }
+
+        if (same1 && same2) {
             return 40f;
-        } else if (hero.belongings.mainhandweapon instanceof DualWieldWeapon) {
+        } else if (dual1 && dual2) {
             return 40f;
         } else return 40f;
     }

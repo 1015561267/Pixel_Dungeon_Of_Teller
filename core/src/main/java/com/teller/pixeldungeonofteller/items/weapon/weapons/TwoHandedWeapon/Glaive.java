@@ -20,11 +20,12 @@
  */
 package com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon;
 
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Glaive extends TwoHandedWeapon {
+public class Glaive extends Weapon {
 
     @Override
     public int stealth() {return 0;}
@@ -32,6 +33,11 @@ public class Glaive extends TwoHandedWeapon {
     public int Impactdamage(){return Random.Int(3,16)+level()*Random.Int(1,4);}
     public int Slashdamage() {return Random.Int(1,10);}
     public int Puncturedamage(){return Random.Int(4,22)+level()*Random.Int(1,4);}
+
+    @Override
+    public Type WeaponType() {
+        return Type.TwoHanded;
+    }
 
     {
         image = ItemSpriteSheet.GLAIVE;
@@ -56,6 +62,11 @@ public class Glaive extends TwoHandedWeapon {
     @Override
     public int STRReq(int lvl) {
         return 6;
+    }
+
+    @Override
+    public int DEXReq(int lvl) {
+        return 0;
     }
 
     public int STRMINSCALE() { return 1; }

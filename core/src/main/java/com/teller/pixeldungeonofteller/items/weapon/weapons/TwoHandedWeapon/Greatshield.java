@@ -21,11 +21,12 @@
 package com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon;
 
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Greatshield extends TwoHandedWeapon {
+public class Greatshield extends Weapon {
 
     @Override
     public int stealth() {return 1;}
@@ -33,6 +34,11 @@ public class Greatshield extends TwoHandedWeapon {
     public int Impactdamage(){return Random.Int(6,20)+level()*Random.Int(1,3);}
     public int Slashdamage() {return 0;}
     public int Puncturedamage(){return 0;}
+
+    @Override
+    public Type WeaponType() {
+        return Type.TwoHanded;
+    }
 
     {
         image = ItemSpriteSheet.GREATSHIELD;
@@ -56,6 +62,11 @@ public class Greatshield extends TwoHandedWeapon {
     @Override
     public int STRReq(int lvl) {
         return 6;
+    }
+
+    @Override
+    public int DEXReq(int lvl) {
+        return 0;
     }
 
     @Override

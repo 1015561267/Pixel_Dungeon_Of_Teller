@@ -26,7 +26,6 @@ import com.teller.pixeldungeonofteller.Bones;
 import com.teller.pixeldungeonofteller.Dungeon;
 import com.teller.pixeldungeonofteller.GamesInProgress;
 import com.teller.pixeldungeonofteller.Statistics;
-import com.teller.pixeldungeonofteller.actors.AbsoluteDamage;
 import com.teller.pixeldungeonofteller.actors.Actor;
 import com.teller.pixeldungeonofteller.actors.Char;
 import com.teller.pixeldungeonofteller.actors.Damage;
@@ -61,12 +60,10 @@ import com.teller.pixeldungeonofteller.actors.mobs.npcs.NPC;
 import com.teller.pixeldungeonofteller.effects.CellEmitter;
 import com.teller.pixeldungeonofteller.effects.CheckedCell;
 import com.teller.pixeldungeonofteller.effects.Flare;
-import com.teller.pixeldungeonofteller.effects.Pushing;
 import com.teller.pixeldungeonofteller.effects.Speck;
 import com.teller.pixeldungeonofteller.items.Amulet;
 import com.teller.pixeldungeonofteller.items.Ankh;
 import com.teller.pixeldungeonofteller.items.Dewdrop;
-import com.teller.pixeldungeonofteller.items.EquipableItem;
 import com.teller.pixeldungeonofteller.items.Heap;
 import com.teller.pixeldungeonofteller.items.Heap.Type;
 import com.teller.pixeldungeonofteller.items.Item;
@@ -109,7 +106,6 @@ import com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon.Tama
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.Flintlock;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.SubmachineGun;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.Flail;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.TwoHandedWeapon;
 import com.teller.pixeldungeonofteller.journal.Notes;
 import com.teller.pixeldungeonofteller.levels.Level;
 import com.teller.pixeldungeonofteller.levels.Terrain;
@@ -126,7 +122,6 @@ import com.teller.pixeldungeonofteller.sprites.CharSprite;
 import com.teller.pixeldungeonofteller.sprites.HeroSprite;
 import com.teller.pixeldungeonofteller.ui.AttackIndicator;
 import com.teller.pixeldungeonofteller.ui.BuffIndicator;
-import com.teller.pixeldungeonofteller.ui.DangerIndicator;
 import com.teller.pixeldungeonofteller.ui.MainHandIndicator;
 import com.teller.pixeldungeonofteller.ui.OffHandIndicator;
 import com.teller.pixeldungeonofteller.ui.QuickSlotButton;
@@ -139,7 +134,6 @@ import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Callback;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -1815,7 +1809,7 @@ public class Hero extends Char {
                     item.updateQuickslot();
                     GameScene.scene.updateweaponindicator((Weapon)item,true);
                 }
-                else if(hero.belongings.offhandweapon==null && !(hero.belongings.mainhandweapon instanceof TwoHandedWeapon))
+                else if(hero.belongings.offhandweapon==null && !(hero.belongings.mainhandweapon.WeaponType() == KindOfWeapon.Type.TwoHanded))
                 {
                     item= heap.pickUp();
                     item.detachAll(hero.belongings.backpack);

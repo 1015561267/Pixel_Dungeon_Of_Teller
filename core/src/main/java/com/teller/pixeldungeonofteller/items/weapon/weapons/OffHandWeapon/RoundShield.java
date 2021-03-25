@@ -24,6 +24,7 @@ import com.teller.pixeldungeonofteller.actors.PhysicalDamage;
 import com.teller.pixeldungeonofteller.actors.buffs.Buff;
 import com.teller.pixeldungeonofteller.actors.buffs.Guard;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.teller.pixeldungeonofteller.utils.GLog;
@@ -31,7 +32,7 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class RoundShield extends OffHandWeapon {
+public class RoundShield extends Weapon {
 
     private static final float TIME_TO_GUARD = 1;
     private static final String AC_GUARD = "GUARD";
@@ -40,6 +41,11 @@ public class RoundShield extends OffHandWeapon {
         image = ItemSpriteSheet.ROUND_SHIELD;
         defaultAction = AC_GUARD;
         tier = 3;
+    }
+
+    @Override
+    public Type WeaponType() {
+        return Type.OffHand;
     }
 
     @Override
@@ -55,6 +61,16 @@ public class RoundShield extends OffHandWeapon {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int min(int lvl) {
+        return 0;
+    }
+
+    @Override
+    public int max(int lvl) {
+        return 0;
     }
 
     @Override

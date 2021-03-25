@@ -6,23 +6,18 @@ import com.teller.pixeldungeonofteller.actors.Actor;
 import com.teller.pixeldungeonofteller.actors.Char;
 import com.teller.pixeldungeonofteller.actors.Damage;
 import com.teller.pixeldungeonofteller.actors.PhysicalDamage;
-import com.teller.pixeldungeonofteller.actors.buffs.Buff;
 import com.teller.pixeldungeonofteller.actors.buffs.Invisibility;
 import com.teller.pixeldungeonofteller.actors.buffs.Noise;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
-import com.teller.pixeldungeonofteller.effects.Pushing;
 import com.teller.pixeldungeonofteller.effects.Spark;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.items.weapon.missiles.MissileWeapon;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.OffHandWeapon;
 import com.teller.pixeldungeonofteller.mechanics.Ballistica;
 import com.teller.pixeldungeonofteller.messages.Messages;
-import com.teller.pixeldungeonofteller.scenes.GameScene;
 import com.teller.pixeldungeonofteller.sprites.CharSprite;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.teller.pixeldungeonofteller.sprites.MissileSprite;
 import com.teller.pixeldungeonofteller.tiles.DungeonTilemap;
-import com.teller.pixeldungeonofteller.ui.StatusPane;
-import com.teller.pixeldungeonofteller.utils.GLog;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Visual;
@@ -37,7 +32,7 @@ import java.util.ArrayList;
 
 import static com.teller.pixeldungeonofteller.Dungeon.hero;
 
-public class SubmachineGun extends OffHandWeapon {
+public class SubmachineGun extends Weapon {
 
     public boolean openfire;
     public float cooldown;
@@ -133,6 +128,21 @@ public class SubmachineGun extends OffHandWeapon {
         cooldown = bundle.getInt(COOLDOWN);
         ammo = bundle.getInt(AMMO);
         ammolimit = bundle.getInt(AMMOLIMIT);
+    }
+
+    @Override
+    public Type WeaponType() {
+        return Type.OffHand;
+    }
+
+    @Override
+    public int min(int lvl) {
+        return 0;
+    }
+
+    @Override
+    public int max(int lvl) {
+        return 0;
     }
 
     public boolean attackable() {

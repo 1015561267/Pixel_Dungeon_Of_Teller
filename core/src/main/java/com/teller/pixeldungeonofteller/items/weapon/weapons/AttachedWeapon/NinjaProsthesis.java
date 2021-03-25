@@ -9,6 +9,8 @@ import com.teller.pixeldungeonofteller.actors.PhysicalDamage;
 import com.teller.pixeldungeonofteller.actors.PhysicalPercentage;
 import com.teller.pixeldungeonofteller.actors.buffs.Buff;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
+import com.teller.pixeldungeonofteller.items.Item;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.items.weapon.missiles.MissileWeapon;
 import com.teller.pixeldungeonofteller.mechanics.Ballistica;
 import com.teller.pixeldungeonofteller.messages.Messages;
@@ -27,7 +29,12 @@ import java.util.HashSet;
 
 import static com.teller.pixeldungeonofteller.Dungeon.hero;
 
-public class NinjaProsthesis extends AttachedWeapon {
+public class NinjaProsthesis extends Weapon {
+
+    public Type WeaponType()
+    {
+        return Type.Attached;
+    }
 
     public static final String AC_SHOOT = "SHOOT";
     //protected int collisionProperties=Ballistica.PROJECTILE;
@@ -151,6 +158,16 @@ public class NinjaProsthesis extends AttachedWeapon {
         }
     }
 
+    @Override
+    public int min(int lvl) {
+        return 0;
+    }
+
+    @Override
+    public int max(int lvl) {
+        return 0;
+    }
+
     protected Buff passiveBuff() {
         return new passivebuff();
     }
@@ -197,8 +214,8 @@ public class NinjaProsthesis extends AttachedWeapon {
     @Override
     public String info() {
         String info = super.info();
-        info += "\n手里剑可造成" + new Shuriken().min() + "~" + new Shuriken().max() + "伤害,实际造成的冲击:切割:穿刺比为:30%:70%:0%,每次消耗3能量";
-        info += "\n苦无可造成" + new Kunai().min() + "~" + new Kunai().max() + "伤害,实际造成的冲击:切割:穿刺比为:40%:30%:30%,每次消耗4能量";
+        //info += "\n手里剑可造成" + new Shuriken().min() + "~" + new Shuriken().max() + "伤害,实际造成的冲击:切割:穿刺比为:30%:70%:0%,每次消耗3能量";
+        //info += "\n苦无可造成" + new Kunai().min() + "~" + new Kunai().max() + "伤害,实际造成的冲击:切割:穿刺比为:40%:30%:30%,每次消耗4能量";
         info += "\n当前充能为:" + charge + "/" + chargecap;
         return info;
     }
@@ -350,7 +367,7 @@ public class NinjaProsthesis extends AttachedWeapon {
         }
     }
 
-    public static class Shuriken extends MissileWeapon {
+    public static class Shuriken extends Item {
         static int IMPACTFACTOR = 30;
         static int SLASHFACTOR = 70;
         static int PUNCTUREFACTOR = 0;
@@ -360,55 +377,11 @@ public class NinjaProsthesis extends AttachedWeapon {
 
         {
             image = ItemSpriteSheet.SHURIKEN;
-            DLY = 0f;
-        }
-
-        public Shuriken() {
-            this(1);
-        }
-
-        public Shuriken(int number) {
-            super();
-            quantity = number;
         }
 
         @Override
         public String desc() {
             return "\n\n手里剑实际造成的冲击:切割:穿刺比为:\n" + IMPACTFACTOR + "%:" + SLASHFACTOR + "%:" + PUNCTUREFACTOR + "%" + "\n每次消耗3能量";
-        }
-
-        @Override
-        public int min(int lvl) {
-            return 1 + Dungeon.depth / 10;
-        }
-
-        @Override
-        public int max(int lvl) {
-            return 2 + Dungeon.depth / 2 + 2 * DEXFACTOR();
-        }
-
-        @Override
-        public int STRReq(int lvl) {
-            return 3;
-        }
-
-        @Override
-        public int DEXReq(int lvl) {
-            return 4;
-        }
-
-        @Override
-        public Damage proc(Char attacker, Char defender, Damage damage) {
-            return new PhysicalDamage(Random.NormalIntRange(min(), max()), percentage());
-        }
-
-        @Override
-        protected void onThrow(int cell) {
-            enemy = Actor.findChar(cell);
-            if (enemy != null) {
-                if (curUser.shoot(enemy, this)) {
-                }
-            }
         }
     }
 
@@ -429,14 +402,12 @@ public class NinjaProsthesis extends AttachedWeapon {
         }
     }
 
-    public class Kunai extends MissileWeapon {
+    public class Kunai extends Item {
         private PhysicalPercentage percentage() { return new PhysicalPercentage(0.4f,0.3f,0.3f); }
-
         int IMPACTFACTOR = 40;
         int SLASHFACTOR = 30;
         int PUNCTUREFACTOR = 30;
         private Char enemy;
-
         {
             image = ItemSpriteSheet.KUNAI;
             tier = 3;
@@ -444,45 +415,8 @@ public class NinjaProsthesis extends AttachedWeapon {
         }
 
         @Override
-        protected void onThrow(int cell) {
-            enemy = Actor.findChar(cell);
-            if (enemy != null) {
-                if (curUser.shoot(enemy, this)) {
-
-                }
-            }
-        }
-
-        @Override
         public String desc() {
             return "\n\n苦无实际造成的冲击:切割:穿刺比为:\n" + IMPACTFACTOR + "%:" + SLASHFACTOR + "%:" + PUNCTUREFACTOR + "%" + "\n每次消耗4能量";
-        }
-
-        @Override
-        public int min(int lvl) {
-            return 3 + Dungeon.depth / 3;
-        }
-
-        @Override
-        public int max(int lvl) {
-            return 5 + Dungeon.depth / 2;
-        }
-
-        @Override
-        public int STRReq(int lvl) {
-            return 3;
-        }
-
-        @Override
-        public int DEXReq(int lvl) {
-            return 4;
-        }
-
-        public int DEXMAXSCALE() { return 4; }
-
-        @Override
-        public Damage proc(Char attacker, Char defender, Damage damage) {
-            return new PhysicalDamage(Random.NormalIntRange(min(), max()), percentage());
         }
     }
 }

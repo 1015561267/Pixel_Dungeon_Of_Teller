@@ -33,8 +33,6 @@ import com.watabou.utils.Callback;
 
 import java.util.HashMap;
 
-//import com.teller.tellerpixeldungeon.items.weapon.weapons.AttachedWeapon.NinjaProsthesis.Shuriken;
-
 public class HuntressArmor extends ClassArmor {
 
 

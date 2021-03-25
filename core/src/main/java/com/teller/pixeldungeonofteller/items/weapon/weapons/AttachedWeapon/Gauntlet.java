@@ -2,15 +2,21 @@ package com.teller.pixeldungeonofteller.items.weapon.weapons.AttachedWeapon;
 
 import com.teller.pixeldungeonofteller.actors.PhysicalDamage;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
+import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Gauntlet extends AttachedWeapon {
+public class Gauntlet extends Weapon {
 
     {
         image = ItemSpriteSheet.GAUNTLET;
         tier = 2;
+    }
+
+    public Weapon.Type WeaponType()
+    {
+        return Weapon.Type.Attached;
     }
 
     @Override
@@ -33,6 +39,16 @@ public class Gauntlet extends AttachedWeapon {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int min(int lvl) {
+        return 0;
+    }
+
+    @Override
+    public int max(int lvl) {
+        return 0;
     }
 
     public int STRReq(int lvl) {
@@ -80,4 +96,9 @@ public class Gauntlet extends AttachedWeapon {
         return damage;
     }
     //can not attack but has almost same machine of armor,maybe union code later
+
+    public enum Type {
+        Attached
+    }
+
 }
