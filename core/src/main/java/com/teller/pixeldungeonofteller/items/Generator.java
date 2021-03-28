@@ -125,11 +125,11 @@ import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.WornS
 import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.HammerWithThorns;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.JavelinBarrel;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.Rapier;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.RoundShield;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.Shield.RoundShield;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.Wakizashi;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Glaive;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Greataxe;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Greatshield;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.Shield.Greatshield;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Greatsword;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Nunchaku;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Quarterstaff;

@@ -81,10 +81,10 @@ import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.Scimi
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.WarHammer;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.Whip;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.WornShortsword;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.RoundShield;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.Shield.RoundShield;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Glaive;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Greataxe;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Greatshield;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.Shield.Greatshield;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Greatsword;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Quarterstaff;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Spear;

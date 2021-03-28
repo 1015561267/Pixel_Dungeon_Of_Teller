@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon;
+package com.teller.pixeldungeonofteller.items.weapon.weapons.Shield;
 
 import com.teller.pixeldungeonofteller.actors.PhysicalDamage;
 import com.teller.pixeldungeonofteller.actors.buffs.Buff;
@@ -32,11 +32,10 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class RoundShield extends Weapon {
+public class RoundShield extends Shield {
 
     private static final float TIME_TO_GUARD = 1;
     private static final String AC_GUARD = "GUARD";
-
     {
         image = ItemSpriteSheet.ROUND_SHIELD;
         defaultAction = AC_GUARD;

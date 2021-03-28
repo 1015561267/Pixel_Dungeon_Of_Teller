@@ -25,6 +25,7 @@ import com.teller.pixeldungeonofteller.Challenges;
 import com.teller.pixeldungeonofteller.Dungeon;
 import com.teller.pixeldungeonofteller.PixelDungeonOfTeller;
 import com.teller.pixeldungeonofteller.actors.buffs.Noise;
+import com.teller.pixeldungeonofteller.actors.hazards.Hazard;
 import com.teller.pixeldungeonofteller.levels.rooms.special.MassGraveRoom;
 import com.teller.pixeldungeonofteller.tiles.CustomTiledVisual;
 import com.teller.pixeldungeonofteller.tiles.DungeonTileSheet;
@@ -120,6 +121,9 @@ public abstract class Level implements Bundlable {
     private static final String ENTRANCE = "entrance";
     private static final String EXIT = "exit";
     private static final String LOCKED = "locked";
+
+    private static final String HAZARDS		= "hazards";
+
     private static final String HEAPS = "heaps";
     private static final String PLANTS = "plants";
     private static final String TRAPS = "traps";
@@ -154,6 +158,9 @@ public abstract class Level implements Bundlable {
     //when a boss level has become locked.
     public boolean locked = false;
     public HashSet<Mob> mobs;
+
+    public HashSet<Hazard> hazards;//from yet another pd
+
     public SparseArray<Heap> heaps;
     public HashMap<Class<? extends Blob>, Blob> blobs;
     public SparseArray<Plant> plants;
@@ -233,7 +240,11 @@ public abstract class Level implements Bundlable {
             width = height = length = 0;
 
             mobs = new HashSet<>();
+
+            hazards = new HashSet<Hazard>();
+
             heaps = new SparseArray<>();
+
             blobs = new HashMap<>();
             plants = new SparseArray<>();
             traps = new SparseArray<>();
@@ -301,6 +312,9 @@ public abstract class Level implements Bundlable {
             setSize( bundle.getInt(WIDTH), bundle.getInt(HEIGHT)); //default sizes
 
         mobs = new HashSet<>();
+
+        hazards = new HashSet<>();
+
         heaps = new SparseArray<>();
         blobs = new HashMap<>();
         plants = new SparseArray<>();
@@ -333,6 +347,17 @@ public abstract class Level implements Bundlable {
             Heap heap = (Heap) h;
             if (!heap.isEmpty())
                 heaps.put(heap.pos, heap);
+        }
+
+        collection = bundle.getCollection( HAZARDS );
+        for (Bundlable z : collection) {
+            Hazard hazard = (Hazard)z;
+            if (hazard != null){
+                //if( resizingNeeded ){
+                //    hazard.pos = adjustPos( hazard.pos );
+                //}
+                hazards.add( hazard );
+            }
         }
 
         collection = bundle.getCollection(PLANTS);
@@ -1081,4 +1106,7 @@ public abstract class Level implements Bundlable {
                 return Messages.get(Level.class, "default_desc");
         }
     }
+
+    public int getWidth(){return width;}
+    public int getHeight(){return height;}
 }

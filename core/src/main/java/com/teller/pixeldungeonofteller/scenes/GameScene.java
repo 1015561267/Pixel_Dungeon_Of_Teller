@@ -25,7 +25,9 @@ import android.opengl.GLES20;
 import com.teller.pixeldungeonofteller.Assets;
 import com.teller.pixeldungeonofteller.Badges;
 import com.teller.pixeldungeonofteller.Dungeon;
+import com.teller.pixeldungeonofteller.actors.hazards.Hazard;
 import com.teller.pixeldungeonofteller.journal.Journal;
+import com.teller.pixeldungeonofteller.sprites.HazardSprite.HazardSprite;
 import com.teller.pixeldungeonofteller.tiles.CustomTiledVisual;
 import com.teller.pixeldungeonofteller.tiles.DungeonTerrainTilemap;
 import com.teller.pixeldungeonofteller.tiles.DungeonTileSheet;
@@ -111,6 +113,7 @@ import com.watabou.utils.Random;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Locale;
 
 public class GameScene extends PixelScene {
@@ -154,6 +157,9 @@ public class GameScene extends PixelScene {
     private Group ripples;
     private Group plants;
     private Group traps;
+
+    private Group hazards;
+
     private Group heaps;
     private Group mobs;
     private Group emitters;
@@ -260,6 +266,36 @@ public class GameScene extends PixelScene {
     public static void add(EmoIcon icon) {
         scene.emoicons.add(icon);
     }
+
+    public static void add( Hazard hazard ) {
+        Dungeon.level.hazards.add( hazard );
+        Actor.add( hazard );
+        scene.addHazardSprite( hazard );
+        sortHazards();
+    }
+
+    public static void sortHazards() {
+        // let's sort hazard sprites according to their priority
+        // it could've been done better, but i'd rather not mess with watabou's libraries yet
+
+        HashSet<Hazard> hazards = (HashSet<Hazard>)Dungeon.level.hazards.clone();
+
+        for( int i = 0 ; i < Dungeon.level.hazards.size() ; i++ ){
+
+            Hazard selected = null;
+
+            for( Hazard current : hazards ){
+                if( selected == null || selected.sprite.spritePriority() < current.sprite.spritePriority() ) {
+                    selected = current;
+                }
+            }
+
+            scene.hazards.sendToBack( selected.sprite );
+            hazards.remove( selected );
+        }
+    }
+
+
 
     public static void effect(Visual effect) {
         scene.effects.add(effect);
@@ -624,6 +660,16 @@ public class GameScene extends PixelScene {
         effects = new Group();
         emoicons = new Group();
 
+        hazards = new Group();
+        add( hazards );
+
+        for (Hazard hazard : Dungeon.level.hazards) {
+            addHazardSprite( hazard );
+        }
+
+        sortHazards();//from YAPD
+
+
         mobs = new Group();
         add(mobs);
 
@@ -958,6 +1004,13 @@ public class GameScene extends PixelScene {
         sprite.visible = Dungeon.visible[mob.pos];
         mobs.add(sprite);
         sprite.link(mob);
+    }
+
+    private void addHazardSprite( Hazard hazard ) {
+        HazardSprite sprite = hazard.sprite();
+        sprite.visible = Dungeon.visible[hazard.pos];
+        hazards.add( sprite );
+        sprite.link( hazard );
     }
 
     private synchronized void prompt(String text) {

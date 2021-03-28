@@ -27,6 +27,8 @@ public class Assets {
     private static final String HEROS = ACTORS + "heros/";
     private static final String NPCS = ACTORS + "npcs/";
     private static final String SPELLS = ACTORS + "spells/";
+    private static final String HAZARDS = ACTORS + "hazards/";
+
 
     private static final String SOUNDS = "sounds/";
 
@@ -195,5 +197,5 @@ public class Assets {
     public static final String HEALING = SPELLS+ "healing.png";
     public static final String HOLYBOMB = SPELLS+ "holybomb.png";
 
-
+    public static final String FRISBEE = HAZARDS+ "frisbee.png";
 }

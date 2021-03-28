@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 import static com.teller.pixeldungeonofteller.Dungeon.hero;
 
-public class SubmachineGun extends Weapon {
+public class SubmachineGun extends FireArm {
 
     public boolean openfire;
     public float cooldown;

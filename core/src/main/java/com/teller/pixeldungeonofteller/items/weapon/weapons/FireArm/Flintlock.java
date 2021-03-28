@@ -38,7 +38,7 @@ import java.util.ArrayList;
 
 import static com.teller.pixeldungeonofteller.Dungeon.hero;
 
-public class Flintlock extends Weapon {
+public class Flintlock extends FireArm {
 
     public static final String AC_SHOOT = "SHOOT";
     public static final String AC_DOUBLESHOOT = "DOUBLESHOOT";
@@ -368,7 +368,6 @@ public class Flintlock extends Weapon {
                 Spark.at(pf, PointF.angle(pf, pt), 3.1415926f / 12, 0xEE7722, 3 + 1);
             }
         }
-
         @Override
         public String prompt() {
             return Messages.get(Flintlock.class, "prompt");

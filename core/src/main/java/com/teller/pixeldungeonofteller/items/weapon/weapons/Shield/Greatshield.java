@@ -18,15 +18,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon;
+package com.teller.pixeldungeonofteller.items.weapon.weapons.Shield;
 
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.items.weapon.Weapon;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.Shield.Shield;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Greatshield extends Weapon {
+public class Greatshield extends Shield {
 
     @Override
     public int stealth() {return 1;}

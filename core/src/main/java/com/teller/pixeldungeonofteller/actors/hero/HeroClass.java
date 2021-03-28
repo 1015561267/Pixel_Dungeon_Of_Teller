@@ -69,6 +69,7 @@ import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.Mages
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.Whip;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.WornShortsword;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.JavelinBarrel;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.Shield.SawtoothFrisbee;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Nunchaku;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.watabou.utils.Bundle;
@@ -117,6 +118,8 @@ public enum HeroClass {
         new PlateArmor().identify().collect();
         new Dirk().identify().collect();
         new Flail().identify().collect();
+
+        new SawtoothFrisbee().identify().collect();
 
         MagicPage m1 = new MagicPage();
         m1.getspell(new MagicMissile()).collect();
