@@ -10,6 +10,7 @@ import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.PointF;
 
 public abstract class HazardSprite extends Image {
+
     private TextureFilm textures;
     public Hazard hazard;
 
@@ -20,6 +21,8 @@ public abstract class HazardSprite extends Image {
             texture( asset() );
             textures = new TextureFilm( texture, 16, 16 );
         }
+
+
     }
 
     protected abstract String asset();
@@ -43,14 +46,10 @@ public abstract class HazardSprite extends Image {
         int width = Dungeon.level.getWidth();
 
         point( new PointF(
-                ((cell % height) + 0.5f) * csize - width * 0.5f,
-                ((cell / width) + 0.5f) * csize - height * 0.5f));
+                ((cell % width) + 0.5f) * csize - width * 0.5f,
+                ((cell / height) + 0.5f) * csize - height * 0.5f));
 
         origin.set( width / 2, height / 2 );
-    }
-
-    public void changeFrame( int var ) {
-        frame( textures.get( var ) );
     }
 
     @Override

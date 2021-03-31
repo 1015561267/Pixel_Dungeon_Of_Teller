@@ -36,6 +36,7 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
     public MissileSprite() {
         super();
         originToCenter();
+
     }
 
     public void reset(int from, int to, Item item, Callback listener) {

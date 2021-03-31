@@ -35,8 +35,13 @@ public class Ballistica {
     public static final int STOP_CHARS = 2; //ballistica will stop on first char hit
     public static final int STOP_TERRAIN = 4; //ballistica will stop on terrain(LOS blocking, impassable, etc.)
     public static final int PROJECTILE = STOP_TARGET | STOP_CHARS | STOP_TERRAIN;
+
     public static final int MAGIC_BOLT = STOP_CHARS | STOP_TERRAIN;
+
+    public static final int FRISBEE = STOP_TARGET | STOP_TERRAIN;
+
     public static final int WONT_STOP = 0;
+
     //note that the path is the FULL path of the projectile, including tiles after collision.
     //make sure to generate a subPath for the common case of going source to collision.
     public ArrayList<Integer> path = new ArrayList<>();

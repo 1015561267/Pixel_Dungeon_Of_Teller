@@ -885,8 +885,6 @@ public abstract class Char extends Actor {
         return properties;
     }
 
-    public abstract void damage(PhysicalDamage damageRoll);
-
     public enum Property {
         BOSS,
         MINIBOSS,

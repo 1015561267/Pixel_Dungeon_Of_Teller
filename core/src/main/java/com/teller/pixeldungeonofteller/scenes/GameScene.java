@@ -1008,8 +1008,11 @@ public class GameScene extends PixelScene {
 
     private void addHazardSprite( Hazard hazard ) {
         HazardSprite sprite = hazard.sprite();
+
         sprite.visible = Dungeon.visible[hazard.pos];
+
         hazards.add( sprite );
+
         sprite.link( hazard );
     }
 

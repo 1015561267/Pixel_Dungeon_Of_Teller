@@ -7,13 +7,13 @@ import com.teller.pixeldungeonofteller.actors.PhysicalDamage;
 import com.teller.pixeldungeonofteller.actors.hazards.Frisbee;
 import com.teller.pixeldungeonofteller.actors.hazards.Hazard;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
+import com.teller.pixeldungeonofteller.items.EquipableItem;
 import com.teller.pixeldungeonofteller.items.Item;
 import com.teller.pixeldungeonofteller.items.KindOfWeapon;
 import com.teller.pixeldungeonofteller.mechanics.Ballistica;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.CellSelector;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
-import com.teller.pixeldungeonofteller.sprites.HazardSprite.FrisbeeSprite;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.teller.pixeldungeonofteller.sprites.MissileSprite;
 import com.teller.pixeldungeonofteller.utils.GLog;
@@ -35,9 +35,10 @@ public class SawtoothFrisbee extends Shield {
     private static final float TIME_TO_CAST = 1;
     private static final String AC_CAST = "CAST";
     {
-        image = ItemSpriteSheet.SHURIKEN;
+        image = ItemSpriteSheet.SAWTOOTHFRISBEE;
         tier = 4;
         usesTargeting = true;
+        defaultAction = AC_CAST;
     }
 
     private int duration(){return 5;}
@@ -84,6 +85,10 @@ public class SawtoothFrisbee extends Shield {
         super.execute(hero, action);
         if (action.equals(AC_CAST)) {
             if (hero.belongings.offhandweapon == this) {
+                if (cursed) {
+                    GLog.w(Messages.get(EquipableItem.class, "unequip_cursed"));
+                    return;
+                }
                 curItem = this;
                 GameScene.selectCell(caster);
             } else {
@@ -93,17 +98,23 @@ public class SawtoothFrisbee extends Shield {
     }
 
 
-    public void throwout(int pos, Integer target, int projectile)
+    public void throwout(Integer pos, Integer target, final Ballistica way)
     {
-        final Ballistica way = new Ballistica(pos, target, projectile);
 
-        final int dst = target;
+        if (curItem.isEquipped(curUser))
+        {
+            curUser.belongings.offhandweapon = null;
+            curItem.collect();
+            GameScene.scene.offhandupdate();
+        }
+
+        final Integer dst = target;
 
         ((MissileSprite) curUser.sprite.parent.recycle(MissileSprite.class)).
-                reset(pos, target, this, new Callback() {
+                reset(pos, dst, this, new Callback() {
                     @Override
                     public void call() {
-                        Item detached = curItem.detach(curUser.belongings.backpack);
+                        Item detached = (curItem).detach(curUser.belongings.backpack);
                         curUser.spendAndNext(TIME_TO_CAST);
                         for (int c : way.subPath(1, dst)) {
                             Char ch;
@@ -113,45 +124,60 @@ public class SawtoothFrisbee extends Shield {
                                 ch.sprite.flash();
                             }
                         }
+
+                        Frisbee frisbee = Hazard.findHazard(dst, Frisbee.class);
+
+                        if (frisbee == null) {
+
+                            frisbee = new Frisbee();
+
+                            frisbee.setValues(dst,duration(), (SawtoothFrisbee) curItem);
+
+                            GameScene.add(frisbee);
+
+                            ((Frisbee.FrisbeeSprite) frisbee.sprite).appear();
+                        }
+                        else
+                        { ((SawtoothFrisbee)curItem).retrieve( dst ); }
+
                     }
                 });
     }
 
-    public void retrieve(int pos)
+    public void retrieve(Integer pos)
     {
-        int start = pos;
-        final int end = Dungeon.hero.pos;
+        Integer start = pos;
+        final Integer end = Dungeon.hero.pos;
 
         curItem = this;
 
-        final Ballistica shot = new Ballistica(start, end, Ballistica.WONT_STOP);
+        final Ballistica shot = new Ballistica(start, end, Ballistica.STOP_TARGET);
 
         ((MissileSprite) curUser.sprite.parent.recycle(MissileSprite.class)).
                 reset(start, end, this, new Callback() {
                     @Override
                     public void call() {
-
                         for (int c : shot.subPath(1, end)) {
                             Char ch;
                             if ((ch = Actor.findChar(c)) != null) {
                                 PhysicalDamage dmg = damageRoll(Dungeon.hero);
                                 ch.damage(dmg, this);
-                                ch.sprite.flash();
                             }
                         }
-
-                        if(Dungeon.hero.belongings.offhandweapon == null &&!(Dungeon.hero.belongings.mainhandweapon!= null || Dungeon.hero.belongings.mainhandweapon.WeaponType() != Type.TwoHanded))
+                        if(Dungeon.hero.belongings.offhandweapon == null &&(Dungeon.hero.belongings.mainhandweapon== null || Dungeon.hero.belongings.mainhandweapon.WeaponType() != Type.TwoHanded))
                         {
                             Dungeon.hero.belongings.offhandweapon = (KindOfWeapon) curItem;
+                            GameScene.scene.offhandupdate();
                         }
                         else
                         {
-                            curItem.collect();
+                            if(!curItem.collect())
+                            {
+                                Dungeon.level.drop(curItem,end);
+                            }
                         }
                     }
                 });
-
-
     }
 
     private CellSelector.Listener caster = new CellSelector.Listener() {
@@ -159,33 +185,24 @@ public class SawtoothFrisbee extends Shield {
         public void onSelect(Integer target) {
             if (target != null) {
 
-                final Ballistica shot = new Ballistica(curUser.pos, target, Ballistica.PROJECTILE);
-                final int cell = shot.collisionPos;
+                curUser = Dungeon.hero;
 
-                ((SawtoothFrisbee)curItem).throwout(curUser.pos,target,Ballistica.STOP_TARGET );
+                GLog.w(target.toString());
 
-                Frisbee frisbee = Hazard.findHazard(cell, Frisbee.class);
+                final Ballistica shot = new Ballistica(curUser.pos, target, Ballistica.FRISBEE);
+                final Integer cell = shot.collisionPos;
+                //final Ballistica way = new Ballistica(curUser.pos, target, Ballistica.FRISBEE);
 
-                if (frisbee == null) {
-                    frisbee = new Frisbee();
+                GLog.w(cell.toString());
 
-                    frisbee.setValues(cell,duration(), (SawtoothFrisbee) curItem);
+                final Ballistica way = new Ballistica(curUser.pos, cell, Ballistica.FRISBEE);
 
-                    GameScene.add(frisbee);
-
-                    ((FrisbeeSprite) frisbee.sprite).appear();
-                }
-                else
-                { ((SawtoothFrisbee)curItem).retrieve( cell ); }
+                ((SawtoothFrisbee)curItem).throwout(curUser.pos,cell,way );
             }
         }
-
         @Override
         public String prompt() {
             return Messages.get(SawtoothFrisbee.class, "prompt");
         }
     };
-
-
-
 }

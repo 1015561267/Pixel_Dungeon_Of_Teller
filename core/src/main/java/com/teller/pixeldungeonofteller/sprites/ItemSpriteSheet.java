@@ -171,6 +171,8 @@ public class ItemSpriteSheet {
     public static final int JAVELINBARREL       = WEP_OFFHAND + 4;
     public static final int HAMMERWITHTHORNS    = WEP_OFFHAND + 5;
 
+    public static final int  SAWTOOTHFRISBEE    = WEP_OFFHAND + 7;
+
     private static final int WEP_TWOHANDED = xy(1, 8);   //8 slots
     public static final int SPEAR = WEP_TWOHANDED + 0;
     public static final int QUARTERSTAFF = WEP_TWOHANDED + 1;
