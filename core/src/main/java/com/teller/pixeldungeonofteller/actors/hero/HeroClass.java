@@ -48,6 +48,7 @@ import com.teller.pixeldungeonofteller.items.potions.PotionOfStrength;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfMagicMapping;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfMagicalInfusion;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfUpgrade;
+import com.teller.pixeldungeonofteller.items.wands.WandOfBlastWave;
 import com.teller.pixeldungeonofteller.items.wands.WandOfMagicMissile;
 import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.items.weapon.missiles.Boomerang;
@@ -121,6 +122,8 @@ public enum HeroClass {
 
         new SawtoothFrisbee().identify().collect();
 
+        new WandOfBlastWave().identify().collect();
+
         MagicPage m1 = new MagicPage();
         m1.getspell(new MagicMissile()).collect();
 
@@ -130,20 +133,8 @@ public enum HeroClass {
         MagicPage m3 = new MagicPage();
         m3.getspell(new LightUp()).collect();
 
-        MagicPage m4 = new MagicPage();
-        m4.getspell(new LightUp()).collect();
-
-        MagicPage m5 = new MagicPage();
-        m5.getspell(new Flash()).collect();
-
-        MagicPage m6 = new MagicPage();
-        m6.getspell(new Flash()).collect();
-
         MagicPage m7 = new MagicPage();
         m7.getspell(new Healing()).collect();
-
-        MagicPage m8 = new MagicPage();
-        m8.getspell(new HolyBomb()).collect();
     }
 
     private static void initWarrior(Hero hero) {

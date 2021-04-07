@@ -101,6 +101,7 @@ public class WandOfBlastWave extends DamageWand {
     @Override
     protected void onZap(Ballistica bolt) {
         Sample.INSTANCE.play(Assets.SND_BLAST);
+
         BlastWave.blast(bolt.collisionPos);
 
         int damage = damageRoll();
@@ -110,22 +111,22 @@ public class WandOfBlastWave extends DamageWand {
             Dungeon.level.press(bolt.collisionPos + i, Actor.findChar(bolt.collisionPos + i));
         }
 
+
         //throws other chars around the center.
         for (int i : PathFinder.NEIGHBOURS8) {
             Char ch = Actor.findChar(bolt.collisionPos + i);
-
             if (ch != null) {
-                processSoulMark(ch, chargesPerCast());
 
+                processSoulMark(ch, chargesPerCast());
                 PhysicalDamage dmg = new PhysicalDamage();
                 dmg.AddImpact(Math.round(damage * 0.667f));
-
                 ch.damage(dmg, this);
 
                 if (ch.isAlive()) {
-                    Ballistica trajectory = new Ballistica(ch.pos, ch.pos + i, Ballistica.MAGIC_BOLT);
-                    int strength = 1 + Math.round(level() / 2f);
-                    throwChar(ch, trajectory, strength);
+                    //Ballistica trajectory = new Ballistica(ch.pos, ch.pos + i, Ballistica.MAGIC_BOLT);
+                    int strength = 2 + Math.round(level() / 2f);
+                    Pushing.knockback( ch, bolt.collisionPos, strength);
+                    //throwChar(ch, trajectory, strength);
                 }
             }
         }
@@ -134,21 +135,19 @@ public class WandOfBlastWave extends DamageWand {
         Char ch = Actor.findChar(bolt.collisionPos);
         if (ch != null) {
             processSoulMark(ch, chargesPerCast());
-
             PhysicalDamage dmg = new PhysicalDamage();
             dmg.AddImpact(Math.round(damage));
-
             ch.damage(dmg, this);
-
             //ch.damage(new AbsoluteDamage(damage,this,ch), this);
-
-            if (ch.isAlive() && bolt.path.size() > bolt.dist + 1) {
-                Ballistica trajectory = new Ballistica(ch.pos, bolt.path.get(bolt.dist + 1), Ballistica.MAGIC_BOLT);
+            if (ch.isAlive() )
+                //&& bolt.path.size() > bolt.dist + 1) {
+                //Ballistica trajectory = new Ballistica(ch.pos, bolt.path.get(bolt.dist + 1), Ballistica.MAGIC_BOLT);
+            {
                 int strength = level() + 3;
-                throwChar(ch, trajectory, strength);
+                Pushing.knockback( ch, curUser.pos, strength);
+                //throwChar(ch, trajectory, strength);
             }
         }
-
         if (!curUser.isAlive()) {
             Dungeon.fail(getClass());
             GLog.n(Messages.get(this, "ondeath"));
@@ -164,8 +163,11 @@ public class WandOfBlastWave extends DamageWand {
         // lvl 2 - 50%
         if (Random.Int(level + 4) >= 3) {
             int oppositeHero = defender.pos + (defender.pos - attacker.pos);
-            Ballistica trajectory = new Ballistica(defender.pos, oppositeHero, Ballistica.MAGIC_BOLT);
-            throwChar(defender, trajectory, 2);
+
+            Pushing.knockback(defender,curUser.pos,2);
+
+            //Ballistica trajectory = new Ballistica(defender.pos, oppositeHero, Ballistica.MAGIC_BOLT);
+            //throwChar(defender, trajectory, 2);
         }
     }
 

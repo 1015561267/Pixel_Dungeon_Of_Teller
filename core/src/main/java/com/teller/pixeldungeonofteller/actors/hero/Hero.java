@@ -55,6 +55,8 @@ import com.teller.pixeldungeonofteller.actors.buffs.Regeneration;
 import com.teller.pixeldungeonofteller.actors.buffs.ShieldRecharging;
 import com.teller.pixeldungeonofteller.actors.buffs.SnipersMark;
 import com.teller.pixeldungeonofteller.actors.buffs.Vertigo;
+import com.teller.pixeldungeonofteller.actors.hazards.Frisbee;
+import com.teller.pixeldungeonofteller.actors.hazards.Hazard;
 import com.teller.pixeldungeonofteller.actors.mobs.Mob;
 import com.teller.pixeldungeonofteller.actors.mobs.npcs.NPC;
 import com.teller.pixeldungeonofteller.effects.CellEmitter;
@@ -163,17 +165,7 @@ public class Hero extends Char {
     private static final String INTELLIGENCE = "INT";
     private static final String MANAPOINT = "MANA";
     private static final String MANAPOINTCAP = "MANACAP";
-    private static final int NOISE_REST=5;
-    private static final int NOISE_MOVE_ONGRASS=-1;
-    private static final int NOISE_MOVE_ONGROUND=-2;
-    private static final int NOISE_MOVE_ONWATER=-3;
-    private static final int NOISE_MOVE_OPENDOOR=-5;
-    private static final int NOISE_PICK_UP=-2;
-    private static final int NOISE_MOVE_FLY=-1;
-    private static final int NOISE_ATTACK=-5;
-    private static final int NOISE_KILL=3;
-    private static final int NOISE_THROW=-3;
-    private static final int NOISE_USEITEM=-2;
+
     private static final String LEVEL = "lvl";
     private static final String EXPERIENCE = "exp";
     public HeroClass heroClass = HeroClass.ROGUE;
@@ -1156,22 +1148,26 @@ public class Hero extends Char {
 
     private boolean actDescend(HeroAction.Descend action) {
         int stairs = action.dst;
+
         if (pos == stairs && pos == Dungeon.level.exit) {
-
+            for(Hazard hazard:Dungeon.level.hazards)
+            {
+                if(hazard instanceof Frisbee)
+                {
+                    ((Frisbee) hazard).returnAndDestroy();
+                }
+            }
             curAction = null;
-
             Buff buff = buff(TimekeepersHourglass.timeFreeze.class);
             if (buff != null) buff.detach();
-
             for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0]))
                 if (mob instanceof DriedRose.GhostHero) mob.destroy();
-
             InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
             Game.switchScene(InterlevelScene.class);
-
             return false;
+        }
 
-        } else if (getCloser(stairs)) {
+        else if (getCloser(stairs)) {
 
             return true;
 
@@ -1198,6 +1194,14 @@ public class Hero extends Char {
 
             } else {
 
+                for(Hazard hazard:Dungeon.level.hazards)
+                {
+                    if(hazard instanceof Frisbee)
+                    {
+                        ((Frisbee) hazard).returnAndDestroy();
+                    }
+                }
+
                 curAction = null;
 
                 Hunger hunger = buff(Hunger.class);
@@ -1211,8 +1215,11 @@ public class Hero extends Char {
                 for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0]))
                     if (mob instanceof DriedRose.GhostHero) mob.destroy();
 
+
                 InterlevelScene.mode = InterlevelScene.Mode.ASCEND;
                 Game.switchScene(InterlevelScene.class);
+
+
             }
 
             return false;
@@ -1401,9 +1408,11 @@ public class Hero extends Char {
             }
         }
 
+
+
         if (target != null && (QuickSlotButton.lastTarget == null ||
                 !QuickSlotButton.lastTarget.isAlive() ||
-                !fieldOfView[QuickSlotButton.lastTarget.pos] ||
+                ((QuickSlotButton.lastTarget.pos < fieldOfView.length) && !fieldOfView[QuickSlotButton.lastTarget.pos]) ||
                 QuickSlotButton.lastTarget.pos > fieldOfView.length
                 )) {
             QuickSlotButton.target(target);
@@ -1411,13 +1420,14 @@ public class Hero extends Char {
 
         if (target != null && (MainHandIndicator.lastTarget == null ||
                 !MainHandIndicator.lastTarget.isAlive() ||
-                !fieldOfView[MainHandIndicator.lastTarget.pos] ||
+                ((MainHandIndicator.lastTarget.pos < fieldOfView.length) && !fieldOfView[MainHandIndicator.lastTarget.pos]) ||
                 MainHandIndicator.lastTarget.pos > fieldOfView.length
         )) {
             MainHandIndicator.target(target);
         }
         if (target != null && (OffHandIndicator.lastTarget == null ||
                 !OffHandIndicator.lastTarget.isAlive() ||
+                ((OffHandIndicator.lastTarget.pos < fieldOfView.length) && !fieldOfView[OffHandIndicator.lastTarget.pos]) ||
                 !fieldOfView[OffHandIndicator.lastTarget.pos] ||
                 MainHandIndicator.lastTarget.pos > fieldOfView.length
                 )) {

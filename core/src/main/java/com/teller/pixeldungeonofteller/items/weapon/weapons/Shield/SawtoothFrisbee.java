@@ -104,7 +104,7 @@ public class SawtoothFrisbee extends Shield {
         if (curItem.isEquipped(curUser))
         {
             curUser.belongings.offhandweapon = null;
-            curItem.collect();
+            //curItem.collect();
             GameScene.scene.offhandupdate();
         }
 
@@ -115,7 +115,6 @@ public class SawtoothFrisbee extends Shield {
                     @Override
                     public void call() {
                         Item detached = (curItem).detach(curUser.belongings.backpack);
-                        curUser.spendAndNext(TIME_TO_CAST);
                         for (int c : way.subPath(1, dst)) {
                             Char ch;
                             if ((ch = Actor.findChar(c)) != null) {
@@ -124,22 +123,16 @@ public class SawtoothFrisbee extends Shield {
                                 ch.sprite.flash();
                             }
                         }
-
                         Frisbee frisbee = Hazard.findHazard(dst, Frisbee.class);
-
                         if (frisbee == null) {
-
                             frisbee = new Frisbee();
-
                             frisbee.setValues(dst,duration(), (SawtoothFrisbee) curItem);
-
                             GameScene.add(frisbee);
-
                             ((Frisbee.FrisbeeSprite) frisbee.sprite).appear();
                         }
                         else
                         { ((SawtoothFrisbee)curItem).retrieve( dst ); }
-
+                        curUser.spendAndNext(TIME_TO_CAST);
                     }
                 });
     }
@@ -148,7 +141,6 @@ public class SawtoothFrisbee extends Shield {
     {
         Integer start = pos;
         final Integer end = Dungeon.hero.pos;
-
         curItem = this;
 
         final Ballistica shot = new Ballistica(start, end, Ballistica.STOP_TARGET);
@@ -168,16 +160,54 @@ public class SawtoothFrisbee extends Shield {
                         {
                             Dungeon.hero.belongings.offhandweapon = (KindOfWeapon) curItem;
                             GameScene.scene.offhandupdate();
+                            GLog.h("Equipped");
                         }
                         else
                         {
                             if(!curItem.collect())
                             {
                                 Dungeon.level.drop(curItem,end);
+                                GLog.h("Dropped");
                             }
                         }
                     }
                 });
+    }
+
+    public void fastreturn(Integer pos)
+    //callback becomes invalid in ascend and descend or things like that,because the anim have no time to callback
+    {
+        Integer start = pos;
+        final Integer end = Dungeon.hero.pos;
+
+        GLog.n(start.toString());
+
+        curItem = this;
+
+        final Ballistica shot = new Ballistica(start, end, Ballistica.STOP_TARGET);
+
+        for (int c : shot.subPath(1, end)) {
+            Char ch;
+            if ((ch = Actor.findChar(c)) != null) {
+                PhysicalDamage dmg = damageRoll(Dungeon.hero);
+                ch.damage(dmg, this);
+            }
+        }
+
+        if(Dungeon.hero.belongings.offhandweapon == null &&(Dungeon.hero.belongings.mainhandweapon== null || Dungeon.hero.belongings.mainhandweapon.WeaponType() != Type.TwoHanded))
+        {
+            Dungeon.hero.belongings.offhandweapon = (KindOfWeapon) curItem;
+            GameScene.scene.offhandupdate();
+        }
+
+        else
+        {
+            if(!curItem.collect())
+            {
+                Dungeon.level.drop(curItem,end);
+            }
+        }
+
     }
 
     private CellSelector.Listener caster = new CellSelector.Listener() {
@@ -187,14 +217,9 @@ public class SawtoothFrisbee extends Shield {
 
                 curUser = Dungeon.hero;
 
-                GLog.w(target.toString());
-
                 final Ballistica shot = new Ballistica(curUser.pos, target, Ballistica.FRISBEE);
                 final Integer cell = shot.collisionPos;
                 //final Ballistica way = new Ballistica(curUser.pos, target, Ballistica.FRISBEE);
-
-                GLog.w(cell.toString());
-
                 final Ballistica way = new Ballistica(curUser.pos, cell, Ballistica.FRISBEE);
 
                 ((SawtoothFrisbee)curItem).throwout(curUser.pos,cell,way );

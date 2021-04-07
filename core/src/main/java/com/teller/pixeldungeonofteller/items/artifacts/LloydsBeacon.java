@@ -27,6 +27,8 @@ import com.teller.pixeldungeonofteller.actors.Char;
 import com.teller.pixeldungeonofteller.actors.buffs.Buff;
 import com.teller.pixeldungeonofteller.actors.buffs.Invisibility;
 import com.teller.pixeldungeonofteller.actors.buffs.LockedFloor;
+import com.teller.pixeldungeonofteller.actors.hazards.Frisbee;
+import com.teller.pixeldungeonofteller.actors.hazards.Hazard;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.actors.mobs.Mob;
 import com.teller.pixeldungeonofteller.effects.MagicMissile;
@@ -233,6 +235,14 @@ public class LloydsBeacon extends Artifact {
                 Dungeon.observe();
                 GameScene.updateFog();
             } else {
+
+                for(Hazard hazard:Dungeon.level.hazards)
+                {
+                    if(hazard instanceof Frisbee)
+                    {
+                        ((Frisbee) hazard).returnAndDestroy();
+                    }
+                }
 
                 Buff buff = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
                 if (buff != null) buff.detach();

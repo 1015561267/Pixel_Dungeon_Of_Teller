@@ -32,6 +32,8 @@ import com.watabou.utils.ColorMath;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
+import static com.teller.pixeldungeonofteller.Challenges.DARKNESS;
+
 public class Speck extends Image {
 
     public static final int HEALING = 0;
@@ -66,7 +68,7 @@ public class Speck extends Image {
     public static final int CONFUSION = 113;
     public static final int RED_LIGHT = 114;
 
-
+    public static final int DARKNESS = 115;
 
     private static final int SIZE = 7;
     private static TextureFilm film;
@@ -134,6 +136,7 @@ public class Speck extends Image {
             case JET:
             case TOXIC:
             case VENOM:
+            case DARKNESS:
             case PARALYSIS:
             case STENCH:
             case CONFUSION:
@@ -318,6 +321,13 @@ public class Speck extends Image {
                 lifespan = Random.Float(1f, 3f);
                 break;
 
+            case DARKNESS:
+                hardlight(0x010101);
+                angularSpeed = 30;
+                angle = Random.Float(360);
+                lifespan = Random.Float(1f, 3f);
+                break;
+
             case PARALYSIS:
                 hardlight(0xFFFF66);
                 angularSpeed = -30;
@@ -448,6 +458,7 @@ public class Speck extends Image {
                 case TOXIC:
                 case PARALYSIS:
                 case CONFUSION:
+                case DARKNESS:
                 case DUST:
                     am = (float) Math.sqrt((p < 0.5f ? p : 1 - p) * 0.5f);
                     scale.set(1 + p);

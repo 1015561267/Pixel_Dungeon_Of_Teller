@@ -27,6 +27,7 @@ import com.teller.pixeldungeonofteller.PixelDungeonOfTeller;
 import com.teller.pixeldungeonofteller.Statistics;
 import com.teller.pixeldungeonofteller.actors.blobs.Blob;
 import com.teller.pixeldungeonofteller.actors.buffs.Buff;
+import com.teller.pixeldungeonofteller.actors.hazards.Hazard;
 import com.teller.pixeldungeonofteller.actors.mobs.Mob;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.SubmachineGun;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
@@ -90,9 +91,15 @@ public abstract class Actor implements Bundlable {
             add(mob);
         }
 
+        for ( Hazard hazard : Dungeon.level.hazards ) {
+            add( hazard );
+        }
+
         for (Blob blob : Dungeon.level.blobs.values()) {
             add(blob);
         }
+
+
 
         current = null;
     }
@@ -226,6 +233,17 @@ public abstract class Actor implements Bundlable {
         }
     }
 
+    public static void free(Actor actor) {
+        if (actor != null) {
+            all.remove(actor);
+            chars.remove(actor);
+            if (actor.id > 0) {
+                ids.remove(actor.id);
+            }
+        }
+    }
+
+
     public static synchronized Char findChar(int pos) {
         for (Char ch : chars) {
             if (ch.pos == pos)
@@ -297,5 +315,24 @@ public abstract class Actor implements Bundlable {
         if (current == this) {
             current = null;
         }
+    }
+
+    public void delay(float time)
+    {
+        spend(time);
+    }
+
+    public static void freeCell(Char ch){
+
+        chars.remove(ch);
+        Dungeon.level.passable[ch.pos] = true;
+
+    }
+
+    public static void occupyCell(Char ch){
+
+        chars.add(ch);
+        Dungeon.level.passable[ch.pos] = false;
+
     }
 }

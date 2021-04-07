@@ -31,6 +31,7 @@ public abstract class HazardSprite extends Image {
     public void link( Hazard hazard ) {
 
         this.hazard = hazard;
+
         hazard.sprite = this;
 
         frame( textures.get( hazard.var ) );
@@ -42,12 +43,12 @@ public abstract class HazardSprite extends Image {
 
         final int csize = DungeonTilemap.SIZE;
 
-        int height = Dungeon.level.getHeight();
-        int width = Dungeon.level.getWidth();
+        //int Height = Dungeon.level.getHeight();
+        //int Width = Dungeon.level.getWidth();
 
         point( new PointF(
-                ((cell % width) + 0.5f) * csize - width * 0.5f,
-                ((cell / height) + 0.5f) * csize - height * 0.5f));
+                ((cell % Dungeon.level.width()) + 0.5f) * csize - width * 0.5f,
+                ((cell / Dungeon.level.width()) + 0.5f) * csize - height * 0.5f));
 
         origin.set( width / 2, height / 2 );
     }

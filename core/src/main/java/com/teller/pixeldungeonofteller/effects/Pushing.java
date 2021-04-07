@@ -20,21 +20,35 @@
  */
 package com.teller.pixeldungeonofteller.effects;
 
+import com.teller.pixeldungeonofteller.Assets;
+import com.teller.pixeldungeonofteller.Dungeon;
 import com.teller.pixeldungeonofteller.actors.Actor;
 import com.teller.pixeldungeonofteller.actors.Char;
+import com.teller.pixeldungeonofteller.actors.mobs.Mob;
+import com.teller.pixeldungeonofteller.levels.Level;
+import com.teller.pixeldungeonofteller.levels.Terrain;
+import com.teller.pixeldungeonofteller.levels.features.Door;
+import com.teller.pixeldungeonofteller.mechanics.Ballistica;
+import com.teller.pixeldungeonofteller.scenes.GameScene;
 import com.teller.pixeldungeonofteller.sprites.CharSprite;
+import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Visual;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.tweeners.PosTweener;
+import com.watabou.noosa.tweeners.Tweener;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
+import com.watabou.utils.Random;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Pushing extends Actor {
 
     private CharSprite sprite;
     private int from;
     private int to;
-
-    private Effect effect;
 
     private Callback callback;
 
@@ -56,25 +70,136 @@ public class Pushing extends Actor {
 
     @Override
     protected boolean act() {
-
         if (sprite != null) {
+            PointF dest = sprite.worldToCamera( to );
+            PointF d = PointF.diff( sprite.worldToCamera( from ), dest );
+            PosTweener tweener = new PosTweener( sprite, dest, d.length() / 240f );
+            tweener.listener = new Tweener.Listener() {
+                @Override
+                public void onComplete( Tweener tweener ){
+                    Actor.remove( Pushing.this );
+                    if( callback != null ){
+                        callback.call();
+                    }
+                    next();
+                }
+            };
+            sprite.parent.add( tweener );
+            return false;
+        } else {
+            Actor.remove( Pushing.this );
+            return true;
+        }
+    }
 
+    public static void move( final Char ch, final int newPos, final Callback callback ) {
+        // moved this method here to avoid repeatng the same pieces of code over and over
+        // it is still not the most elegant
+        Actor.addDelayed( new Pushing( ch, ch.pos, newPos, new Callback() {
+            @Override
+            public void call(){
+                if( callback != null ){
+                    callback.call();
+                }
+
+            }
+        }), -1 );
+        ch.pos = newPos;
+    }
+
+    /*//FIXME I'd like to imitate ya's knockback effect but not mess with existed things like guard's chain etc
+    public void dropneighbour( final Char ch,int from,int to)
+    {
+        sprite = ch.sprite;
+        this.from = from;
+        this.to = to;
+        this.callback = null;
+        if (sprite != null) {
             if (effect == null) {
                 new Effect();
             }
         }
+        Actor.remove( Pushing.this );
+    }
+     */
 
-        Actor.remove(Pushing.this);
 
-        //so that all pushing effects at the same time go simultaneously
-        for (Actor actor : Actor.all()) {
-            if (actor instanceof Pushing && actor.cooldown() == 0)
-                return true;
+    public static void knockback( final Char ch, int pushedFrom, int Power ) {
+        if( Power > 0 ){
+            // first, we "remove" target from the tilemap and check where it
+            // should land when knocked back, as if it weren't there
+
+            //Actor.freeCell( ch );//we wants to avoid ballistica think here is a target or unpassable(that's how it works)
+
+            Ballistica vector = new Ballistica(pushedFrom,ch.pos,Ballistica.MAGIC_BOLT);
+            //note that pushFrom is the pos where the pusher stand,and we wants a vector so it shouldn't stop at target point
+            // then we calcualte where the targer would actually land, considering
+            // the maximum distance which it is supposed to be knocked back
+            int pushedTo = vector.collisionPos;//this step get the collision point,in order to conclude the distance
+
+            int index = vector.path.indexOf(pushedTo);
+            int hitted = vector.path.get(index+1);//we get one block after collisionpos as it's the pos it should stop when this happens,but not it should when it doesn't happen
+
+            Ballistica knockway = new Ballistica( ch.pos,hitted,Ballistica.MAGIC_BOLT);//build another ballistica to get real distance how long it really fly
+            // note that all ballistica path is a full path that go through the whole map
+
+           // Ballistica knockway = new Ballistica( ch.pos,pushedTo,Ballistica.PROJECTILE);//build another ballistica to get real distance how long it really fly
+
+
+            Power = Math.min( knockway.dist , Power );//then we compare two inorder to know what will happen first between fly to end and crush into sth
+            if( Power > 0 ){
+                // gotta make those final for the sake of using callback mechanics
+                    final int finalPos = knockway.path.get(Power);//get the block the char should stay
+                    final int knockPos = knockway.path.get(Power-1);
+                    final Char pushedInto = Char.findChar( finalPos );
+                move( ch , finalPos , new Callback() {
+                    @Override
+                    public void call(){
+                        if( pushedInto != null || Dungeon.level.solid[ finalPos ] )//this means this pos is occupied,so draw back to one block before the path
+                        {
+                            hitObstacle( ch, knockPos);
+                        }
+                        if( ch.isAlive() ){
+                            if( ch instanceof Mob ){
+                                ch.delay( 1f );
+                            }
+                            // apply target's current position and activate traps there
+                            // gotta re-check whether mobs killed by knockback activate traps or not
+                            //Actor.occupyCell(ch);
+                            Dungeon.level.press( ch.pos, ch );
+                        }
+                        else
+                        {
+                            ch.die(this);
+                        }
+                        if( pushedInto != null ){
+                            knockback( pushedInto, ch.pos, 1 );
+                        }
+                    }
+            });
         }
-        return false;
+        }
+        else {
+            // if the target is immovable, then just deal damage straight up
+            // don't wanna this wand to be useless against Yog, for instance
+            //dealDamage( ch, damage );
+            GameScene.flash(0xFFFF);
+        }
     }
 
-    public class Effect extends Visual {
+    private static void hitObstacle(final Char ch , int moveTo) {
+        // move() method handles changing the target's position value
+        move( ch, moveTo, null );
+        // make sounds and shake the screen to make this effect meatier
+        if( Dungeon.visible[ ch.pos ] ) {
+            Sample.INSTANCE.play( Assets.SND_BLAST, 1.0f, 1.0f, 0.5f );
+            Camera.main.shake( 2, 0.1f );
+        }
+    }
+
+
+
+   /* public class Effect extends Visual {
 
         private static final float DELAY = 0.15f;
 
@@ -100,23 +225,16 @@ public class Pushing extends Actor {
         @Override
         public void update() {
             super.update();
-
             if ((delay += Game.elapsed) < DELAY) {
-
                 sprite.x = x;
                 sprite.y = y;
-
             } else {
-
                 sprite.point(end);
-
                 killAndErase();
                 Actor.remove(Pushing.this);
                 if (callback != null) callback.call();
-
                 next();
             }
         }
-    }
-
+    }*/
 }

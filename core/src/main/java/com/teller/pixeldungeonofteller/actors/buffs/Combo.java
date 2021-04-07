@@ -133,9 +133,7 @@ public class Combo extends Buff implements ActionIndicator.Action {
                                 if (enemy.pos - target.pos == ofs) {
                                     int newPos = enemy.pos + ofs;
                                     if ((Dungeon.level.passable[newPos] || Dungeon.level.avoid[newPos]) && Actor.findChar(newPos) == null) {
-
                                         Actor.addDelayed(new Pushing(enemy, enemy.pos, newPos), -1);
-
                                         enemy.pos = newPos;
                                         // FIXME
                                         if (enemy instanceof Mob) {
@@ -143,7 +141,6 @@ public class Combo extends Buff implements ActionIndicator.Action {
                                         } else {
                                             Dungeon.level.press(newPos, enemy);
                                         }
-
                                     }
                                     break;
                                 }

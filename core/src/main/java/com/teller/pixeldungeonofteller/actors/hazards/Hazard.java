@@ -38,10 +38,6 @@ public abstract class Hazard extends Actor {
     public int pos;
     public int var;
 
-    {
-        actPriority = 1; //take priority over mobs, but not the hero
-    }
-
     @Override
     protected boolean act(){
         return false;
@@ -77,7 +73,6 @@ public abstract class Hazard extends Actor {
                 return hazardClass.cast( hazard );
             }
         }
-
         return null;
     }
 

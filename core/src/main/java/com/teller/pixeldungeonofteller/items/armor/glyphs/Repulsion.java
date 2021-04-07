@@ -22,6 +22,7 @@ package com.teller.pixeldungeonofteller.items.armor.glyphs;
 
 import com.teller.pixeldungeonofteller.actors.Char;
 import com.teller.pixeldungeonofteller.actors.Damage;
+import com.teller.pixeldungeonofteller.effects.Pushing;
 import com.teller.pixeldungeonofteller.items.armor.Armor;
 import com.teller.pixeldungeonofteller.items.wands.WandOfBlastWave;
 import com.teller.pixeldungeonofteller.mechanics.Ballistica;
@@ -39,8 +40,9 @@ public class Repulsion extends Armor.Glyph {
 
         if (Random.Int(level + 5) >= 4) {
             int oppositeHero = attacker.pos + (attacker.pos - defender.pos);
-            Ballistica trajectory = new Ballistica(attacker.pos, oppositeHero, Ballistica.MAGIC_BOLT);
-            WandOfBlastWave.throwChar(attacker, trajectory, 2);
+            //Ballistica trajectory = new Ballistica(attacker.pos, oppositeHero, Ballistica.MAGIC_BOLT);
+            //WandOfBlastWave.throwChar(attacker, trajectory, 2);
+            Pushing.knockback(attacker,attacker.pos,2);
         }
 
         return damage;

@@ -666,6 +666,7 @@ public class Dungeon {
             }
         }
         GameScene.afterObserve();
+
     }
 
     private static void setupPassable() {

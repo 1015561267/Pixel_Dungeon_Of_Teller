@@ -27,6 +27,8 @@ import com.teller.pixeldungeonofteller.actors.AbsoluteDamage;
 import com.teller.pixeldungeonofteller.actors.buffs.Bleeding;
 import com.teller.pixeldungeonofteller.actors.buffs.Buff;
 import com.teller.pixeldungeonofteller.actors.buffs.Cripple;
+import com.teller.pixeldungeonofteller.actors.hazards.Frisbee;
+import com.teller.pixeldungeonofteller.actors.hazards.Hazard;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.actors.mobs.Mob;
 import com.teller.pixeldungeonofteller.items.artifacts.DriedRose;
@@ -69,6 +71,14 @@ public class Chasm {
     public static void heroFall(int pos) {
 
         jumpConfirmed = false;
+
+        for(Hazard hazard:Dungeon.level.hazards)
+        {
+            if(hazard instanceof Frisbee)
+            {
+                ((Frisbee) hazard).returnAndDestroy();
+            }
+        }
 
         Sample.INSTANCE.play(Assets.SND_FALLING);
 

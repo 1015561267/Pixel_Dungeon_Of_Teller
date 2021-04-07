@@ -892,4 +892,18 @@ public abstract class Char extends Actor {
         DEMONIC,
         IMMOVABLE
     }
+
+    public int removefrommap()
+    {
+
+        int p = pos;
+        this.pos = 0;
+        return p;
+    }
+
+    public void addintomap(int p)
+    {
+        this.pos = p;
+        return;
+    }
 }
