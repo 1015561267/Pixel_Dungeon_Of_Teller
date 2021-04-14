@@ -139,12 +139,13 @@ public class Pushing extends Actor {
 
                 int stopPos = knockway.path.get(Power);//get the block the char should stay
                 int backPos = knockway.path.get(Power-1);
-                for(int dist:knockway.subPath(1, knockway.dist))
+                for(int dist:knockway.subPath(1, knockway.collisionPos))
                 {
-                    if(Dungeon.level.map[dist] ==Terrain.DOOR)
+                    if(Dungeon.level.map[dist] == Terrain.DOOR)
                     {
                         stopPos = dist;//get the block the char should stay
                         backPos = knockway.path.get(knockway.path.indexOf(dist)-1);
+                        break;
                     }
                 }
                 // gotta make those final for the sake of using callback mechanics
@@ -155,7 +156,7 @@ public class Pushing extends Actor {
                     final int knockPos = backPos;
 
                     final Char pushedInto = Char.findChar( finalPos );
-                move( ch , finalPos , new Callback() {
+                    move( ch , finalPos , new Callback() {
                     @Override
                     public void call(){
                         if( pushedInto != null || Dungeon.level.solid[ finalPos ] )//this means this pos is occupied,so draw back to one block before the path

@@ -126,12 +126,12 @@ public class WandOfBlastWave extends DamageWand {
                     //Ballistica trajectory = new Ballistica(ch.pos, ch.pos + i, Ballistica.MAGIC_BOLT);
                     int strength = 2 + Math.round(level() / 2f);
 
-                    Integer chpos = ch.pos;
-                    Integer userpos = curUser.pos;
+                    //Integer chpos = ch.pos;
+                    //Integer userpos = curUser.pos;
 
-                    GLog.n(bolt.collisionPos.toString());
-                    GLog.h(chpos.toString());
-                    GLog.w(userpos.toString());
+                    //GLog.n(bolt.collisionPos.toString());
+                    //GLog.h(chpos.toString());
+                    //GLog.w(userpos.toString());
 
                     Pushing.knockback( ch, bolt.collisionPos, strength);
                 }
@@ -152,11 +152,11 @@ public class WandOfBlastWave extends DamageWand {
             {
                 int strength = level() + 3;
 
-                Integer chpos = ch.pos;
-                Integer userpos = curUser.pos;
+                //Integer chpos = ch.pos;
+                //Integer userpos = curUser.pos;
 
-                GLog.w(chpos.toString());
-                GLog.h(userpos.toString());
+                //GLog.w(chpos.toString());
+                //GLog.h(userpos.toString());
 
                 Pushing.knockback( ch, curUser.pos, strength);
                 //throwChar(ch, trajectory, strength);
