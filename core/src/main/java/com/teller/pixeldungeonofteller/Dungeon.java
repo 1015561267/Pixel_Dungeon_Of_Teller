@@ -721,6 +721,7 @@ public class Dungeon {
     public static int flee(Char ch, int cur, int from, boolean[] pass, boolean[] visible) {
 
         setupPassable();
+
         if (ch.flying) {
             BArray.or(pass,Dungeon.level.avoid, passable);
         } else {

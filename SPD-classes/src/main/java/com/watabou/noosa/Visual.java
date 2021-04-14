@@ -147,6 +147,13 @@ public class Visual extends Gizmo {
         return p;
     }
 
+    public PointF center( Visual v ) {
+        return new PointF(
+                x + (width() - v.width())/2f,
+                y + (height() - v.height())/2f
+        );
+    }
+
     public float width() {
         return width * scale.x;
     }

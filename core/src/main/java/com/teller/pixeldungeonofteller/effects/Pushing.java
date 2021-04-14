@@ -107,46 +107,34 @@ public class Pushing extends Actor {
         ch.pos = newPos;
     }
 
-    /*//FIXME I'd like to imitate ya's knockback effect but not mess with existed things like guard's chain etc
-    public void dropneighbour( final Char ch,int from,int to)
-    {
-        sprite = ch.sprite;
-        this.from = from;
-        this.to = to;
-        this.callback = null;
-        if (sprite != null) {
-            if (effect == null) {
-                new Effect();
-            }
-        }
-        Actor.remove( Pushing.this );
-    }
-     */
-
-
     public static void knockback( final Char ch, int pushedFrom, int Power ) {
         if( Power > 0 ){
             // first, we "remove" target from the tilemap and check where it
             // should land when knocked back, as if it weren't there
 
-            //Actor.freeCell( ch );//we wants to avoid ballistica think here is a target or unpassable(that's how it works)
-
-            Ballistica vector = new Ballistica(pushedFrom,ch.pos,Ballistica.MAGIC_BOLT);
+            Ballistica vector = new Ballistica(pushedFrom,ch.pos,ch.pos,Ballistica.MAGIC_BOLT);
             //note that pushFrom is the pos where the pusher stand,and we wants a vector so it shouldn't stop at target point
             // then we calcualte where the targer would actually land, considering
             // the maximum distance which it is supposed to be knocked back
             int pushedTo = vector.collisionPos;//this step get the collision point,in order to conclude the distance
 
             int index = vector.path.indexOf(pushedTo);
-            int hitted = vector.path.get(index+1);//we get one block after collisionpos as it's the pos it should stop when this happens,but not it should when it doesn't happen
 
-            Ballistica knockway = new Ballistica( ch.pos,hitted,Ballistica.MAGIC_BOLT);//build another ballistica to get real distance how long it really fly
+            int hitted = vector.path.get(index);
+            if(index+1 < vector.path.size())
+            {
+                hitted = vector.path.get(index+1);
+            }//we get one block after collisionpos as it's the pos it should stop when this happens,but not it should when it doesn't happen
+
+            //Ballistica knockway = new Ballistica( ch.pos,hitted,Ballistica.MAGIC_BOLT);//build another ballistica to get real distance how long it really fly
             // note that all ballistica path is a full path that go through the whole map
-
-           // Ballistica knockway = new Ballistica( ch.pos,pushedTo,Ballistica.PROJECTILE);//build another ballistica to get real distance how long it really fly
-
+            Ballistica knockway = new Ballistica( ch.pos,hitted,Ballistica.MAGIC_BOLT);//build another ballistica to get real distance how long it really fly
 
             Power = Math.min( knockway.dist , Power );//then we compare two inorder to know what will happen first between fly to end and crush into sth
+
+            if (pushedTo == ch.pos)//in some condition.like use blast wave against narrow wall,first collisonPos is same with ch's pos,then Power would always be 0,and we need plus one otherwise code below will be invalid
+            { Power++; }
+
             if( Power > 0 ){
                 // gotta make those final for the sake of using callback mechanics
                     final int finalPos = knockway.path.get(Power);//get the block the char should stay
@@ -157,10 +145,25 @@ public class Pushing extends Actor {
                     public void call(){
                         if( pushedInto != null || Dungeon.level.solid[ finalPos ] )//this means this pos is occupied,so draw back to one block before the path
                         {
-                            hitObstacle( ch, knockPos);
+                            if(Dungeon.level.map[finalPos] == Terrain.DOOR)
+                            {
+                                Door.enter(finalPos);
+                            }
+                            if(Dungeon.level.map[knockPos] == Terrain.CHASM) // FIXME this will cause hero fall before bounce back
+                            {
+                                move(ch, knockPos, new Callback() {
+                                    @Override
+                                    public void call() {
+                                        Dungeon.level.press( ch.pos, ch );
+                                    }
+                                });
+                                return;
+                            }
+                            else  hitObstacle( ch, knockPos);
                         }
                         if( ch.isAlive() ){
                             if( ch instanceof Mob ){
+                                ((Mob) ch).beckon(ch.pos);
                                 ch.delay( 1f );
                             }
                             // apply target's current position and activate traps there
@@ -173,7 +176,7 @@ public class Pushing extends Actor {
                             ch.die(this);
                         }
                         if( pushedInto != null ){
-                            knockback( pushedInto, ch.pos, 1 );
+                            knockback( pushedInto, knockPos, 1 );
                         }
                     }
             });
@@ -183,7 +186,7 @@ public class Pushing extends Actor {
             // if the target is immovable, then just deal damage straight up
             // don't wanna this wand to be useless against Yog, for instance
             //dealDamage( ch, damage );
-            GameScene.flash(0xFFFF);
+            //GameScene.flash(0xFFFF);
         }
     }
 

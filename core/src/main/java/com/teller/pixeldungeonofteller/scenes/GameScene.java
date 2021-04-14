@@ -369,8 +369,12 @@ public class GameScene extends PixelScene {
     public static void updateMap(int cell) {
         if (scene != null) {
             scene.tiles.updateMapCell(cell);
-            scene.terrainFeatures.updateMapCell(cell);
+
+            scene.visualGrid.updateMapCell( cell );
             scene.terrainFeatures.updateMapCell( cell );
+           // scene.raisedTerrain.updateMapCell( cell );
+
+           // scene.terrainFeatures.updateMapCell( cell );
             scene.walls.updateMapCell( cell );
             updateFog( cell, 1 );
         }
@@ -622,6 +626,7 @@ public class GameScene extends PixelScene {
                 GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
             }
         };
+        //water.autoAdjust = true;
         terrain.add(water);
 
         ripples = new Group();

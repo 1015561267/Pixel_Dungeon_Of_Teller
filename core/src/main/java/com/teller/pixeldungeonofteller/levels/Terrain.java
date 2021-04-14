@@ -67,6 +67,8 @@ public class Terrain {
 
     public static final int WATER = 29;
 
+    public static final int ICE = 30;
+
     public static final int PASSABLE = 0x01;
     public static final int LOS_BLOCKING = 0x02;
     public static final int FLAMABLE = 0x04;
@@ -76,6 +78,7 @@ public class Terrain {
     public static final int LIQUID = 0x40;
     public static final int PIT = 0x80;
 
+
     public static final int[] flags = new int[256];
 
     static {
@@ -83,11 +86,13 @@ public class Terrain {
         flags[EMPTY] = PASSABLE;
         flags[GRASS] = PASSABLE | FLAMABLE;
         flags[EMPTY_WELL] = PASSABLE;
+
         flags[WATER] = PASSABLE | LIQUID;
+
         flags[WALL] = LOS_BLOCKING | SOLID;
         flags[DOOR] = PASSABLE | LOS_BLOCKING | FLAMABLE | SOLID;
         flags[OPEN_DOOR] = PASSABLE | FLAMABLE;
-        flags[ENTRANCE] = PASSABLE/* | SOLID*/;
+        flags[ENTRANCE] = PASSABLE;
         flags[EXIT] = PASSABLE;
         flags[EMBERS] = PASSABLE;
         flags[LOCKED_DOOR] = LOS_BLOCKING | SOLID;
@@ -111,6 +116,8 @@ public class Terrain {
         flags[STATUE_SP] = flags[STATUE];
         flags[BOOKSHELF] = flags[BARRICADE];
         flags[ALCHEMY] = PASSABLE;
+
+        flags[ICE] = PASSABLE;
 
     }
 

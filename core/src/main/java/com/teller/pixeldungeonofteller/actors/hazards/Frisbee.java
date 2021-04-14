@@ -129,7 +129,7 @@ public class Frisbee extends Hazard {
             //}
             //parent.add( burning );
 
-            angularSpeed = 1440;
+            angularSpeed = 1280;
             origin.set( width / 2, height - DungeonTilemap.SIZE / 2 );
         }
 

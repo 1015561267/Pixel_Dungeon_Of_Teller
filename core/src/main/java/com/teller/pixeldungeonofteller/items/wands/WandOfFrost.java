@@ -34,7 +34,9 @@ import com.teller.pixeldungeonofteller.effects.MagicMissile;
 import com.teller.pixeldungeonofteller.items.Heap;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.MagesStaff;
 import com.teller.pixeldungeonofteller.levels.Level;
+import com.teller.pixeldungeonofteller.levels.Terrain;
 import com.teller.pixeldungeonofteller.mechanics.Ballistica;
+import com.teller.pixeldungeonofteller.scenes.GameScene;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
@@ -61,6 +63,13 @@ public class WandOfFrost extends DamageWand {
         if (heap != null) {
             heap.freeze();
         }
+
+        if(Dungeon.level.map[bolt.collisionPos] == Terrain.WATER)
+        {
+            Dungeon.level.set(bolt.collisionPos, Terrain.ICE);
+            GameScene.updateMap(bolt.collisionPos);
+        }
+
         Char ch = Actor.findChar(bolt.collisionPos);
         if (ch != null) {
             int damage = damageRoll();

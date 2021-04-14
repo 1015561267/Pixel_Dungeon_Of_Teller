@@ -21,6 +21,7 @@
 package com.teller.pixeldungeonofteller.effects.particles;
 
 import com.teller.pixeldungeonofteller.Dungeon;
+import com.teller.pixeldungeonofteller.levels.Terrain;
 import com.teller.pixeldungeonofteller.tiles.DungeonTilemap;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
@@ -94,8 +95,7 @@ public class FlowParticle extends PixelParticle {
 
         @Override
         public void update() {
-
-            if (visible = Dungeon.visible[pos]) {
+            if (visible = Dungeon.visible[pos] && Dungeon.level.map[pos] == Terrain.WATER) {
 
                 super.update();
 

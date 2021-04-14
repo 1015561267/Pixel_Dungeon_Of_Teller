@@ -44,7 +44,6 @@ public class WallBlockingTilemap extends Tilemap {
     @Override
     public synchronized void updateMapCell(int cell) {
         if (!wall(cell)) {
-
             //clear empty floor tiles and cells which are visible
             if (!fogHidden(cell) || !wall(cell + mapWidth)) {
                 curr = CLEARED;

@@ -29,6 +29,7 @@ import com.teller.pixeldungeonofteller.effects.BlobEmitter;
 import com.teller.pixeldungeonofteller.effects.particles.FlameParticle;
 import com.teller.pixeldungeonofteller.items.Heap;
 import com.teller.pixeldungeonofteller.levels.Level;
+import com.teller.pixeldungeonofteller.levels.Terrain;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.plants.Plant;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
@@ -87,6 +88,13 @@ public class Fire extends Blob {
     }
 
     private void burn(int pos) {
+
+        if(Dungeon.level.map[pos] == Terrain.ICE)
+        {
+            Dungeon.level.set(pos, Terrain.WATER);
+            GameScene.updateMap(pos);
+        }
+
         Char ch = Actor.findChar(pos);
         if (ch != null) {
             Buff.affect(ch, Burning.class).reignite(ch);

@@ -98,13 +98,9 @@ public class WindParticle extends PixelParticle {
         public void update() {
 
             if (visible = Dungeon.visible[pos]) {
-
                 super.update();
-
                 if ((delay -= Game.elapsed) <= 0) {
-
                     delay = Random.Float(5);
-
                     ((WindParticle) recycle(WindParticle.class)).reset(
                             x + Random.Float(DungeonTilemap.SIZE),
                             y + Random.Float(DungeonTilemap.SIZE));

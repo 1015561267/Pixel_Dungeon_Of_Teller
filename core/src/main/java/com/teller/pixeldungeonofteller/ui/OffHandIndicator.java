@@ -292,7 +292,8 @@ public class OffHandIndicator extends Button {
                 Dungeon.visible[lastTarget.pos]) {
             targeting = true;
             lastTarget.sprite.parent.add(crossM);
-            crossM.point(DungeonTilemap.tileToWorld(lastTarget.pos));
+            crossM.point(lastTarget.sprite.center(crossM));
+//            crossM.point(DungeonTilemap.tileToWorld(lastTarget.pos));
             //crossB.x = x + (width - crossB.width) / 2;
             //crossB.y = y + (height - crossB.height) / 2;
             //crossB.visible = true;

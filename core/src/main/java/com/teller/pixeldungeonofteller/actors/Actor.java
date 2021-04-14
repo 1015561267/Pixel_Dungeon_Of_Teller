@@ -323,16 +323,10 @@ public abstract class Actor implements Bundlable {
     }
 
     public static void freeCell(Char ch){
-
         chars.remove(ch);
-        Dungeon.level.passable[ch.pos] = true;
-
     }
 
     public static void occupyCell(Char ch){
-
         chars.add(ch);
-        Dungeon.level.passable[ch.pos] = false;
-
     }
 }

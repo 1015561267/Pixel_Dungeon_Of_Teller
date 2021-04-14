@@ -22,19 +22,23 @@ package com.teller.pixeldungeonofteller.ui;
 
 import com.teller.pixeldungeonofteller.Assets;
 import com.teller.pixeldungeonofteller.Dungeon;
+import com.teller.pixeldungeonofteller.items.DewVial;
 import com.teller.pixeldungeonofteller.items.Item;
 import com.teller.pixeldungeonofteller.items.KindOfWeapon;
 import com.teller.pixeldungeonofteller.items.armor.Armor;
+import com.teller.pixeldungeonofteller.items.artifacts.Artifact;
 import com.teller.pixeldungeonofteller.items.keys.Key;
 import com.teller.pixeldungeonofteller.items.keys.SkeletonKey;
 import com.teller.pixeldungeonofteller.items.potions.Potion;
 import com.teller.pixeldungeonofteller.items.scrolls.Scroll;
+import com.teller.pixeldungeonofteller.items.wands.Wand;
 import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.items.weapon.melee.MeleeWeapon;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.AttachedWeapon.NinjaProsthesis;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.Flintlock;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.SubmachineGun;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.MagicBook;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.MagesStaff;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.JavelinBarrel;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.PixelScene;
@@ -367,6 +371,9 @@ public class ItemSlot extends Button {
                     }
                 }
         }
+
+
+
         else if (item instanceof Key && !(item instanceof SkeletonKey)) {
             topRight.text(Messages.format(TXT_KEY_DEPTH, ((Key) item).depth));
             topRight.measure();
@@ -396,8 +403,15 @@ public class ItemSlot extends Button {
         } else {
             bottomRight.text(null);
         }
-        if(item.stackable) {
+        if(item.stackable || item instanceof DewVial || item instanceof Wand || item instanceof MagesStaff) {
             topLeft.text(item.status());
+            topLeft.measure();
+        }
+
+        if(item instanceof Artifact && item.status() != null)
+        {
+            topLeft.text(item.status());
+            topLeft.measure();
         }
         layout();
     }

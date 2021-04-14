@@ -62,6 +62,16 @@ public class Ballistica {
             collisionPos = path.get(dist = path.size() - 1);
     }
 
+    public Ballistica(int from, int to, int params,int dismiss) {//FIXME I have no good way to dismiss one char when pushing,as there are not mature freecell and occupycell function yet
+        sourcePos = from;
+        build(from, to, dismiss,(params & STOP_TARGET) > 0, (params & STOP_CHARS) > 0, (params & STOP_TERRAIN) > 0);
+        if (collisionPos != null)
+            dist = path.indexOf(collisionPos);
+        else
+            collisionPos = path.get(dist = path.size() - 1);
+    }
+
+
     private void build(int from, int to, boolean stopTarget, boolean stopChars, boolean stopTerrain) {
         int w = Dungeon.level.width();
 
@@ -129,7 +139,72 @@ public class Ballistica {
         }
     }
 
+    private void build(int from, int to, int dismiss,boolean stopTarget, boolean stopChars, boolean stopTerrain) {
+        int w = Dungeon.level.width();
 
+        boolean hit = false;//use this to detect if hits a wall and make it to inWall,see Pushing.java
+
+        int x0 = from % w;
+        int x1 = to % w;
+        int y0 = from / w;
+        int y1 = to / w;
+
+        int dx = x1 - x0;
+        int dy = y1 - y0;
+
+        int stepX = dx > 0 ? +1 : -1;
+        int stepY = dy > 0 ? +1 : -1;
+
+        dx = Math.abs(dx);
+        dy = Math.abs(dy);
+
+        int stepA;
+        int stepB;
+        int dA;
+        int dB;
+
+        if (dx > dy) {
+
+            stepA = stepX;
+            stepB = stepY * w;
+            dA = dx;
+            dB = dy;
+
+        } else {
+
+            stepA = stepY * w;
+            stepB = stepX;
+            dA = dy;
+            dB = dx;
+
+        }
+
+        int cell = from;
+
+        int err = dA / 2;
+        while (Dungeon.level.insideMap(cell)) {
+            //if we're in a wall, collide with the previous cell along the path.
+            if (stopTerrain && cell != sourcePos && !Dungeon.level.passable[cell] && !Dungeon.level.avoid[cell]) {
+                collide(path.get(path.size() - 1));
+            }
+
+            path.add(cell);
+
+            if ((stopTerrain && cell != sourcePos && Dungeon.level.losBlocking[cell])
+                    || (cell != sourcePos && stopChars && Actor.findChar(cell) != null && cell!= dismiss)//use dismiss to let the char pretend to 'avoid' consult
+                    || (cell == to && stopTarget)) {
+                collide(cell);
+            }
+
+            cell += stepA;
+
+            err += dB;
+            if (err >= dA) {
+                err = err - dA;
+                cell = cell + stepB;
+            }
+        }
+    }
 
 
     //we only want to record the first position collision occurs at.

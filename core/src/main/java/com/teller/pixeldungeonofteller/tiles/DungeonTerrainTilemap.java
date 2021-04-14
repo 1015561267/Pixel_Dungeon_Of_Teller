@@ -34,6 +34,18 @@ public class DungeonTerrainTilemap extends DungeonTilemap {
             return DungeonTileSheet.stitchChasmTile( pos > mapWidth ? map[pos - mapWidth] : -1);
         }
 
+        else if(tile == Terrain.ICE)
+        {
+            return DungeonTileSheet.stitchIceTile(
+                    map[pos + PathFinder.CIRCLE4[0]],
+                    map[pos + PathFinder.CIRCLE4[1]],
+                    map[pos + PathFinder.CIRCLE4[2]],
+                    map[pos + PathFinder.CIRCLE4[3]]
+            );
+        }
+
+
+
         if (!flat) {
             if ((DungeonTileSheet.doorTile(tile))) {
                 return DungeonTileSheet.getRaisedDoorTile(tile, map[pos - mapWidth]);

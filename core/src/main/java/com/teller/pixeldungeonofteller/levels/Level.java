@@ -170,6 +170,7 @@ public abstract class Level implements Bundlable {
     public int color1 = 0x004400;
     public int color2 = 0x88CC44;
     protected ArrayList<Item> itemsToSpawn = new ArrayList<>();
+
     protected Group visuals;
 
     public void create() {
@@ -505,6 +506,7 @@ public abstract class Level implements Bundlable {
             visuals = new Group();
         } else {
             visuals.clear();
+            visuals.camera = null;
         }
         for (int i = 0; i < length(); i++) {
             if (pit[i]) {
@@ -674,6 +676,7 @@ public abstract class Level implements Bundlable {
         level.avoid[cell]			= (flags & Terrain.AVOID) != 0;
         level.pit[cell]			    = (flags & Terrain.PIT) != 0;
         level.water[cell]			= terrain == Terrain.WATER;
+
     }
 
     public Heap drop(Item item, int cell) {
@@ -797,6 +800,7 @@ public abstract class Level implements Bundlable {
             trap.reveal();
         GameScene.updateMap(cell);
     }
+
 
     public int fallCell( boolean fallIntoPit ) {
         int result;
@@ -1026,6 +1030,10 @@ public abstract class Level implements Bundlable {
                 return Messages.get(Level.class, "grass_name");
             case Terrain.WATER:
                 return Messages.get(Level.class, "water_name");
+
+            case Terrain.ICE:
+                return Messages.get(Level.class, "ice_name");
+
             case Terrain.WALL:
             case Terrain.WALL_DECO:
             case Terrain.SECRET_DOOR:
@@ -1079,6 +1087,10 @@ public abstract class Level implements Bundlable {
                 return Messages.get(Level.class, "chasm_desc");
             case Terrain.WATER:
                 return Messages.get(Level.class, "water_desc");
+
+            case Terrain.ICE:
+                return Messages.get(Level.class, "ice_desc");
+
             case Terrain.ENTRANCE:
                 return Messages.get(Level.class, "entrance_desc");
             case Terrain.EXIT:

@@ -78,11 +78,22 @@ public class DungeonTileSheet {
         return result;
     }
 
-
-    public static boolean floorTile(int tile){
-        return tile == Terrain.WATER || directVisuals.get(tile, CHASM) < CHASM;
+    /**********************************************************************
+     * Ice Tiles,just like water
+     **********************************************************************/
+    public static final int ICE =                                         xy(1, 16);   //16 slots
+    public static int stitchIceTile(int top, int right, int bottom, int left){
+        int result = ICE;
+        if (waterStitcheable.contains(top))     result += 1;
+        if (waterStitcheable.contains(right))   result += 2;
+        if (waterStitcheable.contains(bottom))  result += 4;
+        if (waterStitcheable.contains(left))    result += 8;
+        return result;
     }
 
+    public static boolean floorTile(int tile){
+        return (tile == Terrain.WATER || tile == Terrain.ICE) || directVisuals.get(tile, CHASM) < CHASM;
+    }
 
     /**********************************************************************
      * Chasm Tiles
@@ -94,6 +105,7 @@ public class DungeonTileSheet {
     public static final int CHASM_FLOOR_SP          = CHASM+2;
     public static final int CHASM_WALL              = CHASM+3;
     public static final int CHASM_WATER             = CHASM+4;
+
 
     //tiles that can stitch with chasms (from above), and which visual represents the stitching
     public static SparseIntArray chasmStitcheable = new SparseIntArray(32);
@@ -121,6 +133,8 @@ public class DungeonTileSheet {
 
         //water
         chasmStitcheable.put( Terrain.WATER,        CHASM_WATER );
+
+        chasmStitcheable.put( Terrain.ICE,        CHASM_WATER );
     }
 
     public static int stitchChasmTile(int above){

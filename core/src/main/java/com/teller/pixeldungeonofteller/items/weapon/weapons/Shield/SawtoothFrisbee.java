@@ -10,6 +10,8 @@ import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.items.EquipableItem;
 import com.teller.pixeldungeonofteller.items.Item;
 import com.teller.pixeldungeonofteller.items.KindOfWeapon;
+import com.teller.pixeldungeonofteller.levels.Terrain;
+import com.teller.pixeldungeonofteller.levels.features.Door;
 import com.teller.pixeldungeonofteller.mechanics.Ballistica;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.CellSelector;
@@ -104,7 +106,6 @@ public class SawtoothFrisbee extends Shield {
         if (curItem.isEquipped(curUser))
         {
             curUser.belongings.offhandweapon = null;
-            //curItem.collect();
             GameScene.scene.offhandupdate();
         }
 
@@ -125,6 +126,11 @@ public class SawtoothFrisbee extends Shield {
                         }
                         Frisbee frisbee = Hazard.findHazard(dst, Frisbee.class);
                         if (frisbee == null) {
+                            if(Dungeon.level.map[dst] == Terrain.DOOR)
+                            {
+                                Door.enter(dst);
+                            }
+
                             frisbee = new Frisbee();
                             frisbee.setValues(dst,duration(), (SawtoothFrisbee) curItem);
                             GameScene.add(frisbee);
@@ -160,14 +166,12 @@ public class SawtoothFrisbee extends Shield {
                         {
                             Dungeon.hero.belongings.offhandweapon = (KindOfWeapon) curItem;
                             GameScene.scene.offhandupdate();
-                            GLog.h("Equipped");
                         }
                         else
                         {
                             if(!curItem.collect())
                             {
                                 Dungeon.level.drop(curItem,end);
-                                GLog.h("Dropped");
                             }
                         }
                     }
@@ -179,8 +183,6 @@ public class SawtoothFrisbee extends Shield {
     {
         Integer start = pos;
         final Integer end = Dungeon.hero.pos;
-
-        GLog.n(start.toString());
 
         curItem = this;
 

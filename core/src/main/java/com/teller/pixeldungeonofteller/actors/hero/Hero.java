@@ -1412,24 +1412,23 @@ public class Hero extends Char {
 
         if (target != null && (QuickSlotButton.lastTarget == null ||
                 !QuickSlotButton.lastTarget.isAlive() ||
-                ((QuickSlotButton.lastTarget.pos < fieldOfView.length) && !fieldOfView[QuickSlotButton.lastTarget.pos]) ||
-                QuickSlotButton.lastTarget.pos > fieldOfView.length
-                )) {
+                QuickSlotButton.lastTarget.pos > fieldOfView.length ||
+                !fieldOfView[QuickSlotButton.lastTarget.pos]
+        )) {
             QuickSlotButton.target(target);
         }
 
         if (target != null && (MainHandIndicator.lastTarget == null ||
                 !MainHandIndicator.lastTarget.isAlive() ||
-                ((MainHandIndicator.lastTarget.pos < fieldOfView.length) && !fieldOfView[MainHandIndicator.lastTarget.pos]) ||
-                MainHandIndicator.lastTarget.pos > fieldOfView.length
+                MainHandIndicator.lastTarget.pos > fieldOfView.length ||
+                !fieldOfView[MainHandIndicator.lastTarget.pos]
         )) {
             MainHandIndicator.target(target);
         }
         if (target != null && (OffHandIndicator.lastTarget == null ||
                 !OffHandIndicator.lastTarget.isAlive() ||
-                ((OffHandIndicator.lastTarget.pos < fieldOfView.length) && !fieldOfView[OffHandIndicator.lastTarget.pos]) ||
-                !fieldOfView[OffHandIndicator.lastTarget.pos] ||
-                MainHandIndicator.lastTarget.pos > fieldOfView.length
+                OffHandIndicator.lastTarget.pos > fieldOfView.length ||
+                !fieldOfView[OffHandIndicator.lastTarget.pos]
                 )) {
             OffHandIndicator.target(target);
         }
@@ -1461,7 +1460,7 @@ public class Hero extends Char {
 
         int step = -1;
 
-        if (Dungeon.level.adjacent(pos, target)) {
+        if (Dungeon.level.adjacent(pos, target) && buff(Vertigo.class) == null) {
 
             path = null;
             if (Actor.findChar(target) == null) {
@@ -1515,7 +1514,24 @@ public class Hero extends Char {
         }
 
         if (step != -1) {
+
             int moveTime = 1;
+
+            if (Dungeon.level.adjacent(step, pos) && buff(Vertigo.class) != null) {
+                sprite.interruptMotion();
+                int newPos = pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
+                if (!(Dungeon.level.passable[newPos] || Dungeon.level.avoid[newPos]) || Actor.findChar(newPos) != null) {
+                    curAction = new HeroAction.Move(newPos);
+                    sprite.move(pos, newPos);
+                    spend(moveTime / speed());
+                    return false;
+                }
+                    else {
+                    step = newPos;
+                    curAction = new HeroAction.Move(step);
+                }
+            }
+
             if (belongings.armor != null && belongings.armor.hasGlyph(Stone.class) &&
                     (Dungeon.level.map[pos] == Terrain.DOOR
                             || Dungeon.level.map[pos] == Terrain.OPEN_DOOR
@@ -1523,9 +1539,38 @@ public class Hero extends Char {
                             || Dungeon.level.map[step] == Terrain.OPEN_DOOR)) {
                 moveTime *= 2;
             }
-            sprite.move(pos, step);
-            move(step);
-            spend(moveTime / speed());
+
+            int newstep =  slipto(pos,step);
+            int oripos = pos;
+
+            if(newstep!=step)
+            {
+                curAction = new HeroAction.Move(newstep);
+                sprite.move(pos, newstep);
+                move(newstep);
+                spend(moveTime / speed());
+            }
+            else
+            {
+                sprite.move(pos, step);
+                move(step);
+                spend(moveTime / speed());
+            }
+
+            if (belongings.offhandweapon instanceof SubmachineGun)
+            {
+                if(((SubmachineGun) belongings.offhandweapon).check()) {
+                    Actor.addDelayed(new SubmachineGun.VirtualActor(this,pos,newstep-oripos+newstep), -1);
+                }
+                else
+                { reloadfirearm(-moveTime / speed()); }
+            }
+            else
+            {
+                //FIXME:It will conduct much more unnecessary code if I try to paste it in all other action,so I try to just let firearm gain sometime to balance it's consume in next scentence
+                reloadfirearm(-moveTime / speed());
+            }
+
             return true;
         } else {
             return false;
@@ -1771,27 +1816,6 @@ public class Hero extends Char {
 
     @Override
     public void move(final int step) {
-        int moveTime = 1;
-        if (belongings.armor != null && belongings.armor.hasGlyph(Stone.class) &&
-                (Dungeon.level.map[pos] == Terrain.DOOR
-                        || Dungeon.level.map[pos] == Terrain.OPEN_DOOR
-                        || Dungeon.level.map[step] == Terrain.DOOR
-                        || Dungeon.level.map[step] == Terrain.OPEN_DOOR)) {
-            moveTime *= 2;
-        }
-        if (belongings.offhandweapon instanceof SubmachineGun)
-        {
-            if(((SubmachineGun) belongings.offhandweapon).check()) {
-                Actor.addDelayed(new SubmachineGun.VirtualActor(this,step,step-pos+step), -1);
-            }
-            else
-            { reloadfirearm(-moveTime / speed()); }
-        }
-        else
-        {
-            //FIXME:It will conduct much more unnecessary code if I try to paste it in all other action,so I try to just let firearm gain sometime to balance it's consume in next scentence
-            reloadfirearm(-moveTime / speed());
-        }
         super.move(step);
         if (!flying) {
             if (Dungeon.level.water[pos]) {
@@ -1802,10 +1826,9 @@ public class Hero extends Char {
         }
 
         Heap heap = Dungeon.level.heaps.get( step );
-        if(
-                heap != null && heap.type == Type.HEAP && heap.peek() != null
-                        && heap.peek() instanceof Tamahawk
-        )
+
+        if(heap != null && heap.type == Type.HEAP && heap.peek() != null
+                        && heap.peek() instanceof Tamahawk)
         {
             Item item = heap.peek();
             if(item instanceof Tamahawk)

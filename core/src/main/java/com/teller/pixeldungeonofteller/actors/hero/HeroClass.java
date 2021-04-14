@@ -49,6 +49,8 @@ import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfMagicMapping;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfMagicalInfusion;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfUpgrade;
 import com.teller.pixeldungeonofteller.items.wands.WandOfBlastWave;
+import com.teller.pixeldungeonofteller.items.wands.WandOfFireblast;
+import com.teller.pixeldungeonofteller.items.wands.WandOfFrost;
 import com.teller.pixeldungeonofteller.items.wands.WandOfMagicMissile;
 import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.items.weapon.missiles.Boomerang;
@@ -106,9 +108,9 @@ public enum HeroClass {
         }
         new HiddenBlade().identify().collect();
         //new NinjaProsthesis().identify().collect();
-        new Gauntlet().identify().collect();
+        //new Gauntlet().identify().collect();
         //new JavelinBarrel().identify().collect();
-        new Nunchaku().identify().collect();
+        //new Nunchaku().identify().collect();
         new OldBook().addRaw().identify().collect();
         new BookOfLight().addRaw().identify().collect();
         new SubmachineGun().identify().collect();
@@ -116,13 +118,17 @@ public enum HeroClass {
         //new Tamahawk().identify().collect();
         new Tamahawk().identify().collect();
 
-        new PlateArmor().identify().collect();
-        new Dirk().identify().collect();
-        new Flail().identify().collect();
+        //new PlateArmor().identify().collect();
+        //new Dirk().identify().collect();
+        //new Flail().identify().collect();
 
         new SawtoothFrisbee().identify().collect();
 
         new WandOfBlastWave().identify().collect();
+
+        new WandOfFrost().identify().collect();
+
+        new WandOfFireblast().identify().collect();
 
         MagicPage m1 = new MagicPage();
         m1.getspell(new MagicMissile()).collect();

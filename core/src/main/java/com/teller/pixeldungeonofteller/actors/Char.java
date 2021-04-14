@@ -825,17 +825,6 @@ public abstract class Char extends Actor {
 
     public void move(int step) {
 
-        if (Dungeon.level.adjacent(step, pos) && buff(Vertigo.class) != null) {
-            sprite.interruptMotion();
-            int newPos = pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
-            if (!(Dungeon.level.passable[newPos] || Dungeon.level.avoid[newPos]) || Actor.findChar(newPos) != null)
-                return;
-            else {
-                sprite.move(pos, newPos);
-                step = newPos;
-            }
-        }
-
         if (Dungeon.level.map[pos] == Terrain.OPEN_DOOR) {
             Door.leave(pos);
         }
@@ -853,6 +842,26 @@ public abstract class Char extends Actor {
         if (!flying) {
             Dungeon.level.press( pos, this );
         }
+    }
+
+    public int slipto(int pos,int step)//FIXME this would consult the final pos it should land when move on ice,using recursion may reduce performance
+    {
+        if(Dungeon.level.map[step] == Terrain.ICE && !flying)
+        {
+                int newpos = step + (step - pos);
+
+                boolean haschar = (Actor.findChar(newpos) != null);
+
+                if (Dungeon.level.map[newpos] == Terrain.ICE && !haschar) {
+                    move(newpos);
+                    return slipto(step, newpos);
+                } else if (Dungeon.level.solid[newpos] || haschar) {
+                    return step;
+                } else {
+                    return newpos;
+                }
+        }
+        else return step;
     }
 
     public int distance(Char other) {

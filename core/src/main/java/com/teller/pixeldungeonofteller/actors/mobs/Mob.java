@@ -36,6 +36,7 @@ import com.teller.pixeldungeonofteller.actors.buffs.Noise;
 import com.teller.pixeldungeonofteller.actors.buffs.Sleep;
 import com.teller.pixeldungeonofteller.actors.buffs.SoulMark;
 import com.teller.pixeldungeonofteller.actors.buffs.Terror;
+import com.teller.pixeldungeonofteller.actors.buffs.Vertigo;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.actors.hero.HeroSubClass;
 import com.teller.pixeldungeonofteller.effects.Speck;
@@ -359,7 +360,6 @@ public abstract class Mob extends Char {
                     int last = path.removeLast();
 
                     if (path.isEmpty()) {
-
                         //shorten for a closer one
                         if (Dungeon.level.adjacent(target, pos)) {
                             path.add(target);
@@ -372,24 +372,19 @@ public abstract class Mob extends Char {
                     } else if (!path.isEmpty()) {
                         //if the new target is simply 1 earlier in the path shorten the path
                         if (path.getLast() == target) {
-
                             //if the new target is closer/same, need to modify end of path
                         } else if (Dungeon.level.adjacent(target, path.getLast())) {
                             path.add(target);
-
                             //if the new target is further away, need to extend the path
                         } else {
                             path.add(last);
                             path.add(target);
                         }
                     }
-
                 } else {
                     newPath = true;
                 }
-
             }
-
 
             if (!newPath) {
                 //looks ahead for path validity, up to length-1 or 4, but always at least 1.
@@ -415,6 +410,19 @@ public abstract class Mob extends Char {
             step = path.removeFirst();
         }
         if (step != -1) {
+
+            if (Dungeon.level.adjacent(step, pos) && buff(Vertigo.class) != null) {
+                sprite.interruptMotion();
+                int newPos = pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
+                if (!(Dungeon.level.passable[newPos] || Dungeon.level.avoid[newPos]) || Actor.findChar(newPos) != null) {
+                    sprite.move(pos, newPos);
+                    return false;
+                }
+                else {
+                    step = newPos;
+                }
+            }
+            step = slipto(pos,step);
             move(step);
             return true;
         } else {
@@ -427,6 +435,18 @@ public abstract class Mob extends Char {
                 Dungeon.level.passable,
                 fieldOfView);
         if (step != -1) {
+            if (Dungeon.level.adjacent(step, pos) && buff(Vertigo.class) != null) {
+                sprite.interruptMotion();
+                int newPos = pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
+                if (!(Dungeon.level.passable[newPos] || Dungeon.level.avoid[newPos]) || Actor.findChar(newPos) != null) {
+                    sprite.move(pos, newPos);
+                    return false;
+                }
+                else {
+                    step = newPos;
+                }
+            }
+            step = slipto(pos,step);
             move(step);
             return true;
         } else {
@@ -964,6 +984,7 @@ public abstract class Mob extends Char {
             }
 
             int oldPos = pos;
+
             if (target != -1 && getFurther(target)) {
 
                 spend(1 / speed());
