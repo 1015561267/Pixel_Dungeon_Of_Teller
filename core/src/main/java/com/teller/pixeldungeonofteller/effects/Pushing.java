@@ -139,7 +139,7 @@ public class Pushing extends Actor {
 
                 int stopPos = knockway.path.get(Power);//get the block the char should stay
                 int backPos = knockway.path.get(Power-1);
-                for(int dist:knockway.subPath(1, knockway.collisionPos))
+                for(int dist:knockway.subPath(1, knockway.collisionPos))//FIXME Donno know why it will dismiss doors so I hava to add this,let char bounce on door and open it without stay on door
                 {
                     if(Dungeon.level.map[dist] == Terrain.DOOR)
                     {
