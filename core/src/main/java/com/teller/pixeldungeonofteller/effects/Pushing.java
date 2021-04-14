@@ -136,9 +136,24 @@ public class Pushing extends Actor {
             { Power++; }
 
             if( Power > 0 ){
+
+                int stopPos = knockway.path.get(Power);//get the block the char should stay
+                int backPos = knockway.path.get(Power-1);
+                for(int dist:knockway.subPath(1, knockway.dist))
+                {
+                    if(Dungeon.level.map[dist] ==Terrain.DOOR)
+                    {
+                        stopPos = dist;//get the block the char should stay
+                        backPos = knockway.path.get(knockway.path.indexOf(dist)-1);
+                    }
+                }
                 // gotta make those final for the sake of using callback mechanics
-                    final int finalPos = knockway.path.get(Power);//get the block the char should stay
-                    final int knockPos = knockway.path.get(Power-1);
+                    //final int stop = knockway.path.get(Power);//get the block the char should stay
+                    //final int knock = knockway.path.get(Power-1);
+
+                    final int finalPos = stopPos;//get the block the char should stay
+                    final int knockPos = backPos;
+
                     final Char pushedInto = Char.findChar( finalPos );
                 move( ch , finalPos , new Callback() {
                     @Override
@@ -175,18 +190,14 @@ public class Pushing extends Actor {
                         {
                             ch.die(this);
                         }
-                        if( pushedInto != null ){
-                            knockback( pushedInto, knockPos, 1 );
-                        }
                     }
             });
-        }
-        }
-        else {
-            // if the target is immovable, then just deal damage straight up
-            // don't wanna this wand to be useless against Yog, for instance
-            //dealDamage( ch, damage );
-            //GameScene.flash(0xFFFF);
+                if( pushedInto != null ){
+                    knockback( pushedInto, knockPos, 1 );
+                }
+            }
+            else {
+            }
         }
     }
 
