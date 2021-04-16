@@ -118,7 +118,7 @@ public class SawtoothFrisbee extends Shield {
                         Item detached = (curItem).detach(curUser.belongings.backpack);
                         for (int c : way.subPath(1, dst)) {
                             Char ch;
-                            if ((ch = Actor.findChar(c)) != null) {
+                            if ((ch = Actor.findChar(c)) != null && !(ch instanceof Hero)) {
                                 PhysicalDamage dmg = damageRoll(Dungeon.hero);
                                 ch.damage(dmg, this);
                                 ch.sprite.flash();
@@ -157,7 +157,7 @@ public class SawtoothFrisbee extends Shield {
                     public void call() {
                         for (int c : shot.subPath(1, end)) {
                             Char ch;
-                            if ((ch = Actor.findChar(c)) != null) {
+                            if ((ch = Actor.findChar(c)) != null && !(ch instanceof Hero)) {
                                 PhysicalDamage dmg = damageRoll(Dungeon.hero);
                                 ch.damage(dmg, this);
                             }
@@ -190,7 +190,7 @@ public class SawtoothFrisbee extends Shield {
 
         for (int c : shot.subPath(1, end)) {
             Char ch;
-            if ((ch = Actor.findChar(c)) != null) {
+            if ((ch = Actor.findChar(c)) != null && !(ch instanceof Hero)) {
                 PhysicalDamage dmg = damageRoll(Dungeon.hero);
                 ch.damage(dmg, this);
             }

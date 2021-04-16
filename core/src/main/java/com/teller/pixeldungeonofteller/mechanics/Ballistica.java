@@ -75,8 +75,6 @@ public class Ballistica {
     private void build(int from, int to, boolean stopTarget, boolean stopChars, boolean stopTerrain) {
         int w = Dungeon.level.width();
 
-        boolean hit = false;//use this to detect if hits a wall and make it to inWall,see Pushing.java
-
         int x0 = from % w;
         int x1 = to % w;
         int y0 = from / w;
