@@ -173,11 +173,11 @@ public class Flintlock extends FireArm {
                     GameScene.selectCell(shooter);
                 } else {
                         MainHandIndicator.cancel();
-                        OffHandIndicator.cancel();
-                    GLog.n(Messages.get(this, "outofammo"));
+                    OffHandIndicator.cancel();
+                    GLog.n(Messages.get(FireArm.class, "outofammo"));
                 }
             } else {
-                GLog.n(Messages.get(this, "unequip"));
+                GLog.n(Messages.get(FireArm.class, "unequip"));
             }
             updateQuickslot();
         }
@@ -210,14 +210,14 @@ public class Flintlock extends FireArm {
                         {
                                 MainHandIndicator.cancel();
                                 OffHandIndicator.cancel();
-                            GLog.n(Messages.get(this, "outofammo"));
+                            GLog.n(Messages.get(FireArm.class, "outofammo"));
                         }
                     }
                     else
                     {
                         MainHandIndicator.cancel();
                         OffHandIndicator.cancel();
-                        GLog.n(Messages.get(this, "outofammo"));
+                        GLog.n(Messages.get(FireArm.class, "outofammo"));
                     }
                 }
             }
@@ -248,14 +248,14 @@ public class Flintlock extends FireArm {
                             {
                                 MainHandIndicator.cancel();
                                 OffHandIndicator.cancel();
-                                GLog.n(Messages.get(this, "outofammo"));
+                                GLog.n(Messages.get(FireArm.class, "outofammo"));
                             }
                         }
                         else
                         {
                             MainHandIndicator.cancel();
                             OffHandIndicator.cancel();
-                            GLog.n(Messages.get(this, "outofammo"));
+                            GLog.n(Messages.get(FireArm.class, "outofammo"));
                         }
                     }
                 }
@@ -300,7 +300,7 @@ public class Flintlock extends FireArm {
             if (target != null) {
                 if(cooldown != 0)
                 {
-                    GLog.n(Messages.get(this, "outofammo"));
+                    GLog.n(Messages.get(FireArm.class, "outofammo"));
                     MainHandIndicator.cancel();
                     OffHandIndicator.cancel();
                     return;
@@ -352,9 +352,6 @@ public class Flintlock extends FireArm {
                                 hero.spendAndNext(1f);
                                 Invisibility.dispel();
                                 cooldown=3;
-
-
-
                             }
                         });
 
@@ -370,7 +367,7 @@ public class Flintlock extends FireArm {
         }
         @Override
         public String prompt() {
-            return Messages.get(Flintlock.class, "prompt");
+            return Messages.get(FireArm.class, "prompt");
         }
     };
 
@@ -481,7 +478,7 @@ public class Flintlock extends FireArm {
 
         @Override
         public String prompt() {
-            return Messages.get(Flintlock.class, "prompt");
+            return Messages.get(FireArm.class, "prompt");
         }
     };
 

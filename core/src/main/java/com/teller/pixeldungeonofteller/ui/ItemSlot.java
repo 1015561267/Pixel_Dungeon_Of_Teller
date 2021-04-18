@@ -36,6 +36,7 @@ import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.items.weapon.melee.MeleeWeapon;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.AttachedWeapon.NinjaProsthesis;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.Flintlock;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.HandCannon;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.SubmachineGun;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.MagicBook;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.MagesStaff;
@@ -270,7 +271,7 @@ public class ItemSlot extends Button {
             return;
         }
 
-        if(item instanceof SubmachineGun)
+        if(item instanceof SubmachineGun || item instanceof HandCannon)
         {
             if (!item.levelKnown) {
                 int dex = ((Weapon) item).DEXReq(0);

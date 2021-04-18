@@ -200,6 +200,7 @@ public class SubmachineGun extends FireArm {
                                         String defense = enemy.defenseVerb();
                                         enemy.sprite.showStatus(CharSprite.NEUTRAL, defense);
                                     }
+                                    hero.next();
                                 }
                                 Invisibility.dispel();
                                 ammo--;

@@ -137,6 +137,12 @@ public class ItemSpriteSheet {
     //public static final int SHURIKEN        = MISSILE_WEP+3;
     public static final int CURARE_DART = MISSILE_WEP + 3;
     public static final int JAVELIN = MISSILE_WEP + 4;
+    public static final int BULLET = MISSILE_WEP+5;
+    public static final int DOUBLESHOOT = MISSILE_WEP+6;
+    public static final int TINYBULLET= MISSILE_WEP+7;
+    public static final int GIANTBULLET = MISSILE_WEP+8;
+
+
 
     private static final int WEP_MAINHAND = xy(1, 6);   //8 slots
     public static final int WORN_SHORTSWORD     =   WEP_MAINHAND + 0;
@@ -210,21 +216,28 @@ public class ItemSpriteSheet {
 
 
     private static final int WEP_GUN = xy(1,11);
-    public static final int BULLET = WEP_GUN+0;
-    public static final int DOUBLESHOOT = WEP_GUN+1;
-    public static final int FLINTLOCK= WEP_GUN + 2;
-    public static final int SUBMACHINEGUN= WEP_GUN + 3;
-    public static final int HANDCANNON=WEP_GUN+4;
+    public static final int FLINTLOCK= WEP_GUN + 0;
+    public static final int SUBMACHINEGUN= WEP_GUN + 1;
+    public static final int HANDCANNON=WEP_GUN+2;
 
     static {
         assignItemRect(FLINTLOCK,         3,1,11,14);
         assignItemRect(SUBMACHINEGUN,     1,0,13,16);
+        assignItemRect(HANDCANNON,        3,0,11,16);
     }
 
     private static final int WEP_MAGICBOOK = xy(1,12);
     public static final int OLDBOOK = WEP_MAGICBOOK+0;
     public static final int BOOKOFFLAME = WEP_MAGICBOOK+1;
-    public static final int BOOKOFLIGHT = WEP_MAGICBOOK+4;
+    public static final int BOOKOFFROST = WEP_MAGICBOOK+2;
+    public static final int BOOKOFSTORM = WEP_MAGICBOOK+3;
+    public static final int BOOKOFEARTH = WEP_MAGICBOOK+4;
+    public static final int BOOKOFLIGHT = WEP_MAGICBOOK+5;
+    public static final int BOOKOFSHADOW = WEP_MAGICBOOK+6;
+    public static final int BOOKOFBLOOD = WEP_MAGICBOOK+7;
+    public static final int BOOKOFTIME = WEP_MAGICBOOK+8;
+    public static final int BOOKOFSPACE = WEP_MAGICBOOK+9;
+    public static final int BOOKOFARCANE = WEP_MAGICBOOK+10;
 
     static {
         for (int i = WEP_MAGICBOOK; i < WEP_MAGICBOOK+8; i++)

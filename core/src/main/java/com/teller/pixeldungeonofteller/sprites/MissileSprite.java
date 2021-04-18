@@ -68,18 +68,19 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
             angle = 135 - (float) (Math.atan2(d.x, d.y) / 3.1415926 * 180);
             tweener = new PosTweener(this, dest, d.length() / SPEED);
         }
-        else if(image ==ItemSpriteSheet.BULLET)
+
+        else if(image ==ItemSpriteSheet.BULLET ||image ==ItemSpriteSheet.TINYBULLET || image ==ItemSpriteSheet.GIANTBULLET)
         {
             angularSpeed = 0;
             angle = 135 - (float) (Math.atan2(d.x, d.y) / 3.1415926 * 180);
-            tweener = new PosTweener(this, dest, d.length() / (SPEED*2));
+            tweener = new PosTweener(this, dest, d.length() / (SPEED));
         }
 
         else if(image ==ItemSpriteSheet.DOUBLESHOOT)
         {
             angularSpeed = 0;
             angle = 135 - (float) (Math.atan2(d.x, d.y) / 3.1415926 * 180);
-            tweener = new PosTweener(this, dest, d.length() / (SPEED*3));
+            tweener = new PosTweener(this, dest, d.length() / (SPEED*2));
         }
 
         else {

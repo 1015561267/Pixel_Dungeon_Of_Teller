@@ -106,6 +106,7 @@ import com.teller.pixeldungeonofteller.items.weapon.weapons.AttachedWeapon.Gaunt
 import com.teller.pixeldungeonofteller.items.weapon.weapons.AttachedWeapon.NinjaProsthesis;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon.Tamahawk;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.Flintlock;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.HandCannon;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.SubmachineGun;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MainHandWeapon.Flail;
 import com.teller.pixeldungeonofteller.journal.Notes;
@@ -917,6 +918,10 @@ public class Hero extends Char {
         else if(this.belongings.offhandweapon instanceof SubmachineGun)
         {
             ((SubmachineGun) this.belongings.offhandweapon).reload(time);
+        }
+        else if(this.belongings.offhandweapon instanceof HandCannon)
+        {
+            ((HandCannon) this.belongings.offhandweapon).reload(time);
         }
     }
 

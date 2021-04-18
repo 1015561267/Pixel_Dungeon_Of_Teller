@@ -8,6 +8,7 @@ import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.items.KindOfWeapon;
 import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.Flintlock;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.HandCannon;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.SubmachineGun;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.MagicBook;
 import com.teller.pixeldungeonofteller.items.pages.Spell.BookOfLight.Healing;
@@ -101,6 +102,10 @@ public class OffHandIndicator extends Button {
                     else if(weapon instanceof SubmachineGun)
                     {
                         item.execute(Dungeon.hero,((SubmachineGun)Dungeon.hero.belongings.offhandweapon).AC_SWITCH);
+                    }
+                    else if(weapon instanceof HandCannon)
+                    {
+                        item.execute(Dungeon.hero,((HandCannon)Dungeon.hero.belongings.offhandweapon).AC_SHOOT);
                     }
 
                     else if(weapon.defaultAction!=null) {

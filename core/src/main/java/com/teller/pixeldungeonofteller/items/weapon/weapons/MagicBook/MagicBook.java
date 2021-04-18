@@ -79,9 +79,17 @@ public class MagicBook extends Weapon {
             if (item != null) storedspells.add((Spell) item);
         }
 
-        usesTargeting = selectedspell.usesTargeting;
-        selftargeting = selectedspell.selftargeting;
-    }
+        if(selectedspell!=null) {
+            usesTargeting = selectedspell.usesTargeting;
+            selftargeting = selectedspell.selftargeting;
+        }
+        else
+        {
+            usesTargeting = false;
+            selftargeting = false;
+        }
+
+        }
 
     @Override
     public int STRReq(int lvl) {

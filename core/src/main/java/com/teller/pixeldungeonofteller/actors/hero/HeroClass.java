@@ -63,6 +63,7 @@ import com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon.Knuc
 import com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon.Sai;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.DualWieldWeapon.Tamahawk;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.Flintlock;
+import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.HandCannon;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.SubmachineGun;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.BookOfLight;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.MagicBook.OldBook;
@@ -123,6 +124,8 @@ public enum HeroClass {
         //new Flail().identify().collect();
 
         new SawtoothFrisbee().identify().collect();
+
+        new HandCannon().identify().collect();
 
         new WandOfBlastWave().identify().collect();
 

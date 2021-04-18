@@ -39,6 +39,8 @@ import com.teller.pixeldungeonofteller.actors.buffs.ShieldRecharging;
 import com.teller.pixeldungeonofteller.actors.buffs.Slow;
 import com.teller.pixeldungeonofteller.actors.buffs.Speed;
 import com.teller.pixeldungeonofteller.actors.buffs.Vertigo;
+import com.teller.pixeldungeonofteller.actors.hazards.Frisbee;
+import com.teller.pixeldungeonofteller.actors.hazards.Hazard;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.actors.hero.HeroSubClass;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.AttachedWeapon.HiddenBlade;
@@ -336,6 +338,10 @@ public abstract class Char extends Actor {
                 return;
             }
         } else if (dmg instanceof PhysicalDamage) {
+
+            dmg.multiplie(0.5);
+
+
             //int indicator=Random.Int(6);//I want to let 3 types of damage do in random,but it looks too foolish,but a solid style may have a bad reflect
             //whatever,now physical damage will settle in the order of:impact---puncture---slash(which will be deadly in most times)
             //impact against shield first
@@ -826,7 +832,9 @@ public abstract class Char extends Actor {
     public void move(int step) {
 
         if (Dungeon.level.map[pos] == Terrain.OPEN_DOOR) {
-            Door.leave(pos);
+            if(Hazard.findHazards(pos).isEmpty()) {//note that hashset.isEmpty return null pointer error when
+                Door.leave(pos);
+            }
         }
 
         pos = step;
