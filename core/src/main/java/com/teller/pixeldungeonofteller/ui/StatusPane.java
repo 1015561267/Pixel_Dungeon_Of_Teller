@@ -65,6 +65,9 @@ public class StatusPane extends Component {
     private int lastLvl = -1;
     private BitmapText level;
     private BitmapText depth;
+
+    private ClockIndicator clock;
+
     private DangerIndicator danger;
     private BuffIndicator buffs;
     private Compass compass;
@@ -140,6 +143,9 @@ public class StatusPane extends Component {
         danger = new DangerIndicator();
         add(danger);
 
+        clock = new ClockIndicator(0xff4c4c);
+        add(clock);
+
         buffs = new BuffIndicator(Dungeon.hero);
         add(buffs);
 
@@ -189,15 +195,17 @@ public class StatusPane extends Component {
 
         danger.setPos(width - danger.width(), 20);
 
+        clock.setPos(width - clock.width(), danger.bottom() + 2);
+
         buffs.setPos(31, 12);
 
         btnJournal.setPos(width - 42, 1);
 
         btnMenu.setPos(width - btnMenu.width(), 1);
 
-        mainhand.setPos(0,48);
+        mainhand.setPos(0,52);
 
-        offhand.setPos(width-23,48);
+        offhand.setPos(width-23,52);
 
         switchIndicator.setPos(width-23,72);
     }

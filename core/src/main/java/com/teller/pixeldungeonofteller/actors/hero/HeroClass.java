@@ -30,6 +30,7 @@ import com.teller.pixeldungeonofteller.items.armor.ClothArmor;
 import com.teller.pixeldungeonofteller.items.armor.PlateArmor;
 import com.teller.pixeldungeonofteller.items.artifacts.CloakOfShadows;
 import com.teller.pixeldungeonofteller.items.artifacts.EtherealChains;
+import com.teller.pixeldungeonofteller.items.bags.WandHolster;
 import com.teller.pixeldungeonofteller.items.food.Food;
 import com.teller.pixeldungeonofteller.items.pages.MagicPage;
 import com.teller.pixeldungeonofteller.items.pages.Spell.BookOfLight.Flash;
@@ -45,8 +46,10 @@ import com.teller.pixeldungeonofteller.items.potions.PotionOfMindVision;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfParalyticGas;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfPurity;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfStrength;
+import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfIdentify;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfMagicMapping;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfMagicalInfusion;
+import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfRecharging;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfUpgrade;
 import com.teller.pixeldungeonofteller.items.wands.WandOfBlastWave;
 import com.teller.pixeldungeonofteller.items.wands.WandOfFireblast;
@@ -106,6 +109,8 @@ public enum HeroClass {
         for (int i = 0; i < 10; i++) {
             new SewingKit().identify().collect();
             new PotionOfStrength().identify().collect();
+            new ScrollOfRecharging().identify().collect();
+            new ScrollOfMagicMapping().identify().collect();
         }
         new HiddenBlade().identify().collect();
         //new NinjaProsthesis().identify().collect();
@@ -119,9 +124,8 @@ public enum HeroClass {
         //new Tamahawk().identify().collect();
         new Tamahawk().identify().collect();
 
-        //new PlateArmor().identify().collect();
-        //new Dirk().identify().collect();
-        //new Flail().identify().collect();
+        Dungeon.limitedDrops.wandBag.drop();
+        new WandHolster().collect();
 
         new SawtoothFrisbee().identify().collect();
 

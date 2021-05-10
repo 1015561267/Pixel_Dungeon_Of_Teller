@@ -26,6 +26,7 @@ import com.teller.pixeldungeonofteller.PixelDungeonOfTeller;
 import com.teller.pixeldungeonofteller.effects.BadgeBanner;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.ui.Archs;
+import com.teller.pixeldungeonofteller.ui.BadgesGrid;
 import com.teller.pixeldungeonofteller.ui.ExitButton;
 import com.teller.pixeldungeonofteller.ui.Window;
 import com.teller.pixeldungeonofteller.windows.WndBadge;
@@ -47,6 +48,8 @@ public class BadgesScene extends PixelScene {
     public void create() {
 
         super.create();
+
+        float margin = 5;
 
         Music.INSTANCE.play(Assets.THEME, true);
         Music.INSTANCE.volume(PixelDungeonOfTeller.musicVol() / 10f);
@@ -80,7 +83,8 @@ public class BadgesScene extends PixelScene {
 
         Badges.loadGlobal();
 
-        List<Badges.Badge> badges = Badges.filtered(true);
+
+        /*List<Badges.Badge> badges = Badges.filtered(true);
         for (int i = 0; i < nRows; i++) {
             for (int j = 0; j < nCols; j++) {
                 int index = i * nCols + j;
@@ -92,7 +96,12 @@ public class BadgesScene extends PixelScene {
                 align(button);
                 add(button);
             }
-        }
+        }*/
+
+        Badges.loadGlobal();
+        BadgesGrid grid = new BadgesGrid(true);
+        grid.setRect(margin, top, w-(2*margin), h-top-margin);
+        add(grid);
 
         ExitButton btnExit = new ExitButton();
         btnExit.setPos(Camera.main.width - btnExit.width(), 0);
@@ -100,14 +109,14 @@ public class BadgesScene extends PixelScene {
 
         fadeIn();
 
-        Badges.loadingListener = new Callback() {
+        /*Badges.loadingListener = new Callback() {
             @Override
             public void call() {
                 if (Game.scene() == BadgesScene.this) {
                     PixelDungeonOfTeller.switchNoFade(BadgesScene.class);
                 }
             }
-        };
+        };*/
     }
 
     @Override
@@ -124,6 +133,7 @@ public class BadgesScene extends PixelScene {
         PixelDungeonOfTeller.switchNoFade(TitleScene.class);
     }
 
+    /*
     private static class BadgeButton extends Button {
 
         private Badges.Badge badge;
@@ -164,5 +174,5 @@ public class BadgesScene extends PixelScene {
             Sample.INSTANCE.play(Assets.SND_CLICK, 0.7f, 0.7f, 1.2f);
             Game.scene().add(new WndBadge(badge));
         }
-    }
+    }*/
 }

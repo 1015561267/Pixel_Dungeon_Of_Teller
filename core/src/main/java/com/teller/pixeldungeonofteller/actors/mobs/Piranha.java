@@ -34,6 +34,7 @@ import com.teller.pixeldungeonofteller.actors.buffs.Roots;
 import com.teller.pixeldungeonofteller.items.food.MysteryMeat;
 import com.teller.pixeldungeonofteller.levels.Level;
 import com.teller.pixeldungeonofteller.sprites.PiranhaSprite;
+import com.teller.pixeldungeonofteller.utils.GLog;
 import com.watabou.utils.Random;
 
 import java.util.HashSet;
@@ -74,6 +75,9 @@ public class Piranha extends Mob {
     @Override
     protected boolean act() {
         if (!Dungeon.level.water[pos]) {
+            Integer p = pos;
+            GLog.h(p.toString());
+
             die(null);
             sprite.killAndErase();
             return true;

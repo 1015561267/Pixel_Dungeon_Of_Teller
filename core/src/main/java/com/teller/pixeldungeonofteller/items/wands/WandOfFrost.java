@@ -64,10 +64,14 @@ public class WandOfFrost extends DamageWand {
             heap.freeze();
         }
 
-        if(Dungeon.level.map[bolt.collisionPos] == Terrain.WATER)
+
+        for(int cell : bolt.subPath(0,bolt.dist))
         {
-            Dungeon.level.set(bolt.collisionPos, Terrain.ICE);
-            GameScene.updateMap(bolt.collisionPos);
+            if(Dungeon.level.map[cell] == Terrain.WATER)
+            {
+                Dungeon.level.set(bolt.collisionPos, Terrain.ICE);
+                GameScene.updateMap(bolt.collisionPos);
+            }
         }
 
         Char ch = Actor.findChar(bolt.collisionPos);

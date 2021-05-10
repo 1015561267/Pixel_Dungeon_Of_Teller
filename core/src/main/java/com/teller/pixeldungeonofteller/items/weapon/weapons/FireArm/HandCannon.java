@@ -207,7 +207,7 @@ public class HandCannon extends FireArm {
                                                         PhysicalDamage dmg = shootdamageRoll(level);
                                                         enemy.damage(dmg, this);
                                                     }
-                                                hero.next();
+                                                    hero.spendAndNext(0f);
                                                 }
                                             });
                                     Sample.INSTANCE.play(Assets.SND_BLAST, 0.4f + 1 * 0.2f, 0.4f + 1 * 0.2f, 1.55f - 1 * 0.15f);
@@ -218,6 +218,7 @@ public class HandCannon extends FireArm {
                                     Spark.at(pf, PointF.angle(pf, pt), 3.1415926f / 12, 0xEE7722, 3 + 1);
                                 }
                             }
+                            vaild = true ;
                             hero.buff(Noise.class).fire_firearm();
                             Invisibility.dispel();
                             cooldown=5;

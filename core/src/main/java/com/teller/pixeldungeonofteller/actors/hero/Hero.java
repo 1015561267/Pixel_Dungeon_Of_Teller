@@ -807,6 +807,8 @@ public class Hero extends Char {
         if (!(buff != null && buff.processTime(time)))
             super.spend(time);
         reloadfirearm(time);
+
+        Statistics.day.spend(time);
     }
 
     public void spendAndNext(float time) {

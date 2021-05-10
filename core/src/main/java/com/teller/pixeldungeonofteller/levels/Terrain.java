@@ -117,7 +117,7 @@ public class Terrain {
         flags[BOOKSHELF] = flags[BARRICADE];
         flags[ALCHEMY] = PASSABLE;
 
-        flags[ICE] = PASSABLE;
+        flags[ICE] = PASSABLE | ICE;
 
     }
 

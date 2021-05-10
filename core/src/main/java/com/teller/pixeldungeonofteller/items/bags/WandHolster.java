@@ -44,9 +44,11 @@ public class WandHolster extends Bag {
     @Override
     public boolean collect(Bag container) {
         if (super.collect(container)) {
-            if (owner != null) {
+            if (owner != null ) {
                 for (Item item : items) {
-                    ((Wand) item).charge(owner, HOLSTER_SCALE_FACTOR);
+                    if(item instanceof Wand) {
+                        ((Wand) item).charge(owner, HOLSTER_SCALE_FACTOR);
+                    }
                 }
             }
             return true;

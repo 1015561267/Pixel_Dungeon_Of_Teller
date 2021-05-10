@@ -691,7 +691,7 @@ public class Dungeon {
             }
         }
 
-        return PathFinder.find(from, to, passable);
+        return PathFinder.find(from, to, passable , level.ice);
 
     }
 
@@ -702,6 +702,7 @@ public class Dungeon {
         }
 
         setupPassable();
+
         if (ch.flying || ch.buff(Amok.class) != null) {
             BArray.or(pass, Dungeon.level.avoid, passable);
         } else {
@@ -714,7 +715,7 @@ public class Dungeon {
             }
         }
 
-        return PathFinder.getStep(from, to, passable);
+        return PathFinder.getStep(from, to, passable ,level.ice);
 
     }
 

@@ -143,6 +143,9 @@ public abstract class Level implements Bundlable {
     public  boolean[] water;
     public  boolean[] pit;
     public boolean[] discoverable;
+
+    public boolean[] ice;
+
     public static boolean weakFloorCreated = false;
     //FIXME this is sloppy. Should be able to keep track of this without static variables
     public int version;
@@ -287,6 +290,8 @@ public abstract class Level implements Bundlable {
         avoid		= new boolean[length()];
         water		= new boolean[length()];
         pit			= new boolean[length()];
+
+        ice		= new boolean[length()];
 
         PathFinder.setMapSize(w, h);
     }
@@ -617,6 +622,8 @@ public abstract class Level implements Bundlable {
             avoid[i] = (flags & Terrain.AVOID) != 0;
             water[i] = (flags & Terrain.LIQUID) != 0;
             pit[i] = (flags & Terrain.PIT) != 0;
+
+            water[i] = (flags & Terrain.ICE) != 0;
         }
 
         int lastRow = length() - width();
@@ -676,6 +683,8 @@ public abstract class Level implements Bundlable {
         level.avoid[cell]			= (flags & Terrain.AVOID) != 0;
         level.pit[cell]			    = (flags & Terrain.PIT) != 0;
         level.water[cell]			= terrain == Terrain.WATER;
+
+        level.ice[cell]             = terrain == Terrain.ICE;
 
     }
 

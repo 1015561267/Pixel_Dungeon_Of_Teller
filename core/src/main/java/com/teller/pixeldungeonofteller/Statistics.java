@@ -20,7 +20,12 @@
  */
 package com.teller.pixeldungeonofteller;
 
+import com.teller.pixeldungeonofteller.actors.hero.Hero;
+import com.teller.pixeldungeonofteller.messages.Messages;
+import com.teller.pixeldungeonofteller.utils.GLog;
 import com.watabou.utils.Bundle;
+
+import java.util.Calendar;
 
 public class Statistics {
 
@@ -34,6 +39,9 @@ public class Statistics {
     private static final String ANKHS = "ankhsUsed";
     private static final String DURATION = "duration";
     private static final String AMULET = "amuletObtained";
+
+    private static final String DAY = "day";//have inspired and supported by Egoal and his darkest pd
+
     public static int goldCollected;
     public static int deepestFloor;
     public static int enemiesSlain;
@@ -46,6 +54,8 @@ public class Statistics {
     public static boolean qualifiedForNoKilling = false;
     public static boolean completedWithNoKilling = false;
     public static boolean amuletObtained = false;
+
+    public static dayAndNight day = new dayAndNight();
 
     public static void reset() {
 
@@ -64,6 +74,9 @@ public class Statistics {
 
         amuletObtained = false;
 
+        day =  new dayAndNight();
+
+        day.init();
     }
 
     public static void storeInBundle(Bundle bundle) {
@@ -77,6 +90,7 @@ public class Statistics {
         bundle.put(ANKHS, ankhsUsed);
         bundle.put(DURATION, duration);
         bundle.put(AMULET, amuletObtained);
+        bundle.put(DAY,day.totalMinutes);
     }
 
     public static void restoreFromBundle(Bundle bundle) {
@@ -90,10 +104,88 @@ public class Statistics {
         ankhsUsed = bundle.getInt(ANKHS);
         duration = bundle.getFloat(DURATION);
         amuletObtained = bundle.getBoolean(AMULET);
+
+        day.totalMinutes = bundle.getFloat(DAY);
+        day.update();
     }
 
     public static void preview( GamesInProgress.Info info, Bundle bundle ){
         info.goldCollected  = bundle.getInt( GOLD );
         info.maxDepth       = bundle.getInt( DEEPEST );
     }
+
+    public static class dayAndNight
+    {
+        public float totalMinutes = 0f ;
+        public DayState state = DayState.Day;
+        public int day = (int)Math.floor(totalMinutes) / 60 / 24;
+        public int hour = (int)Math.floor(totalMinutes) / 60 % 24;
+        public int minute = (int)Math.floor(totalMinutes) % 60;
+
+        public String time = String.format("%02d:%02d" , hour, minute);
+
+        public void init()
+        {
+            final Calendar calendar = Calendar.getInstance();
+
+            calendar.get(Calendar.AM_PM);
+
+            totalMinutes = 9*60f;
+            day = 0 ;
+            hour = 9 ;
+            minute = 0;
+
+            state = DayState.Day;
+        }
+
+        public void spend(float time)
+        {
+            totalMinutes += time ;
+            update();
+        }
+
+
+        public boolean needNotice()
+        {
+            if(hour == 2 || hour == 7 || hour == 19 || hour == 22)
+            {
+                if(minute >= 0 && minute <= 20)
+                {
+                    time = String.format("%02d:%02d" , hour, minute);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void update()
+        {
+            day = (int)Math.floor(totalMinutes) / 60 / 24;
+            hour = (int)Math.floor(totalMinutes) / 60 % 24;
+            minute = (int)Math.floor(totalMinutes) % 60;
+
+            DayState newState;
+            if(hour >= 7 && hour<= 19 )
+            newState = DayState.Day;
+            else if(hour <2 || hour > 22)
+            newState = DayState.Midnight;
+            else newState = DayState.Night;
+
+            if(newState!= state)
+            {
+                state = newState;
+                String msg = "";
+                switch (state)
+                {
+                    case Day:      msg = Messages.get(Hero.class , "clock-day");break;
+                    case Night:    msg = Messages.get(Hero.class , "clock-night");break;
+                    case Midnight: msg = Messages.get(Hero.class , "clock-midnight");break;
+                }
+                GLog.w(msg);
+            }
+        }
+    }
+
+    public enum DayState{ Day , Night , Midnight }
+    public enum MoonPhase{ New , WaxingCrescent , Quarter , WaxingGibbous , Full ,WaningGibbous , LastQuarter , WaningCrecent , Blood }
 }

@@ -47,12 +47,176 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 public class Badges {
+
+    public enum Badge {//2021/5/9 improvement of badges from SPD 0.9.0
+        MONSTERS_SLAIN_1(0),
+        MONSTERS_SLAIN_2(1),
+        MONSTERS_SLAIN_3(2),
+        MONSTERS_SLAIN_4(3),
+
+        GOLD_COLLECTED_1(4),
+        GOLD_COLLECTED_2(5),
+        GOLD_COLLECTED_3(6),
+        GOLD_COLLECTED_4(7),
+
+        LEVEL_REACHED_1(8),
+        LEVEL_REACHED_2(9),
+        LEVEL_REACHED_3(10),
+        LEVEL_REACHED_4(11),
+
+        BOSS_SLAIN_1_WARRIOR,
+        BOSS_SLAIN_1_MAGE,
+        BOSS_SLAIN_1_ROGUE,
+        BOSS_SLAIN_1_HUNTRESS,
+        BOSS_SLAIN_1(12),
+        BOSS_SLAIN_2(13),
+        BOSS_SLAIN_3(14),
+        BOSS_SLAIN_4(15),
+        BOSS_SLAIN_1_ALL_CLASSES(60, true),
+        BOSS_SLAIN_3_GLADIATOR,
+        BOSS_SLAIN_3_BERSERKER,
+        BOSS_SLAIN_3_WARLOCK,
+        BOSS_SLAIN_3_BATTLEMAGE,
+        BOSS_SLAIN_3_FREERUNNER,
+        BOSS_SLAIN_3_ASSASSIN,
+        BOSS_SLAIN_3_SNIPER,
+        BOSS_SLAIN_3_WARDEN,
+        BOSS_SLAIN_3_ALL_SUBCLASSES(61, true),
+
+        STRENGTH_ATTAINED_1(16),
+        STRENGTH_ATTAINED_2(17),
+        STRENGTH_ATTAINED_3(18),
+        STRENGTH_ATTAINED_4(19),
+
+        FOOD_EATEN_1(20),
+        FOOD_EATEN_2(21),
+        FOOD_EATEN_3(22),
+        FOOD_EATEN_4(23),
+
+        ITEM_LEVEL_1(24),
+        ITEM_LEVEL_2(25),
+        ITEM_LEVEL_3(26),
+        ITEM_LEVEL_4(27),
+
+        POTIONS_COOKED_1(28),
+        POTIONS_COOKED_2(29),
+        POTIONS_COOKED_3(30),
+        POTIONS_COOKED_4(31),
+
+        DEATH_FROM_FIRE(32),
+        DEATH_FROM_POISON(33),
+        DEATH_FROM_GAS(34),
+        DEATH_FROM_HUNGER(35),
+        DEATH_FROM_FALLING(36),
+        DEATH_FROM_GLYPH(37),
+        YASD(38, true),
+
+        RARE_ALBINO,
+        RARE_BANDIT,
+        RARE_SHIELDED,
+        RARE_SENIOR,
+        RARE_ACIDIC,
+        RARE(39, true),
+
+        NO_MONSTERS_SLAIN(40),
+        GRIM_WEAPON(41),
+        NIGHT_HUNTER(42),
+        PIRANHAS(43),
+
+        BAG_BOUGHT_SEED_POUCH,
+        BAG_BOUGHT_SCROLL_HOLDER,
+        BAG_BOUGHT_POTION_BANDOLIER,
+        BAG_BOUGHT_WAND_HOLSTER,
+        ALL_BAGS_BOUGHT(44),
+
+        MASTERY_COMBO(45),
+
+        VICTORY_WARRIOR,
+        VICTORY_MAGE,
+        VICTORY_ROGUE,
+        VICTORY_HUNTRESS,
+        VICTORY(46),
+        VICTORY_ALL_CLASSES(63, true),
+
+        HAPPY_END(47),
+
+        ALL_POTIONS_IDENTIFIED(48),
+        ALL_SCROLLS_IDENTIFIED(49),
+        ALL_RINGS_IDENTIFIED(53),
+        ALL_WANDS_IDENTIFIED(54),
+        ALL_ITEMS_IDENTIFIED(55, true),
+
+        GAMES_PLAYED_1(56, true),
+        GAMES_PLAYED_2(57, true),
+        GAMES_PLAYED_3(58, true),
+        GAMES_PLAYED_4(59, true),
+
+        MASTERY_WARRIOR,
+        MASTERY_MAGE,
+        MASTERY_ROGUE,
+        MASTERY_HUNTRESS,
+        TUTORIAL_WARRIOR,
+        TUTORIAL_MAGE,
+
+        CHAMPION(66, true),
+        SUPPORTER(67, true),
+        RING_OF_HAGGLER(72),
+        RING_OF_THORNS(73);
+
+        public boolean meta;
+
+        public int image;
+
+        Badge(int image) {
+            this(image, false);
+        }
+
+        Badge(int image, boolean meta) {
+            this.image = image;
+            this.meta = meta;
+        }
+
+        Badge() {
+            this(-1);
+        }
+
+        public String desc() {
+            return Messages.get(this, name());
+        }
+    }
+
+    private static final Badge[][] tierBadgeReplacements = new Badge[][]{
+            {Badge.MONSTERS_SLAIN_1, Badge.MONSTERS_SLAIN_2, Badge.MONSTERS_SLAIN_3, Badge.MONSTERS_SLAIN_4},
+            {Badge.GOLD_COLLECTED_1, Badge.GOLD_COLLECTED_2, Badge.GOLD_COLLECTED_3, Badge.GOLD_COLLECTED_4},
+            {Badge.ITEM_LEVEL_1, Badge.ITEM_LEVEL_2, Badge.ITEM_LEVEL_3, Badge.ITEM_LEVEL_4},
+            {Badge.LEVEL_REACHED_1, Badge.LEVEL_REACHED_2, Badge.LEVEL_REACHED_3, Badge.LEVEL_REACHED_4},
+            {Badge.STRENGTH_ATTAINED_1, Badge.STRENGTH_ATTAINED_2, Badge.STRENGTH_ATTAINED_3, Badge.STRENGTH_ATTAINED_4},
+            {Badge.FOOD_EATEN_1, Badge.FOOD_EATEN_2, Badge.FOOD_EATEN_3, Badge.FOOD_EATEN_4},
+            {Badge.POTIONS_COOKED_1, Badge.POTIONS_COOKED_2, Badge.POTIONS_COOKED_3, Badge.POTIONS_COOKED_4 },
+            {Badge.BOSS_SLAIN_1, Badge.BOSS_SLAIN_2, Badge.BOSS_SLAIN_3, Badge.BOSS_SLAIN_4},
+            {Badge.GAMES_PLAYED_1, Badge.GAMES_PLAYED_2, Badge.GAMES_PLAYED_3, Badge.GAMES_PLAYED_4},
+    };
+
+    private static final Badge[][] metaBadgeReplacements = new Badge[][]{
+            {Badge.DEATH_FROM_FIRE, Badge.YASD},
+            {Badge.DEATH_FROM_GAS, Badge.YASD},
+            {Badge.DEATH_FROM_HUNGER, Badge.YASD},
+            {Badge.DEATH_FROM_POISON, Badge.YASD},
+            {Badge.DEATH_FROM_GLYPH, Badge.YASD},
+            {Badge.DEATH_FROM_FALLING, Badge.YASD },
+
+            {Badge.ALL_WANDS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED},
+            {Badge.ALL_RINGS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED},
+            {Badge.ALL_POTIONS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED},
+            {Badge.ALL_SCROLLS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED}
+    };
 
     public static final String BADGES_FILE = "badges.dat";
     private static final String BADGES = "badges";
@@ -79,10 +243,14 @@ public class Badges {
             }
         }
 
+        addReplacedBadges(badges);
+
         return badges;
     }
 
     private static void store(Bundle bundle, HashSet<Badge> badges) {
+        addReplacedBadges(badges);
+
         int count = 0;
         String[] names = new String[badges.size()];
 
@@ -799,6 +967,47 @@ public class Badges {
         saveNeeded = true;
     }
 
+    public static List<Badge> filterReplacedBadges( boolean global ) {
+
+        ArrayList<Badge> badges = new ArrayList<>(global ? Badges.global : Badges.local);
+
+        Iterator<Badge> iterator = badges.iterator();
+        while (iterator.hasNext()) {
+            Badge badge = iterator.next();
+            if ((!global && badge.meta) || badge.image == -1) {
+                iterator.remove();
+            }
+        }
+
+        Collections.sort(badges);
+
+        return filterReplacedBadges(badges);
+
+    }
+
+    public static List<Badge> filterReplacedBadges( List<Badge> badges ) {
+
+        leaveBest( badges, Badge.MONSTERS_SLAIN_1, Badge.MONSTERS_SLAIN_2, Badge.MONSTERS_SLAIN_3, Badge.MONSTERS_SLAIN_4 );
+        leaveBest( badges, Badge.GOLD_COLLECTED_1, Badge.GOLD_COLLECTED_2, Badge.GOLD_COLLECTED_3, Badge.GOLD_COLLECTED_4 );
+        leaveBest( badges, Badge.BOSS_SLAIN_1, Badge.BOSS_SLAIN_2, Badge.BOSS_SLAIN_3, Badge.BOSS_SLAIN_4 );
+        leaveBest( badges, Badge.LEVEL_REACHED_1, Badge.LEVEL_REACHED_2, Badge.LEVEL_REACHED_3, Badge.LEVEL_REACHED_4 );
+        leaveBest( badges, Badge.STRENGTH_ATTAINED_1, Badge.STRENGTH_ATTAINED_2, Badge.STRENGTH_ATTAINED_3, Badge.STRENGTH_ATTAINED_4 );
+        leaveBest( badges, Badge.FOOD_EATEN_1, Badge.FOOD_EATEN_2, Badge.FOOD_EATEN_3, Badge.FOOD_EATEN_4 );
+        leaveBest( badges, Badge.ITEM_LEVEL_1, Badge.ITEM_LEVEL_2, Badge.ITEM_LEVEL_3, Badge.ITEM_LEVEL_4 );
+        leaveBest( badges, Badge.POTIONS_COOKED_1, Badge.POTIONS_COOKED_2, Badge.POTIONS_COOKED_3, Badge.POTIONS_COOKED_4 );
+        leaveBest( badges, Badge.GAMES_PLAYED_1, Badge.GAMES_PLAYED_2, Badge.GAMES_PLAYED_3, Badge.GAMES_PLAYED_4 );
+
+        for (Badge[] tierReplace : tierBadgeReplacements){
+            leaveBest( badges, tierReplace );
+        }
+
+        for (Badge[] metaReplace : metaBadgeReplacements){
+            leaveBest( badges, metaReplace );
+        }
+
+        return badges;
+    }
+
     public static List<Badge> filtered(boolean global) {
 
         HashSet<Badge> filtered = new HashSet<Badge>(global ? Badges.global : Badges.local);
@@ -810,7 +1019,6 @@ public class Badges {
                 iterator.remove();
             }
         }
-
         leaveBest(filtered, Badge.MONSTERS_SLAIN_1, Badge.MONSTERS_SLAIN_2, Badge.MONSTERS_SLAIN_3, Badge.MONSTERS_SLAIN_4);
         leaveBest(filtered, Badge.GOLD_COLLECTED_1, Badge.GOLD_COLLECTED_2, Badge.GOLD_COLLECTED_3, Badge.GOLD_COLLECTED_4);
         leaveBest(filtered, Badge.BOSS_SLAIN_1, Badge.BOSS_SLAIN_2, Badge.BOSS_SLAIN_3, Badge.BOSS_SLAIN_4);
@@ -838,134 +1046,62 @@ public class Badges {
 
         return list;
     }
+    public static List<Badge> filterHigherIncrementalBadges(List<Badges.Badge> badges ) {
 
-    private static void leaveBest(HashSet<Badge> list, Badge... badges) {
-        for (int i = badges.length - 1; i > 0; i--) {
-            if (list.contains(badges[i])) {
-                for (int j = 0; j < i; j++) {
-                    list.remove(badges[j]);
+        for (Badge[] tierReplace : tierBadgeReplacements){
+            leaveWorst( badges, tierReplace );
+        }
+
+        Collections.sort( badges );
+
+        return badges;
+    }
+
+    public static Collection<Badge> addReplacedBadges(Collection<Badges.Badge> badges ) {
+
+        for (Badge[] tierReplace : tierBadgeReplacements){
+            addLower( badges, tierReplace );
+        }
+
+        for (Badge[] metaReplace : metaBadgeReplacements){
+            addLower( badges, metaReplace );
+        }
+
+        return badges;
+    }
+
+    private static void addLower( Collection<Badge> list, Badge...badges ) {
+        for (int i=badges.length-1; i > 0; i--) {
+            if (list.contains( badges[i])) {
+                for (int j=0; j < i; j++) {
+                    list.add( badges[j] );
                 }
                 break;
             }
         }
     }
 
-    public enum Badge {
-        MONSTERS_SLAIN_1(0),
-        MONSTERS_SLAIN_2(1),
-        MONSTERS_SLAIN_3(2),
-        MONSTERS_SLAIN_4(3),
-        GOLD_COLLECTED_1(4),
-        GOLD_COLLECTED_2(5),
-        GOLD_COLLECTED_3(6),
-        GOLD_COLLECTED_4(7),
-        LEVEL_REACHED_1(8),
-        LEVEL_REACHED_2(9),
-        LEVEL_REACHED_3(10),
-        LEVEL_REACHED_4(11),
-        ALL_POTIONS_IDENTIFIED(16),
-        ALL_SCROLLS_IDENTIFIED(17),
-        ALL_RINGS_IDENTIFIED(18),
-        ALL_WANDS_IDENTIFIED(19),
-        ALL_ITEMS_IDENTIFIED(35, true),
-        BAG_BOUGHT_SEED_POUCH,
-        BAG_BOUGHT_SCROLL_HOLDER,
-        BAG_BOUGHT_POTION_BANDOLIER,
-        BAG_BOUGHT_WAND_HOLSTER,
-        ALL_BAGS_BOUGHT(23),
-        DEATH_FROM_FIRE(24),
-        DEATH_FROM_POISON(25),
-        DEATH_FROM_GAS(26),
-        DEATH_FROM_HUNGER(27),
-        DEATH_FROM_GLYPH(57),
-        DEATH_FROM_FALLING(59),
-        YASD(34, true),
-        BOSS_SLAIN_1_WARRIOR,
-        BOSS_SLAIN_1_MAGE,
-        BOSS_SLAIN_1_ROGUE,
-        BOSS_SLAIN_1_HUNTRESS,
-        BOSS_SLAIN_1(12),
-        BOSS_SLAIN_2(13),
-        BOSS_SLAIN_3(14),
-        BOSS_SLAIN_4(15),
-        BOSS_SLAIN_1_ALL_CLASSES(32, true),
-        BOSS_SLAIN_3_GLADIATOR,
-        BOSS_SLAIN_3_BERSERKER,
-        BOSS_SLAIN_3_WARLOCK,
-        BOSS_SLAIN_3_BATTLEMAGE,
-        BOSS_SLAIN_3_FREERUNNER,
-        BOSS_SLAIN_3_ASSASSIN,
-        BOSS_SLAIN_3_SNIPER,
-        BOSS_SLAIN_3_WARDEN,
-        BOSS_SLAIN_3_ALL_SUBCLASSES(33, true),
-        RING_OF_HAGGLER(20),
-        RING_OF_THORNS(21),
-        STRENGTH_ATTAINED_1(40),
-        STRENGTH_ATTAINED_2(41),
-        STRENGTH_ATTAINED_3(42),
-        STRENGTH_ATTAINED_4(43),
-        FOOD_EATEN_1(44),
-        FOOD_EATEN_2(45),
-        FOOD_EATEN_3(46),
-        FOOD_EATEN_4(47),
-        MASTERY_WARRIOR,
-        MASTERY_MAGE,
-        MASTERY_ROGUE,
-        MASTERY_HUNTRESS,
-        ITEM_LEVEL_1(48),
-        ITEM_LEVEL_2(49),
-        ITEM_LEVEL_3(50),
-        ITEM_LEVEL_4(51),
-        RARE_ALBINO,
-        RARE_BANDIT,
-        RARE_SHIELDED,
-        RARE_SENIOR,
-        RARE_ACIDIC,
-        RARE(37, true),
-        TUTORIAL_WARRIOR,
-        TUTORIAL_MAGE,
-        VICTORY_WARRIOR,
-        VICTORY_MAGE,
-        VICTORY_ROGUE,
-        VICTORY_HUNTRESS,
-        VICTORY(22),
-        VICTORY_ALL_CLASSES(36, true),
-        MASTERY_COMBO(56),
-        POTIONS_COOKED_1(52),
-        POTIONS_COOKED_2(53),
-        POTIONS_COOKED_3(54),
-        POTIONS_COOKED_4(55),
-        NO_MONSTERS_SLAIN(28),
-        GRIM_WEAPON(29),
-        PIRANHAS(30),
-        NIGHT_HUNTER(58),
-        GAMES_PLAYED_1(60, true),
-        GAMES_PLAYED_2(61, true),
-        GAMES_PLAYED_3(62, true),
-        GAMES_PLAYED_4(63, true),
-        HAPPY_END(38),
-        CHAMPION(39, true),
-        SUPPORTER(31, true);
-
-        public boolean meta;
-
-        public int image;
-
-        Badge(int image) {
-            this(image, false);
-        }
-
-        Badge(int image, boolean meta) {
-            this.image = image;
-            this.meta = meta;
-        }
-
-        Badge() {
-            this(-1);
-        }
-
-        public String desc() {
-            return Messages.get(this, name());
+    private static void leaveBest(Collection<Badge> list, Badge...badges ) {
+        for (int i=badges.length-1; i > 0; i--) {
+            if (list.contains( badges[i])) {
+                for (int j=0; j < i; j++) {
+                    list.remove( badges[j] );
+                }
+                break;
+            }
         }
     }
+
+    private static void leaveWorst( Collection<Badge> list, Badge...badges ) {
+        for (int i=0; i < badges.length; i++) {
+            if (list.contains( badges[i])) {
+                for (int j=i+1; j < badges.length; j++) {
+                    list.remove( badges[j] );
+                }
+                break;
+            }
+        }
+    }
+
+
 }

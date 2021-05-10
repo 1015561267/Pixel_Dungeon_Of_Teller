@@ -23,13 +23,11 @@ package com.teller.pixeldungeonofteller.actors;
 import android.util.SparseArray;
 
 import com.teller.pixeldungeonofteller.Dungeon;
-import com.teller.pixeldungeonofteller.PixelDungeonOfTeller;
 import com.teller.pixeldungeonofteller.Statistics;
 import com.teller.pixeldungeonofteller.actors.blobs.Blob;
 import com.teller.pixeldungeonofteller.actors.buffs.Buff;
 import com.teller.pixeldungeonofteller.actors.hazards.Hazard;
 import com.teller.pixeldungeonofteller.actors.mobs.Mob;
-import com.teller.pixeldungeonofteller.items.weapon.weapons.FireArm.SubmachineGun;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
@@ -157,6 +155,9 @@ public abstract class Actor implements Bundlable {
                     }
                 }
 
+
+
+
                 interrupted = interrupted || Thread.interrupted();
 
                 if (interrupted){
@@ -186,7 +187,7 @@ public abstract class Actor implements Bundlable {
                         Thread.currentThread().wait();
                     } catch (InterruptedException e) {
                         interrupted = true;
-                    }
+                }
                 }
             }
         } while (true);
@@ -328,5 +329,10 @@ public abstract class Actor implements Bundlable {
 
     public static void occupyCell(Char ch){
         chars.add(ch);
+    }
+
+    public static Actor current()
+    {
+        return current;
     }
 }

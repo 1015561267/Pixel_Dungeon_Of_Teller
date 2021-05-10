@@ -52,6 +52,8 @@ public class Pushing extends Actor {
     private int from;
     private int to;
 
+    private Effect effect;
+
     private Callback callback;
 
     {
@@ -70,6 +72,7 @@ public class Pushing extends Actor {
         this.callback = callback;
     }
 
+    /*
     @Override
     protected boolean act() {
         if (sprite != null) {
@@ -93,6 +96,27 @@ public class Pushing extends Actor {
             return true;
         }
     }
+    */
+
+    @Override
+    protected boolean act() {
+        if (sprite != null) {
+
+            if (effect == null) {
+                new Effect();
+            }
+        }
+
+        Actor.remove( Pushing.this );
+
+        //so that all pushing effects at the same time go simultaneously
+        for ( Actor actor : Actor.all() ){
+            if (actor instanceof Pushing && actor.cooldown() == 0)
+                return true;
+        }
+        return false;
+
+    }
 
     public static void move( final Char ch, final int newPos, final Callback callback ) {
         // moved this method here to avoid repeatng the same pieces of code over and over
@@ -106,8 +130,12 @@ public class Pushing extends Actor {
 
             }
         }), -1 );
-        ch.pos = newPos;
+
+        if(!Dungeon.level.solid[newPos] && Actor.findChar(newPos)== null) {
+            ch.pos = newPos;
+        }
     }
+
 
     public static int knockback( final Char ch, int pushedFrom, int Power ) {
 
@@ -118,8 +146,10 @@ public class Pushing extends Actor {
 
                 Ballistica vector = new Ballistica(pushedFrom, ch.pos, ch.pos, Ballistica.MAGIC_BOLT);
                 //note that pushFrom is the pos where the pusher stand,and we wants a vector so it shouldn't stop at target point
+
                 // then we calcualte where the targer would actually land, considering
                 // the maximum distance which it is supposed to be knocked back
+
                 int pushedTo = vector.collisionPos;//this step get the collision point,in order to conclude the distance
 
                 int index = vector.path.indexOf(pushedTo);
@@ -133,10 +163,11 @@ public class Pushing extends Actor {
                 // note that all ballistica path is a full path that go through the whole map
                 Ballistica knockway = new Ballistica(ch.pos, hitted, Ballistica.MAGIC_BOLT);//build another ballistica to get real distance how long it really fly
 
-                Power = Math.min(knockway.dist + 1, Power);//then we compare two inorder to know what will happen first between fly to end and crush into sth
+                Power = Math.min(knockway.dist , Power);//then we compare two inorder to know what will happen first between fly to end and crush into sth
 
                 if (pushedTo == ch.pos && Power == 0)//in some condition.like use blast wave against narrow wall,first collisonPos is same with ch's pos,then Power would always be 0,and we need plus one otherwise code below will be invalid
-                { GameScene.flash(0xFFFFFF);Power++; }
+                    //if (Power == 0)
+                    { Power++; }
 
                 if (Power > 0) {
                     int stopPos = knockway.path.get(Power);//get the block the char should stay
@@ -145,23 +176,19 @@ public class Pushing extends Actor {
                 for(int dist:knockway.subPath(1, Power))//if there are a door on the way,then bounce on it,it could not have a char on that otherwise the way would collision on it first
                     //FIXME Donno know why it will dismiss doors so I hava to add this,let char bounce on door and open it without stay on door
                 {
-                    if(Dungeon.level.solid[dist])
-                    {
-                        stopPos = dist;//get the block the char should stay
-                        backPos = knockway.path.get(knockway.path.indexOf(dist)-1);
-                        break;
-                    }
-                    if(Actor.findChar(dist)!=null)
+                    if(Dungeon.level.solid[dist] || Actor.findChar(dist) != null)
                     {
                         stopPos = dist;//get the block the char should stay
                         backPos = knockway.path.get(knockway.path.indexOf(dist)-1);
                         break;
                     }
                 }
+
                     // gotta make those final for the sake of using callback mechanics;
                     final int finalPos = stopPos;//get the block the char should stay
                     final int knockPos = backPos;
-                    final Char pushedInto = Char.findChar(finalPos);
+                    final Char pushedInto = Actor.findChar(finalPos);
+
                     move(ch, finalPos, new Callback() {
                         @Override
                         public void call() {
@@ -211,25 +238,29 @@ public class Pushing extends Actor {
 
     private static void hitObstacle(final Char ch , int moveTo) {
         // move() method handles changing the target's position value
-        int oldpos = ch.pos;
+        final int oldpos = ch.pos;
+        move( ch, moveTo, new Callback() {
+            @Override
+            public void call() {
 
-        move( ch, moveTo, null );
+                // make sounds and shake the screen to make this effect meatier
+                if( Dungeon.visible[ ch.pos ] ) {
+                    Sample.INSTANCE.play( Assets.SND_BLAST, 1.0f, 1.0f, 0.5f );
+                    Camera.main.shake( 2, 0.1f );
+                }
 
-        // make sounds and shake the screen to make this effect meatier
-        if( Dungeon.visible[ ch.pos ] ) {
-            Sample.INSTANCE.play( Assets.SND_BLAST, 1.0f, 1.0f, 0.5f );
-            Camera.main.shake( 2, 0.1f );
-        }
+                final Char pushedInto = Char.findChar(oldpos);
 
-        final Char pushedInto = Char.findChar(oldpos);
-        if (pushedInto != null) {
-            knockback(pushedInto, ch.pos, 1);
-        }
+                if (pushedInto != null) {
+                    knockback(pushedInto, ch.pos, 1);
+                }
+
+            }
+        });
     }
 
 
-
-   /* public class Effect extends Visual {
+   public class Effect extends Visual {
 
         private static final float DELAY = 0.15f;
 
@@ -266,5 +297,5 @@ public class Pushing extends Actor {
                 next();
             }
         }
-    }*/
+    }
 }

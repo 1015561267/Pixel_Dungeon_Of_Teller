@@ -26,6 +26,7 @@ import com.teller.pixeldungeonofteller.Assets;
 import com.teller.pixeldungeonofteller.Badges;
 import com.teller.pixeldungeonofteller.PixelDungeonOfTeller;
 import com.teller.pixeldungeonofteller.effects.BadgeBanner;
+import com.teller.pixeldungeonofteller.ui.RenderedTextBlock;
 import com.teller.pixeldungeonofteller.ui.RenderedTextMultiline;
 import com.watabou.glwrap.Texture;
 import com.watabou.input.Touchscreen;
@@ -322,5 +323,15 @@ public class PixelScene extends Scene {
             matrix[13] = +1 - y * invH2 - sy * matrix[5];
 
         }
+    }
+
+    public static RenderedTextBlock renderTextBlock(int size ){
+        return renderTextBlock("", size);
+    }
+
+    public static RenderedTextBlock renderTextBlock(String text, int size ){
+        RenderedTextBlock result = new RenderedTextBlock( text, size*defaultZoom);
+        result.zoom(1/(float)defaultZoom);
+        return result;
     }
 }

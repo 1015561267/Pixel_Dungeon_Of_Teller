@@ -20,8 +20,16 @@
  */
 package com.teller.pixeldungeonofteller.sprites;
 
+import com.teller.pixeldungeonofteller.actors.Actor;
+import com.teller.pixeldungeonofteller.actors.blobs.Blob;
+import com.teller.pixeldungeonofteller.actors.buffs.Buff;
+import com.teller.pixeldungeonofteller.actors.hazards.Hazard;
+import com.teller.pixeldungeonofteller.actors.hero.Hero;
+import com.teller.pixeldungeonofteller.actors.mobs.Mob;
 import com.teller.pixeldungeonofteller.tiles.DungeonTilemap;
 import com.teller.pixeldungeonofteller.items.Item;
+import com.teller.pixeldungeonofteller.utils.GLog;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.tweeners.PosTweener;
 import com.watabou.noosa.tweeners.Tweener;
 import com.watabou.utils.Callback;
@@ -30,6 +38,8 @@ import com.watabou.utils.PointF;
 public class MissileSprite extends ItemSprite implements Tweener.Listener {
 
     private static final float SPEED = 240f;
+
+    private float time;
 
     private Callback callback;
 
@@ -60,12 +70,13 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
         PointF d = PointF.diff(dest, point());
         speed.set(d).normalize().scale(SPEED);
 
-        PosTweener tweener = new PosTweener(this, dest, d.length() / SPEED);
+        PosTweener tweener;// = new PosTweener(this, dest, d.length() / SPEED);
 
         if (image == ItemSpriteSheet.DART || image == ItemSpriteSheet.INCENDIARY_DART
                 || image == ItemSpriteSheet.CURARE_DART || image == ItemSpriteSheet.JAVELIN || image == ItemSpriteSheet.KUNAI) {
             angularSpeed = 0;
             angle = 135 - (float) (Math.atan2(d.x, d.y) / 3.1415926 * 180);
+            time = d.length() / SPEED;
             tweener = new PosTweener(this, dest, d.length() / SPEED);
         }
 
@@ -73,6 +84,7 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
         {
             angularSpeed = 0;
             angle = 135 - (float) (Math.atan2(d.x, d.y) / 3.1415926 * 180);
+            time = d.length() / SPEED;
             tweener = new PosTweener(this, dest, d.length() / (SPEED));
         }
 
@@ -80,11 +92,13 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
         {
             angularSpeed = 0;
             angle = 135 - (float) (Math.atan2(d.x, d.y) / 3.1415926 * 180);
+            time = d.length() / (SPEED * 2);
             tweener = new PosTweener(this, dest, d.length() / (SPEED*2));
         }
 
         else {
             angularSpeed = image == 15 || image == 106 ? 1440 : 720;
+            time = d.length() / (SPEED);
             tweener = new PosTweener(this, dest, d.length() / SPEED);
         }
 
@@ -97,6 +111,21 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
         kill();
         if (callback != null) {
             callback.call();
+            if(Actor.processing())
+            {
+                if(Actor.current() instanceof Mob)
+                {
+                    //GLog.h("mob");
+                    if(!((Mob) Actor.current()).isAlive())
+                    {
+                        Mob enemy = (Mob) Actor.current();
+                        //GLog.h(enemy.name);
+                        enemy.next();
+                        Actor.remove(enemy);
+                    }
+                }
+            }
         }
+
     }
 }
