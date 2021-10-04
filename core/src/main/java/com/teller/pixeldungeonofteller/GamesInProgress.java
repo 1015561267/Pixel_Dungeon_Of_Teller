@@ -37,9 +37,10 @@ import java.util.HashMap;
 public class GamesInProgress {
 
     public static final int MAX_SLOTS = 4;
-
     //null means we have loaded info and it is empty, no entry means unknown.
+
     private static HashMap<Integer, Info> slotStates = new HashMap<>();
+
     public static int curSlot;
 
     public static HeroClass selectedClass;
@@ -47,19 +48,15 @@ public class GamesInProgress {
     private static final String GAME_FOLDER = "game%d";
     private static final String GAME_FILE	= "game.dat";
     private static final String DEPTH_FILE	= "depth%d.dat";
-
     public static boolean gameExists( int slot ){
         return FileUtils.dirExists(Messages.format(GAME_FOLDER, slot));
     }
-
     public static File gameFolder(int slot ){
         return FileUtils.getDir(Messages.format(GAME_FOLDER, slot));
     }
-
     public static File gameFile( int slot ){
         return FileUtils.getFile(gameFolder( slot ), GAME_FILE);
     }
-
     public static File depthFile( int slot, int depth ) {
         return FileUtils.getFile( gameFolder(slot), Messages.format(DEPTH_FILE, depth));
     }

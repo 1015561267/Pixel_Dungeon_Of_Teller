@@ -23,9 +23,6 @@ package com.watabou.noosa;
 
 import java.util.ArrayList;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 import com.watabou.glscripts.Script;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.glwrap.Vertexbuffer;
@@ -35,6 +32,11 @@ import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.BitmapCache;
 import com.watabou.utils.SystemTime;
+
+
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

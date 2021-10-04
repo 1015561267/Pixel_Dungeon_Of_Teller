@@ -20,23 +20,35 @@
  */
 package com.teller.pixeldungeonofteller.items.weapon.missiles;
 
+import com.teller.pixeldungeonofteller.Assets;
 import com.teller.pixeldungeonofteller.Dungeon;
+import com.teller.pixeldungeonofteller.actors.Actor;
 import com.teller.pixeldungeonofteller.actors.Char;
 import com.teller.pixeldungeonofteller.actors.Damage;
 import com.teller.pixeldungeonofteller.actors.PhysicalDamage;
 import com.teller.pixeldungeonofteller.actors.PhysicalPercentage;
+import com.teller.pixeldungeonofteller.actors.buffs.EarthImbue;
+import com.teller.pixeldungeonofteller.actors.buffs.FireImbue;
+import com.teller.pixeldungeonofteller.actors.buffs.Invisibility;
 import com.teller.pixeldungeonofteller.actors.hero.Hero;
+import com.teller.pixeldungeonofteller.actors.hero.HeroSubClass;
 import com.teller.pixeldungeonofteller.items.Item;
 import com.teller.pixeldungeonofteller.items.weapon.Weapon;
 import com.teller.pixeldungeonofteller.messages.Messages;
+import com.teller.pixeldungeonofteller.scenes.GameScene;
+import com.teller.pixeldungeonofteller.sprites.CharSprite;
 import com.teller.pixeldungeonofteller.sprites.ItemSpriteSheet;
 import com.teller.pixeldungeonofteller.sprites.MissileSprite;
+import com.watabou.noosa.Camera;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class Boomerang extends MissileWeapon {
+import static com.teller.pixeldungeonofteller.Dungeon.hero;
 
+public class Boomerang extends Weapon {
     static int IMPACTFACTOR = 80;
     static int SLASHFACTOR = 20;
     static int PUNCTUREFACTOR = 0;
@@ -52,6 +64,15 @@ public class Boomerang extends MissileWeapon {
 
         unique = true;
         bones = false;
+
+        usesTargeting = true;
+
+        defaultAction = AC_THROW;
+    }
+
+    @Override
+    public Type WeaponType() {
+        return Type.Attached;
     }
 
     @Override
@@ -71,19 +92,16 @@ public class Boomerang extends MissileWeapon {
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        if (!isEquipped(hero)) actions.add(AC_EQUIP);
         return actions;
     }
 
     @Override
     public int STRReq(int lvl) {
-        return 1;
+        return 0;
     }
 
     @Override
-    public int DEXReq(int lvl) {
-        return 0;
-    }
+    public int DEXReq(int lvl) { return 1; }
 
     @Override
     public boolean isUpgradable() {
@@ -98,7 +116,7 @@ public class Boomerang extends MissileWeapon {
     @Override
     public Item upgrade(boolean enchant) {
         super.upgrade(enchant);
-        updateQuickslot();
+        GameScene.scene.offhandupdate();
         return this;
     }
 
@@ -109,27 +127,25 @@ public class Boomerang extends MissileWeapon {
 
     @Override
     public Damage proc(Char attacker, Char defender, Damage damage) {
-        if (attacker instanceof Hero && ((Hero) attacker).rangedWeapon == this) {
+            if (attacker instanceof Hero) {
             circleBack(defender.pos, (Hero) attacker);
         }
         return new PhysicalDamage(imbue.damageFactor(Random.NormalIntRange(min(), max())), percentage());
     }
 
-    @Override
+
     protected void miss(int cell) {
         circleBack(cell, curUser);
     }
 
     private void circleBack(int from, Hero owner) {
-
         ((MissileSprite) curUser.sprite.parent.recycle(MissileSprite.class)).
                 reset(from, curUser.pos, curItem, null);
-
         if (throwEquiped) {
-            owner.belongings.mainhandweapon = this;
-            owner.spend(-TIME_TO_EQUIP);
+            owner.belongings.offhandweapon = this;
             Dungeon.quickslot.replaceSimilar(this);
             updateQuickslot();
+            GameScene.scene.offhandupdate();
         } else if (!collect(curUser.belongings.backpack)) {
             Dungeon.level.drop(this, owner.pos).sprite.drop();
         }
@@ -138,8 +154,52 @@ public class Boomerang extends MissileWeapon {
     @Override
     public void cast(Hero user, int dst) {
         throwEquiped = isEquipped(user) && !cursed;
-        if (throwEquiped) Dungeon.quickslot.convertToPlaceholder(this);
+        if (throwEquiped)
+        {
+            Dungeon.hero.belongings.offhandweapon = null;
+            Dungeon.quickslot.convertToPlaceholder(this);
+            GameScene.scene.offhandupdate();
+        }
         super.cast(user, dst);
+
+    }
+
+    @Override
+    protected void onThrow(int cell) {
+        Char enemy = Actor.findChar(cell);
+        if (enemy != null && enemy != curUser && throwEquiped) {
+            Invisibility.dispel();
+            if(curUser.hit(curUser,enemy,false))
+            {
+                Damage damage = new PhysicalDamage();
+                damage = this.proc(curUser,enemy,damage);
+                enemy.damage(damage,this);
+
+                int dr = enemy.drRoll();
+
+
+                int effectiveDamage = Math.max(damage.effictivehpdamage - dr, 0);
+
+                enemy.sprite.bloodBurstA(enemy.sprite.center(), effectiveDamage);
+                enemy.sprite.flash();
+                //TODO: consider revisiting this and shaking in more cases.
+                float shake = 0f;
+                if (enemy == hero)
+                    shake = effectiveDamage / (enemy.HT / 4);
+                if (shake > 1f)
+                    Camera.main.shake(GameMath.gate(1, shake, 5), 0.3f);
+            }
+            else {
+                String defense = enemy.defenseVerb();
+                enemy.sprite.showStatus(CharSprite.NEUTRAL, defense);
+                Sample.INSTANCE.play(Assets.SND_MISS);
+                miss(cell);
+            }
+        }
+        else
+        {
+            super.onThrow(cell);
+        }
     }
 
     @Override

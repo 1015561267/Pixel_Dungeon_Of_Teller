@@ -40,62 +40,84 @@ public class BuffIndicator extends Component {
     public static final int NONE = -1;
 
     //TODO consider creating an enum to store both index, and tint. Saves making separate images for color differences.
-    public static final int MIND_VISION = 0;
-    public static final int LEVITATION = 1;
-    public static final int FIRE = 2;
-    public static final int POISON = 3;
-    public static final int PARALYSIS = 4;
-    public static final int HUNGER = 5;
-    public static final int STARVATION = 6;
-    public static final int SLOW = 7;
-    public static final int OOZE = 8;
-    public static final int AMOK = 9;
-    public static final int TERROR = 10;
-    public static final int ROOTS = 11;
-    public static final int INVISIBLE = 12;
-    public static final int SHADOWS = 13;
-    public static final int WEAKNESS = 14;
-    public static final int FROST = 15;
-    public static final int BLINDNESS = 16;
-    public static final int COMBO = 17;
-    public static final int FURY = 18;
-    public static final int HEALING = 19;
-    public static final int ARMOR = 20;
-    public static final int HEART = 21;
-    public static final int LIGHT = 22;
-    public static final int CRIPPLE = 23;
-    public static final int BARKSKIN = 24;
-    public static final int IMMUNITY = 25;
-    public static final int BLEEDING = 26;
-    public static final int MARK = 27;
-    public static final int DEFERRED = 28;
-    public static final int DROWSY = 29;
-    public static final int MAGIC_SLEEP = 30;
-    public static final int THORNS = 31;
-    public static final int FORESIGHT = 32;
-    public static final int VERTIGO = 33;
-    public static final int RECHARGING = 34;
-    public static final int LOCKED_FLOOR = 35;
-    public static final int CORRUPT = 36;
-    public static final int BLESS = 37;
-    public static final int RAGE = 38;
-    public static final int SACRIFICE = 39;
-    public static final int ANGERED = 40;
-    public static final int EXHAUSTED = 41;
-    public static final int RECOVERING = 42;
-    public static final int CURSEDFLAME = 43;
-    public static final int GUARD = 44;
-    public static final int COMBINATIONREADY = 45;
-    public static final int COMBINATIONCOOLDOWN = 46;
-    public static final int APPTIZING = 47;
-    public static final int FLASHOVERLOAD = 48;
-    public static final int HOLYHEALING = 49;
+
+    //Reorganize order along with improvement of hunger and resting in 2021/5/12-13
+
+    public static final int SATIATED = 0;
+    public static final int PARTIAL = 1;
+    public static final int HUNGER = 2;
+    public static final int STARVING = 3;
+    public static final int RAVENOUS = 4;
+
+    public static final int GUARD = 5;
+    public static final int COMBINATIONREADY = 6;
+    public static final int COMBINATIONCOOLDOWN = 7;
 
 
-    public static final int BURNINGBLADE = 48;
+    //Unused
+    public static final int RAGE = 8;
+    public static final int SACRIFICE = 9;
 
-    public static final int ICEIMBUE=50;
-    public static final int FROSTCOFFIN=51;
+
+    //Positive
+
+    public static final int MIND_VISION = 16;
+    public static final int LEVITATION = 17;
+    public static final int HEALING = 18;
+    public static final int ARMOR = 19;
+    public static final int INVISIBLE = 20;
+    public static final int SHADOWS = 21;
+    public static final int BARKSKIN = 22;
+    public static final int IMMUNITY = 23;
+    public static final int RECHARGING = 24;
+    public static final int LIGHT = 25;
+    public static final int BLESS = 26;
+
+    //Negative
+    public static final int FIRE = 32;
+    public static final int FROST = 33;
+    public static final int POISON = 34;
+    public static final int PARALYSIS = 35;
+    public static final int BLEEDING = 36;
+    public static final int CRIPPLE = 37;
+    public static final int WEAKNESS = 38;
+    public static final int VERTIGO = 39;
+    public static final int ROOTS = 40;
+    public static final int BLINDNESS = 41;
+    public static final int SLOW = 42;
+    public static final int OOZE = 43;
+    public static final int AMOK = 44;
+    public static final int TERROR = 45;
+    public static final int HEART = 46;
+    public static final int CORRUPT = 47;
+    public static final int CURSEDFLAME = 48;
+
+
+    //By ability
+    public static final int FURY = 56;
+    public static final int ANGERED = 57;
+    public static final int EXHAUSTED = 58;
+    public static final int RECOVERING = 59;
+    public static final int MARK = 60;
+    public static final int COMBO = 61;
+
+
+    //By equipment
+    public static final int DEFERRED = 64;
+    public static final int THORNS = 65;
+    public static final int FORESIGHT = 66;
+
+
+    //Unable to be included,or Neutral
+    public static final int DROWSY = 72;
+    public static final int MAGIC_SLEEP = 73;
+    public static final int LOCKED_FLOOR = 74;
+
+
+    //My work final,may move them above later
+    public static final int APPTIZING = 80;
+    public static final int FLASHOVERLOAD = 81;
+    public static final int HOLYHEALING = 82;
 
     public static final int SIZE = 7;
 

@@ -58,10 +58,10 @@ import com.teller.pixeldungeonofteller.levels.rooms.secret.SecretRoom;
 import com.teller.pixeldungeonofteller.levels.rooms.special.SpecialRoom;
 import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
-import com.teller.pixeldungeonofteller.scenes.StartScene;
 import com.teller.pixeldungeonofteller.ui.QuickSlotButton;
 import com.teller.pixeldungeonofteller.utils.BArray;
 import com.teller.pixeldungeonofteller.utils.DungeonSeed;
+import com.teller.pixeldungeonofteller.utils.GLog;
 import com.teller.pixeldungeonofteller.windows.WndResurrect;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
@@ -73,9 +73,10 @@ import com.watabou.utils.SparseArray;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class Dungeon {
 
@@ -624,7 +625,7 @@ public class Dungeon {
     }
 
     public static void observe() {
-        observe(hero.viewDistance + 1);
+        observe(hero.getViewDistance() + 1);
     }
 
     public static void observe(int dist) {
@@ -679,6 +680,7 @@ public class Dungeon {
     public static PathFinder.Path findPath(Char ch, int from, int to, boolean[] pass, boolean[] visible) {
 
         setupPassable();
+
         if (ch.flying || ch.buff(Amok.class) != null) {
             BArray.or(pass, Dungeon.level.avoid, passable);
         } else {
@@ -691,8 +693,24 @@ public class Dungeon {
             }
         }
 
-        return PathFinder.find(from, to, passable , level.ice);
+        if(ch.flying)
+        {
+            return PathFinder.findPathWithIce(from, to, passable , Dungeon.level.ice , true);//flying should not be affected by ice,so there are also no need to consider ice when finding path
+        }
 
+        else if(!accessible(to,passable,Dungeon.level.ice))//first,we judge if the target tile is unreachable(ice and no blocks around to stop)if so,then just use the simplest and stupid original way
+        {
+            return PathFinder.findPathWithIce(from, to, passable , Dungeon.level.ice , true);
+        }
+        else
+            return PathFinder.findPathWithIce(from, to, passable , Dungeon.level.ice , false);
+
+        //else we consider things in following step:
+        //First,as the distance of two point might be different from two direction,so the first distance build process have to be correspond to the actual direction(from start to end)
+        //Second,when we decide the real path from reserve direction(from end to start)we have to verify each step,if it's same in both directions(mostly for that one actual walk,from start to end)
+        //so what need to done is clear:we build a distance from start to end(not from end to start like old way)then verify each shortest path from end to start
+        //note that this function can work but still have potential to be improved
+        //more details at PathFinder.java
     }
 
     public static int findStep(Char ch, int from, int to, boolean[] pass, boolean[] visible) {
@@ -714,9 +732,7 @@ public class Dungeon {
                 passable[c.pos] = false;
             }
         }
-
-        return PathFinder.getStep(from, to, passable ,level.ice);
-
+        return PathFinder.getStep(from, to, passable ,Dungeon.level.ice , ch.flying);
     }
 
     public static int flee(Char ch, int cur, int from, boolean[] pass, boolean[] visible) {
@@ -737,8 +753,24 @@ public class Dungeon {
         passable[cur] = true;
 
         return PathFinder.getStepBack(cur, from, passable);
-
     }
+
+    public static boolean accessible(int dst,boolean[] passable,boolean[] ice)
+    {
+        if(!passable[dst]) return false;
+
+        if(ice[dst])
+        {
+            for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
+                if(!passable[dst+i]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        else return true;
+    }
+
 
     //enum of items which have limited spawns, records how many have spawned
     //could all be their own separate numbers, but this allows iterating, much nicer for bundling/initializing.

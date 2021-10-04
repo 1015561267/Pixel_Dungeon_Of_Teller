@@ -44,8 +44,6 @@ public class Ballistica {
 
     public static final int WONT_STOP = 0;
 
-    public int hittedPos;
-
     //note that the path is the FULL path of the projectile, including tiles after collision.
     //make sure to generate a subPath for the common case of going source to collision.
     public ArrayList<Integer> path = new ArrayList<>();

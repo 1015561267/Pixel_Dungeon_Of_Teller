@@ -22,6 +22,8 @@ package com.teller.pixeldungeonofteller.ui;
 
 import com.teller.pixeldungeonofteller.Assets;
 import com.teller.pixeldungeonofteller.Dungeon;
+import com.teller.pixeldungeonofteller.actors.buffs.Hunger;
+import com.teller.pixeldungeonofteller.actors.hero.Hero;
 import com.teller.pixeldungeonofteller.tiles.DungeonTerrainTilemap;
 import com.teller.pixeldungeonofteller.tiles.DungeonTilemap;
 import com.teller.pixeldungeonofteller.PixelDungeonOfTeller;
@@ -30,6 +32,7 @@ import com.teller.pixeldungeonofteller.messages.Messages;
 import com.teller.pixeldungeonofteller.scenes.CellSelector;
 import com.teller.pixeldungeonofteller.scenes.GameScene;
 import com.teller.pixeldungeonofteller.sprites.ItemSprite;
+import com.teller.pixeldungeonofteller.utils.GLog;
 import com.teller.pixeldungeonofteller.windows.WndBag;
 import com.teller.pixeldungeonofteller.windows.WndCatalogs;
 import com.teller.pixeldungeonofteller.windows.WndJournal;
@@ -89,8 +92,28 @@ public class Toolbar extends Component {
 
             protected boolean onLongClick() {
                 examining = false;
-                Dungeon.hero.rest(true);
-                return true;
+                if(Dungeon.hero.HP != Dungeon.hero.HT) {
+                    if(Dungeon.hero.visibleEnemies()==0)
+                    {
+                        if(!Dungeon.hero.isStarving()) {
+                            Dungeon.hero.rest(true);
+                            return true;
+                        }
+                        else {
+                            GLog.w(Messages.get(Hero.class, "hunger_unable")); //FIXME It shall not be at here but I'm just so lazy,may fix this later
+                            return false;
+                        }
+                    }
+                   else {
+                        GLog.w(Messages.get(Hero.class, "enemy_unable"));
+                        return false;
+                    }
+                }
+                else
+                {
+                    GLog.w(Messages.get(Hero.class, "hp_full"));
+                    return false;
+                }
             }
 
         });

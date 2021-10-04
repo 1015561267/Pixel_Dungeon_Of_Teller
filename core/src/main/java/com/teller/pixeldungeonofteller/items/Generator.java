@@ -155,8 +155,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-//import com.teller.tellerpixeldungeon.items.weapon.missiles.Shuriken;
-
 public class Generator {
 
     public static final Category[] wepTiers = new Category[]{

@@ -49,6 +49,7 @@ public class WandHolster extends Bag {
                     if(item instanceof Wand) {
                         ((Wand) item).charge(owner, HOLSTER_SCALE_FACTOR);
                     }
+
                 }
             }
             return true;
@@ -61,7 +62,9 @@ public class WandHolster extends Bag {
     public void onDetach() {
         super.onDetach();
         for (Item item : items) {
-            ((Wand) item).stopCharging();
+            if(item instanceof Wand) {
+                ((Wand) item).stopCharging();
+            }
         }
     }
 

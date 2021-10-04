@@ -852,7 +852,7 @@ public abstract class Char extends Actor {
         }
     }
 
-    public int slipto(int pos,int step)//FIXME this would consult the final pos it should land when move on ice,using recursion may reduce performance
+    public static int slipto(int pos,int step , boolean flying)//FIXME this would consult the final pos it should land when move on ice,using recursion may reduce performance
     {
         if(Dungeon.level.map[step] == Terrain.ICE && !flying)
         {
@@ -861,8 +861,7 @@ public abstract class Char extends Actor {
                 boolean haschar = (Actor.findChar(newpos) != null);
 
                 if (Dungeon.level.map[newpos] == Terrain.ICE && !haschar) {
-                    move(newpos);
-                    return slipto(step, newpos);
+                    return slipto(step, newpos,flying);
                 } else if (Dungeon.level.solid[newpos] || haschar) {
                     return step;
                 } else {
@@ -910,17 +909,12 @@ public abstract class Char extends Actor {
         IMMOVABLE
     }
 
-    public int removefrommap()
+    public int getViewDistance()
     {
-
-        int p = pos;
-        this.pos = 0;
-        return p;
-    }
-
-    public void addintomap(int p)
-    {
-        this.pos = p;
-        return;
+        if(this instanceof Hero)
+        {
+            return viewDistance;
+        }
+        return viewDistance;
     }
 }

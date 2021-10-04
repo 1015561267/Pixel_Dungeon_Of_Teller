@@ -219,8 +219,8 @@ public class SubmachineGun extends FireArm {
     public PhysicalDamage ShootDamageRoll()
     {
         PhysicalDamage shootdamage=new PhysicalDamage();
-        shootdamage.AddImpact(imbue.damageFactor(Random.Int(20,90)+level()*Random.Int(1,3)));
-        shootdamage.AddPuncture(imbue.damageFactor((Random.Int(10,60))));
+        shootdamage.AddImpact(imbue.damageFactor(Random.Int(2,9)+level()*Random.Int(1,3)));
+        shootdamage.AddPuncture(imbue.damageFactor((Random.Int(1,6))));
         return shootdamage;
     }
 

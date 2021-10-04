@@ -10,7 +10,7 @@ public class HawFlakes extends OverpricedRation {
 
     {
         image = ItemSpriteSheet.HAW_FLAKES;
-        energy = Hunger.STARVING - Hunger.HUNGRY;
+        energy = Hunger.DEFAULT - Hunger.PARTIAL;
         hornValue = 1;
     }
 

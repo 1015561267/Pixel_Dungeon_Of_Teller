@@ -109,9 +109,9 @@ public class HornOfPlenty extends Artifact {
             else if (charge == 0) GLog.i(Messages.get(this, "no_food"));
             else {
                 //consume as many
-                int chargesToUse = Math.max(1, hero.buff(Hunger.class).hunger() / (int) (Hunger.STARVING / 10));
+                int chargesToUse = Math.max(1, hero.buff(Hunger.class).hunger() / (int) (Hunger.DEFAULT / 10));
                 if (chargesToUse > charge) chargesToUse = charge;
-                hero.buff(Hunger.class).satisfy((Hunger.STARVING / 10) * chargesToUse);
+                hero.buff(Hunger.class).satisfy((Hunger.DEFAULT / 10) * chargesToUse);
 
                 //if you get at least 80 food energy from the horn
                 switch (hero.heroClass) {
@@ -207,11 +207,11 @@ public class HornOfPlenty extends Artifact {
                 //generates 0.25x max hunger value every hero level, +0.035x max value per horn level
                 //to a max of 1.3x max hunger value per hero level
                 //This means that a standard ration will be recovered in ~7.15 hero levels
-                partialCharge += Hunger.STARVING * levelPortion * (0.25f + (0.035f * level()));
+                partialCharge += Hunger.DEFAULT * levelPortion * (0.25f + (0.035f * level()));
                 //charge is in increments of 1/10 max hunger value.
-                while (partialCharge >= Hunger.STARVING / 10) {
+                while (partialCharge >= Hunger.DEFAULT / 10) {
                     charge++;
-                    partialCharge -= Hunger.STARVING / 10;
+                    partialCharge -= Hunger.DEFAULT / 10;
 
                     if (charge >= 15) image = ItemSpriteSheet.ARTIFACT_HORN4;
                     else if (charge >= 10) image = ItemSpriteSheet.ARTIFACT_HORN3;

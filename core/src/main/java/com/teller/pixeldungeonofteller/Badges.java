@@ -54,8 +54,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Badges {
-
-    public enum Badge {//2021/5/9 improvement of badges from SPD 0.9.0
+    //2021/5/9 improvement of badges from SPD 0.9.0
+    
+    public enum Badge {
         MONSTERS_SLAIN_1(0),
         MONSTERS_SLAIN_2(1),
         MONSTERS_SLAIN_3(2),

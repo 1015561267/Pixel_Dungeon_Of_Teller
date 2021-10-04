@@ -42,7 +42,7 @@ public class Metabolism extends Glyph {
         if (Random.Int(6) == 0) {
 
             //assumes using up 10% of starving, and healing of 1 hp per 10 turns;
-            int healing = Math.min((int) Hunger.STARVING / 100, defender.HT - defender.HP);
+            int healing = Math.min((int) Hunger.DEFAULT / 100, defender.HT - defender.HP);
 
             if (healing > 0) {
 

@@ -78,6 +78,7 @@ public class Terrain {
     public static final int LIQUID = 0x40;
     public static final int PIT = 0x80;
 
+    public static final int SLIPPERY = 0x100;
 
     public static final int[] flags = new int[256];
 
@@ -88,6 +89,7 @@ public class Terrain {
         flags[EMPTY_WELL] = PASSABLE;
 
         flags[WATER] = PASSABLE | LIQUID;
+        flags[ICE] = PASSABLE | SLIPPERY;
 
         flags[WALL] = LOS_BLOCKING | SOLID;
         flags[DOOR] = PASSABLE | LOS_BLOCKING | FLAMABLE | SOLID;
@@ -116,9 +118,6 @@ public class Terrain {
         flags[STATUE_SP] = flags[STATUE];
         flags[BOOKSHELF] = flags[BARRICADE];
         flags[ALCHEMY] = PASSABLE;
-
-        flags[ICE] = PASSABLE | ICE;
-
     }
 
     public static int discover(int terr) {

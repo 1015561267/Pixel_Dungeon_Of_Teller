@@ -72,32 +72,6 @@ public class Pushing extends Actor {
         this.callback = callback;
     }
 
-    /*
-    @Override
-    protected boolean act() {
-        if (sprite != null) {
-            PointF dest = sprite.worldToCamera( to );
-            PointF d = PointF.diff( sprite.worldToCamera( from ), dest );
-            PosTweener tweener = new PosTweener( sprite, dest, d.length() / 240f );
-            tweener.listener = new Tweener.Listener() {
-                @Override
-                public void onComplete( Tweener tweener ){
-                    Actor.remove( Pushing.this );
-                    if( callback != null ){
-                        callback.call();
-                    }
-                    next();
-                }
-            };
-            sprite.parent.add( tweener );
-            return false;
-        } else {
-            Actor.remove( Pushing.this );
-            return true;
-        }
-    }
-    */
-
     @Override
     protected boolean act() {
         if (sprite != null) {
@@ -139,95 +113,90 @@ public class Pushing extends Actor {
 
     public static int knockback( final Char ch, int pushedFrom, int Power ) {
 
-        if (!ch.properties().contains(Char.Property.IMMOVABLE)) {
-            if (Power > 0) {
-                // first, we "remove" target from the tilemap and check where it
-                // should land when knocked back, as if it weren't there
+        if(ch.isAlive() && Power>0 && !ch.properties().contains(Char.Property.IMMOVABLE )) {
 
-                Ballistica vector = new Ballistica(pushedFrom, ch.pos, ch.pos, Ballistica.MAGIC_BOLT);
-                //note that pushFrom is the pos where the pusher stand,and we wants a vector so it shouldn't stop at target point
+            final int oldPos = ch.pos;
 
-                // then we calcualte where the targer would actually land, considering
-                // the maximum distance which it is supposed to be knocked back
+            // first, we should "dismiss" target from the tilemap and check where it should land when knocked back, as if it weren't there
+                    //here we dismiss the pushed char when consulting ballistica,see used method for details
+                    Ballistica vector = new Ballistica(pushedFrom, ch.pos, ch.pos, Ballistica.MAGIC_BOLT);
 
-                int pushedTo = vector.collisionPos;//this step get the collision point,in order to conclude the distance
+                    //note that pushFrom is the pos where the pusher stand,and we wants a vector so it shouldn't stop at target point
 
-                int index = vector.path.indexOf(pushedTo);
+                    // then,we calcualte where the targer would actually land, considering
+                    // the maximum distance which it is supposed to be knocked back
+                    int pushedTo = vector.collisionPos;//this step get the collision point,in order to conclude the distance
 
-                int hitted = vector.path.get(index);
-                if (index + 1 < vector.path.size()) {
-                    hitted = vector.path.get(index + 1);
-                }//we get one block after collisionpos as it's the pos it should stop when this happens,but not it should when it doesn't happen
+                    int index = vector.path.indexOf(pushedTo);
+                    int hitted = vector.path.get(index);
 
-                //Ballistica knockway = new Ballistica( ch.pos,hitted,Ballistica.MAGIC_BOLT);
-                // note that all ballistica path is a full path that go through the whole map
-                Ballistica knockway = new Ballistica(ch.pos, hitted, Ballistica.MAGIC_BOLT);//build another ballistica to get real distance how long it really fly
+                    if (index + 1 < vector.path.size()) {
+                        hitted = vector.path.get(index + 1);
+                    }//we get one block after collisionpos as it's the pos it should stop when this happens,but not it should when it doesn't happen
 
-                Power = Math.min(knockway.dist , Power);//then we compare two inorder to know what will happen first between fly to end and crush into sth
 
-                if (pushedTo == ch.pos && Power == 0)//in some condition.like use blast wave against narrow wall,first collisonPos is same with ch's pos,then Power would always be 0,and we need plus one otherwise code below will be invalid
-                    //if (Power == 0)
-                    { Power++; }
+                    Ballistica knockway = new Ballistica(ch.pos, hitted, Ballistica.MAGIC_BOLT);//build another ballistica to get real distance how long it really fly
+                    // note that all ballistica path is a full path that go through the whole map
 
-                if (Power > 0) {
-                    int stopPos = knockway.path.get(Power);//get the block the char should stay
-                    int backPos = knockway.path.get(Power - 1);
+                    Power = Math.min(knockway.dist, Power);//then we compare two inorder to know what will happen first between fly to end and crush into sth
 
-                for(int dist:knockway.subPath(1, Power))//if there are a door on the way,then bounce on it,it could not have a char on that otherwise the way would collision on it first
-                    //FIXME Donno know why it will dismiss doors so I hava to add this,let char bounce on door and open it without stay on door
-                {
-                    if(Dungeon.level.solid[dist] || Actor.findChar(dist) != null)
+                    if (pushedTo == ch.pos && Power == 0)//in some condition.like use blast wave against narrow wall,first collisonPos is same with ch's pos,then Power would always be 0,and we need plus one otherwise code below will be invalid
                     {
-                        stopPos = dist;//get the block the char should stay
-                        backPos = knockway.path.get(knockway.path.indexOf(dist)-1);
-                        break;
+                        Power++;
                     }
-                }
 
-                    // gotta make those final for the sake of using callback mechanics;
-                    final int finalPos = stopPos;//get the block the char should stay
-                    final int knockPos = backPos;
-                    final Char pushedInto = Actor.findChar(finalPos);
+                    if (Power > 0) {
+                        int stopPos = knockway.path.get(Power);//get the block the char should stay
+                        int backPos = knockway.path.get(Power - 1);
 
-                    move(ch, finalPos, new Callback() {
-                        @Override
-                        public void call() {
-                            if (pushedInto != null || Dungeon.level.solid[finalPos])//this means this pos is occupied,so draw back to one block before the path
-                            {
-                                if (Dungeon.level.map[finalPos] == Terrain.DOOR) {
-                                    Door.enter(finalPos);
-                                }
-                                if (Dungeon.level.map[knockPos] == Terrain.CHASM) // FIXME this will cause hero fall before bounce back
-                                {
-                                    move(ch, knockPos, new Callback() {
-                                        @Override
-                                        public void call() {
-                                            Dungeon.level.press(ch.pos, ch);
-                                        }
-                                    });
-                                    return;
-                                }
-                                else hitObstacle(ch, knockPos);
-                            }
-                            if (ch.isAlive()) {
-                                if (ch instanceof Mob) {
-                                    ((Mob) ch).beckon(ch.pos);
-                                    ch.delay(1f);
-                                }
-                                // apply target's current position and activate traps there
-                                // gotta re-check whether mobs killed by knockback activate traps or not
-                                //Actor.occupyCell(ch);
-                                Dungeon.level.press(ch.pos, ch);
-                            } else {
-                                ch.die(this);
+
+                        for (int dist : knockway.subPath(1, Power))//if there are a door on the way,then bounce on it,it could not have a char on that otherwise the way would collision on it first
+                        //FIXME Donno know why it will dismiss doors so I hava to add this,let char bounce on door and open it without stay on door
+                        {
+                            if (Dungeon.level.solid[stopPos] || Actor.findChar(stopPos) != null) {
+                                stopPos = dist;//get the block the char should stay
+                                backPos = knockway.path.get(knockway.path.indexOf(dist) - 1);
+                                break;
                             }
                         }
-                    });
-                    return finalPos;
-                } else {
+
+                        // gotta make those final for the sake of using callback mechanics;
+                        final int finalPos = stopPos;//get the block the char should stay
+                        final int knockPos = backPos;
+                        final Char pushedInto = Actor.findChar(finalPos);
+
+                        move(ch, finalPos, new Callback() {
+                            @Override
+                            public void call() {
+                                if (pushedInto != null || Dungeon.level.solid[finalPos])//this means this pos is occupied,so draw back to one block before the path
+                                {
+                                    if (Dungeon.level.map[finalPos] == Terrain.DOOR) {
+                                        Door.enter(finalPos);
+                                    }
+                                    if (Dungeon.level.map[knockPos] == Terrain.CHASM) // FIXME this will cause hero fall before bounce back
+                                    {
+                                        move(ch, knockPos, new Callback() {
+                                            @Override
+                                            public void call() {
+                                                Dungeon.level.press(ch.pos, ch);
+                                            }
+                                        });
+                                        return;
+                                    }
+                                    else hitObstacle(ch, knockPos,oldPos,pushedInto);
+                                }
+                                if (ch.isAlive()) {
+                                    if (ch instanceof Mob) {
+                                        ((Mob) ch).beckon(ch.pos);
+                                        ch.delay(1f);
+                                    }
+                                    Dungeon.level.press(ch.pos, ch);
+                                }
+                            }
+                        });
+                        return finalPos;
+                    }
                 }
-            }
-        }
         return Power;
     }
 
@@ -236,25 +205,19 @@ public class Pushing extends Actor {
         return ch.properties().contains(Char.Property.IMMOVABLE) || ch.buff(Roots.class) != null;
     }
 
-    private static void hitObstacle(final Char ch , int moveTo) {
+    private static void hitObstacle(final Char ch , final int moveTo , final int knockFrom, final  Char knocked) {
         // move() method handles changing the target's position value
-        final int oldpos = ch.pos;
         move( ch, moveTo, new Callback() {
             @Override
             public void call() {
-
                 // make sounds and shake the screen to make this effect meatier
-                if( Dungeon.visible[ ch.pos ] ) {
+                if( Dungeon.visible[ moveTo ] ) {
                     Sample.INSTANCE.play( Assets.SND_BLAST, 1.0f, 1.0f, 0.5f );
                     Camera.main.shake( 2, 0.1f );
                 }
-
-                final Char pushedInto = Char.findChar(oldpos);
-
-                if (pushedInto != null) {
-                    knockback(pushedInto, ch.pos, 1);
+                if (knocked != null) {
+                    knockback(knocked, knockFrom , 1);
                 }
-
             }
         });
     }

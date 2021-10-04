@@ -20,6 +20,8 @@
  */
 package com.teller.pixeldungeonofteller.actors.hero;
 
+import android.util.Log;
+
 import com.teller.pixeldungeonofteller.Assets;
 import com.teller.pixeldungeonofteller.Badges;
 import com.teller.pixeldungeonofteller.Bones;
@@ -51,7 +53,6 @@ import com.teller.pixeldungeonofteller.actors.buffs.ManaRegeneration;
 import com.teller.pixeldungeonofteller.actors.buffs.MindVision;
 import com.teller.pixeldungeonofteller.actors.buffs.Noise;
 import com.teller.pixeldungeonofteller.actors.buffs.Paralysis;
-import com.teller.pixeldungeonofteller.actors.buffs.Regeneration;
 import com.teller.pixeldungeonofteller.actors.buffs.ShieldRecharging;
 import com.teller.pixeldungeonofteller.actors.buffs.SnipersMark;
 import com.teller.pixeldungeonofteller.actors.buffs.Vertigo;
@@ -521,7 +522,7 @@ public class Hero extends Char {
     }
 
     public void live() {
-        Buff.affect(this, Regeneration.class);
+        //Buff.affect(this, Regeneration.class);
         Buff.affect(this, Hunger.class);
         Buff.affect(this, ManaRegeneration.class);
         Buff.affect(this, ShieldRecharging.class);
@@ -822,18 +823,24 @@ public class Hero extends Char {
 
         super.act();
 
-        fieldOfView = Dungeon.hero.fieldOfView;
+        Dungeon.visible = fieldOfView;
 
-        if (!ready) {
+        Dungeon.observe();
+       // Dungeon.level.updateFieldOfView( this, fieldOfView );
+        //fieldOfView = Dungeon.hero.fieldOfView;
+        /*if (!ready) {
             //do a full observe (including fog update) if not resting.
-            if (!resting || buff(MindVision.class) != null || buff(Awareness.class) != null) {
-                Dungeon.observe();
+//            if (!resting || buff(MindVision.class) != null || buff(Awareness.class) != null) {
+                if (buff(MindVision.class) != null || buff(Awareness.class) != null) {
+                    Dungeon.observe();
             } else {
                 //otherwise just directly re-calculate FOV
                 Dungeon.level.updateFieldOfView(this,fieldOfView);
             }
-        }
+        }*/
         checkVisibleMobs();
+        Dungeon.visible = fieldOfView;
+
         if (buff(FlavourBuff.class) != null) {
             BuffIndicator.refreshHero();
         }
@@ -845,6 +852,18 @@ public class Hero extends Char {
         //checkVisibleMobs();
         if (curAction == null) {
             if (resting) {
+
+                for( Mob mob : Dungeon.level.mobs )
+                {
+                    if(mob.hostile&&Dungeon.level.adjacent(mob.pos,this.pos))
+                    {
+                        resting = false;
+                        GLog.w(Messages.get(this, "noiseup"));
+                        this.interrupt();
+                        return true;
+                    }
+                }
+
                 buff(Noise.class).fade();
                 spend(TIME_TO_REST);
                 next();
@@ -852,7 +871,9 @@ public class Hero extends Char {
             }
             ready();
             return false;
-        } else {
+        }
+
+        else {
 
             resting = false;
 
@@ -1213,7 +1234,7 @@ public class Hero extends Char {
 
                 Hunger hunger = buff(Hunger.class);
                 if (hunger != null && !hunger.isStarving()) {
-                    hunger.reduceHunger(-Hunger.STARVING / 10);
+                    hunger.reduceHunger(-Hunger.DEFAULT / 10);
                 }
 
                 Buff buff = buff(TimekeepersHourglass.timeFreeze.class);
@@ -1516,9 +1537,17 @@ public class Hero extends Char {
                 }
                 path = Dungeon.findPath(this, pos, target, passable, fieldOfView);
             }
-            if (path == null) return false;
-            step = path.removeFirst();
+
+            if (path == null || path.isEmpty()) {
+                Log.i("Path", "Not found" );
+                return false;
+            }
+
+            else
+                step = path.removeFirst();
+            Log.i("Step", String.valueOf(step) );
         }
+
 
         if (step != -1) {
 
@@ -1528,10 +1557,13 @@ public class Hero extends Char {
                 sprite.interruptMotion();
                 int newPos = pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
                 if (!(Dungeon.level.passable[newPos] || Dungeon.level.avoid[newPos]) || Actor.findChar(newPos) != null) {
-                    curAction = new HeroAction.Move(newPos);
-                    sprite.move(pos, newPos);
+
+                    curAction = new HeroAction.Move(pos);
+                    sprite.turnTo(pos,newPos);
+                    //sprite.move(pos, newPos);
                     spend(moveTime / speed());
                     return false;
+
                 }
                     else {
                     step = newPos;
@@ -1547,7 +1579,7 @@ public class Hero extends Char {
                 moveTime *= 2;
             }
 
-            int newstep =  slipto(pos,step);
+            int newstep =  slipto(pos,step,flying);
             int oripos = pos;
 
             if(newstep!=step)

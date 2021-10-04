@@ -41,14 +41,20 @@ import com.teller.pixeldungeonofteller.items.pages.Spell.OldBook.MagicMissile;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfExperience;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfHealing;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfInvisibility;
+import com.teller.pixeldungeonofteller.items.potions.PotionOfLevitation;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfLiquidFlame;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfMindVision;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfParalyticGas;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfPurity;
 import com.teller.pixeldungeonofteller.items.potions.PotionOfStrength;
+import com.teller.pixeldungeonofteller.items.rings.Ring;
+import com.teller.pixeldungeonofteller.items.rings.RingOfAccuracy;
+import com.teller.pixeldungeonofteller.items.rings.RingOfHaste;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfIdentify;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfMagicMapping;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfMagicalInfusion;
+import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfPsionicBlast;
+import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfRage;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfRecharging;
 import com.teller.pixeldungeonofteller.items.scrolls.ScrollOfUpgrade;
 import com.teller.pixeldungeonofteller.items.wands.WandOfBlastWave;
@@ -79,6 +85,7 @@ import com.teller.pixeldungeonofteller.items.weapon.weapons.OffHandWeapon.Javeli
 import com.teller.pixeldungeonofteller.items.weapon.weapons.Shield.SawtoothFrisbee;
 import com.teller.pixeldungeonofteller.items.weapon.weapons.TwoHandedWeapon.Nunchaku;
 import com.teller.pixeldungeonofteller.messages.Messages;
+import com.teller.pixeldungeonofteller.plants.Blindweed;
 import com.watabou.utils.Bundle;
 
 public enum HeroClass {
@@ -108,10 +115,23 @@ public enum HeroClass {
 
         for (int i = 0; i < 10; i++) {
             new SewingKit().identify().collect();
-            new PotionOfStrength().identify().collect();
-            new ScrollOfRecharging().identify().collect();
-            new ScrollOfMagicMapping().identify().collect();
+            new PotionOfStrength().identify();
+            new ScrollOfRecharging().identify();
+            new ScrollOfMagicMapping().identify();
+            new ScrollOfRage().identify();
+            new PotionOfLevitation().identify();
         }
+
+        new PotionOfLiquidFlame().collect();
+        new ScrollOfIdentify().collect();
+        new ScrollOfIdentify().collect();
+        new ScrollOfIdentify().collect();
+        new PotionOfLiquidFlame().collect();
+
+        Ring ring = new RingOfAccuracy();
+        ring.cursed = true;
+        ring.collect();
+
         new HiddenBlade().identify().collect();
         //new NinjaProsthesis().identify().collect();
         //new Gauntlet().identify().collect();
@@ -124,8 +144,8 @@ public enum HeroClass {
         //new Tamahawk().identify().collect();
         new Tamahawk().identify().collect();
 
-        Dungeon.limitedDrops.wandBag.drop();
         new WandHolster().collect();
+        Dungeon.limitedDrops.wandBag.drop();
 
         new SawtoothFrisbee().identify().collect();
 
@@ -202,7 +222,7 @@ public enum HeroClass {
         Boomerang boomerang = new Boomerang();
         boomerang.identify().collect();
 
-        Dungeon.quickslot.setSlot(0, boomerang);
+        //Dungeon.quickslot.setSlot(0, boomerang);
 
         new PotionOfMindVision().setKnown();
     }

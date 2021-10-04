@@ -111,7 +111,7 @@ public abstract class Mob extends Char {
         if (state == SLEEPING) {
             bundle.put(STATE, Sleeping.TAG);
         }//else if (state == LOW_ALERTING) {
-         //   bundle.put(STATE, LowAlerting.TAG);
+        //   bundle.put(STATE, LowAlerting.TAG);
         //}else if (state == MID_ALERTING) {
         //    bundle.put(STATE, MidAlerting.TAG);
         ///}else if (state == HIGH_ALERTING) {
@@ -147,7 +147,7 @@ public abstract class Mob extends Char {
         //}else if (state.equals(HighAlerting.TAG)) {
         //    this.state = HIGH_ALERTING;
         //}
-         else if (state.equals(Searching.TAG)) {
+        else if (state.equals(Searching.TAG)) {
             this.state = SEARCHING;
         } else if (state.equals(Wandering.TAG)) {
             this.state = WANDERING;
@@ -201,10 +201,10 @@ public abstract class Mob extends Char {
             distance+=Random.Int(5);
         if(distance>8)
             alert-=distance;
-        //else if(noise>75)
-        //{
+            //else if(noise>75)
+            //{
             //alert+=heroinview?Math.floor(2*noise/distance):Math.floor(2*noise/distance)*2;
-       // }
+            // }
         else if(heroinview)
         {
             //alert+=Math.floor(noise/distance);
@@ -422,7 +422,7 @@ public abstract class Mob extends Char {
                     step = newPos;
                 }
             }
-            step = slipto(pos,step);
+            step = slipto(pos,step,flying);
             move(step);
             return true;
         } else {
@@ -446,7 +446,7 @@ public abstract class Mob extends Char {
                     step = newPos;
                 }
             }
-            step = slipto(pos,step);
+            step = slipto(pos,step,flying);
             move(step);
             return true;
         } else {
@@ -844,15 +844,12 @@ public abstract class Mob extends Char {
             }
             else if(alert>=75)
             {
-
             }
             else if(alert>=50)
             {
-
             }
             else
             {
-
             }
             return true;
         }
@@ -1025,4 +1022,3 @@ public abstract class Mob extends Char {
         }
     }
 }
-

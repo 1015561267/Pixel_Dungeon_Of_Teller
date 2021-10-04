@@ -57,9 +57,7 @@ public class Frisbee extends Hazard {
             spend( TICK );
             Char ch = Actor.findChar(pos);
             if (ch != null) {
-
                 ch.damage(frisbee.damageRoll(Dungeon.hero),this);
-
                 if (ch == Dungeon.hero && !ch.isAlive())
                     Dungeon.fail(getClass());
             }
@@ -70,7 +68,8 @@ public class Frisbee extends Hazard {
             {
                 frisbee.fastreturn(pos);
             }
-            else frisbee.retrieve(pos);
+            else
+                frisbee.retrieve(pos);
             destroy();
         }
         return true;

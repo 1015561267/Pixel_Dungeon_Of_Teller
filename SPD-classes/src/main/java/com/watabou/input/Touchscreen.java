@@ -21,11 +21,11 @@
 
 package com.watabou.input;
 
-import android.view.MotionEvent;
-
 import com.watabou.noosa.Game;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Signal;
+
+import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;

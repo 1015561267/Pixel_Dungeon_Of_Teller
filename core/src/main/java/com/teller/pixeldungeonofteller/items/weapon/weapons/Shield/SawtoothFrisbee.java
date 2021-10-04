@@ -147,31 +147,34 @@ public class SawtoothFrisbee extends Shield {
     {
         Integer start = pos;
         final Integer end = Dungeon.hero.pos;
-        curItem = this;
-
         final Ballistica shot = new Ballistica(start, end, Ballistica.STOP_TARGET);
+
+        //curItem = this;
+        final SawtoothFrisbee temporary = this;//as the animation thread is not locked,curItem may be changed to other things if click in a fast way
 
         ((MissileSprite) curUser.sprite.parent.recycle(MissileSprite.class)).
                 reset(start, end, this, new Callback() {
                     @Override
                     public void call() {
-                        for (int c : shot.subPath(1, end)) {
+                        for (int c : shot.subPath(1, shot.dist)) {
                             Char ch;
                             if ((ch = Actor.findChar(c)) != null && !(ch instanceof Hero)) {
                                 PhysicalDamage dmg = damageRoll(Dungeon.hero);
                                 ch.damage(dmg, this);
                             }
                         }
+
                         if(Dungeon.hero.belongings.offhandweapon == null &&(Dungeon.hero.belongings.mainhandweapon== null || Dungeon.hero.belongings.mainhandweapon.WeaponType() != Type.TwoHanded))
                         {
-                            Dungeon.hero.belongings.offhandweapon = (KindOfWeapon) curItem;
+                            Dungeon.hero.belongings.offhandweapon = temporary;
                             GameScene.scene.offhandupdate();
                         }
+
                         else
                         {
-                            if(!curItem.collect())
+                            if(!temporary.collect())
                             {
-                                Dungeon.level.drop(curItem,end);
+                                Dungeon.level.drop(temporary,end);
                             }
                         }
                     }
@@ -188,7 +191,7 @@ public class SawtoothFrisbee extends Shield {
 
         final Ballistica shot = new Ballistica(start, end, Ballistica.STOP_TARGET);
 
-        for (int c : shot.subPath(1, end)) {
+        for (int c : shot.subPath(1, shot.dist)) {
             Char ch;
             if ((ch = Actor.findChar(c)) != null && !(ch instanceof Hero)) {
                 PhysicalDamage dmg = damageRoll(Dungeon.hero);

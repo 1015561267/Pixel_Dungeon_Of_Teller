@@ -107,6 +107,12 @@ public final class ShadowCaster {
             //for each column in this row, which
             for (col = start; col <= end; col++){
 
+                //handles the error case of the slope value at the end of a cell being 1 farther
+                // along then at the beginning of the cell, and that earlier cell is vision blocking
+                if (col == end && inBlocking && (int)Math.ceil((row - 0.5) * rSlope - 0.499) != end){
+                    break;
+                }
+
                 fov[cell] = true;
 
                 if (blocking[cell]){

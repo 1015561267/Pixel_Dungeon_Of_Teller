@@ -97,6 +97,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import static com.teller.pixeldungeonofteller.Dungeon.posNeeded;
+
 public abstract class Level implements Bundlable {
 
     public enum Feeling {
@@ -134,6 +136,7 @@ public abstract class Level implements Bundlable {
     private static final String FEELING = "feeling";
     //FIXME should not be static!
     public  boolean[] fieldOfView = null;
+
     public  boolean[] passable;
     public  boolean[] losBlocking;
     public  boolean[] flamable;
@@ -183,7 +186,7 @@ public abstract class Level implements Bundlable {
 
             int bonus = RingOfWealth.getBonus(Dungeon.hero, RingOfWealth.Wealth.class);
 
-            if (Dungeon.posNeeded()) {
+            if (posNeeded()) {
                 if (Random.Float() > Math.pow(0.925, bonus))
                     addItemToSpawn( new PotionOfMight() );
                 else
@@ -623,7 +626,7 @@ public abstract class Level implements Bundlable {
             water[i] = (flags & Terrain.LIQUID) != 0;
             pit[i] = (flags & Terrain.PIT) != 0;
 
-            water[i] = (flags & Terrain.ICE) != 0;
+            ice[i] = (flags & Terrain.SLIPPERY) != 0;
         }
 
         int lastRow = length() - width();
@@ -920,10 +923,18 @@ public abstract class Level implements Bundlable {
         int cx = c.pos % width();
         int cy = c.pos / width();
 
+
+        boolean heroResting = c instanceof Hero && ((Hero) c).resting;
+
         boolean sighted = c.buff(Blindness.class) == null && c.buff(Shadows.class) == null
                 && c.buff(TimekeepersHourglass.timeStasis.class) == null && c.isAlive();
+
+        if(heroResting){
+            sighted = false;
+        }
+
         if (sighted) {
-            ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance);
+            ShadowCaster.castShadow(cx, cy, fieldOfView, c.getViewDistance());
         } else {
             BArray.setFalse(fieldOfView);
         }

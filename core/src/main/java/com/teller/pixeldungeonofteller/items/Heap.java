@@ -338,7 +338,7 @@ public class Heap implements Bundlable {
                 items.remove(item);
                 ((Potion) item).shatter(pos);
                 frozen = true;
-            } else if (item instanceof Bomb && !(item instanceof HolyBomb)) {
+            } else if (item instanceof Bomb && !(item instanceof Holybomb)) {
                 ((Bomb) item).fuse = null;
                 frozen = true;
             }
